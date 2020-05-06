@@ -638,7 +638,7 @@ export class BackgroundScript {
     return true
   }
 
-  private async sendTip(tipAmount = 1): Promise<{ success: boolean }> {
+  private async sendTip(tipAmount = 100): Promise<{ success: boolean }> {
     const tabId = this.activeTab
     const streamId = this.assoc.getStreamId({ tabId, frameId: 0 })
     if (!streamId) {
@@ -660,7 +660,7 @@ export class BackgroundScript {
 
     const receiver = stream.getPaymentPointer()
     const { assetCode, assetScale, exchangeRate } = stream.getAssetDetails()
-    const amount = Math.floor(tipAmount * 1e9 * exchangeRate).toString()
+    const amount = Math.floor((tipAmount / 1e2) * 1e9 * exchangeRate).toString()
 
     try {
       this.log(`sendTip: sending tip to ${receiver}`)
@@ -672,10 +672,12 @@ export class BackgroundScript {
             }
           }
         `,
+        autoThrow: false,
         token,
         variables: {
           receiver,
-          amount: amount || 100
+          // amount is USD cents
+          amount: tipAmount
         }
       })
 
@@ -694,7 +696,7 @@ export class BackgroundScript {
           assetScale
         }
       }
-      this.api.tabs.sendMessage(tabId, message)
+      this.api.tabs.sendMessage(tabId, message, { frameId: 0 })
       return { success: result.data.sendTip.success }
     } catch (e) {
       this.log(`sendTip: error. msg=${e.message}`)
