@@ -1,6 +1,5 @@
 import { PaymentDetails } from '@web-monetization/polyfill-utils'
 import { MonetizationState } from '@web-monetization/types'
-import { Frame } from 'puppeteer'
 
 import {
   PlayOrPauseState,
@@ -279,9 +278,11 @@ export interface SetMonetizationState {
  * popup -> background
  * browser.runtime.sendMessage
  */
-export interface SendTip {
+export interface SendTip extends Command {
   command: 'sendTip'
-  amount?: number
+  data: {
+    amount?: number
+  }
 }
 
 /**
