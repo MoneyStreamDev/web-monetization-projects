@@ -21,7 +21,7 @@ const BigBalance = styled('p')(() => ({
   margin: '0px',
   flex: 1,
   color: Colors.Grey800,
-  userSelect: 'none',
+  // userSelect: 'none',
   cursor: 'default'
 }))
 

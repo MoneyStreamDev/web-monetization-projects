@@ -34,7 +34,7 @@ export const TipSubButton = ({
   limited,
   tipAmount
 }: TipSubButtonProps) => (
-  <Wrapper>
+  <Wrapper onMouseDown={e => e.preventDefault()}>
     <svg
       onClick={onClick}
       width='40'

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { styled } from '@material-ui/core'
 
 import { PopupProps } from '../types'
 import { SendTip, SendTipResult } from '../../types/commands'
@@ -11,7 +12,7 @@ import { TipCounter } from './TipCounter'
 const MIN_TIP_AMOUNT = 100
 const MAX_TIP_AMOUNT = 2000
 
-export const TipControl = (props: PopupProps) => {
+export const TipControl = styled((props: PopupProps) => {
   const [tipState, setTipState] = useState(TipState.READY)
   const [tipAmount, setTipAmount] = useState(100)
   const increaseTip = () =>
@@ -55,7 +56,7 @@ export const TipControl = (props: PopupProps) => {
   const [tipBalance, setTipBalance] = useState(500)
   const canTip = Boolean(props.context.store.user.canTip)
 
-  return (
+  return canTip ? (
     <>
       <TipRule />
       <CoilContainer>
@@ -74,5 +75,7 @@ export const TipControl = (props: PopupProps) => {
         />
       </CoilContainer>
     </>
+  ) : (
+    <></>
   )
-}
+})({ userSelect: 'none' })
