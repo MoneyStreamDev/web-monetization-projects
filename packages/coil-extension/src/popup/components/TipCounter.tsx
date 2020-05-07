@@ -19,7 +19,7 @@ const BigBalance = styled('p')(() => ({
   fontSize: '56px',
   lineHeight: '64px',
   margin: '0px',
-  width: '60%',
+  flex: 1,
   color: Colors.Grey800,
   userSelect: 'none',
   cursor: 'default'
@@ -28,12 +28,16 @@ const BigBalance = styled('p')(() => ({
 const Flex = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'row',
-  flexAlign: 'center'
+  flexAlign: 'center',
+  height: '80px',
+  width: '212px',
+  margin: '0 auto'
 }))
 
-const TipSubButtonWrap = styled('div')(() => ({
+const TipButtonWrap = styled('div')(() => ({
   display: 'flex',
-  width: '20%',
+  width: '36px',
+  textAlign: 'center',
   paddingTop: '14px'
 }))
 
@@ -49,21 +53,21 @@ export const TipCounter = (props: TipCounterProps) => {
 
   return (
     <Flex>
-      <TipSubButtonWrap>
+      <TipButtonWrap>
         <TipSubButton
           onClick={props.decrease}
           limited={props.tipAmount == props.min}
           tipAmount={formattedAmount}
         />
-      </TipSubButtonWrap>
+      </TipButtonWrap>
       <BigBalance>{formattedAmount}</BigBalance>
-      <TipSubButtonWrap>
+      <TipButtonWrap>
         <TipAddButton
           onClick={props.increase}
           limited={props.tipAmount == props.max}
           tipAmount={formattedAmount}
         />
-      </TipSubButtonWrap>
+      </TipButtonWrap>
     </Flex>
   )
 }

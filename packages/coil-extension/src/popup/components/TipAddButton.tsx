@@ -9,6 +9,11 @@ interface TipAddButtonProps {
   tipAmount: string
 }
 
+const Wrapper = styled('div')(() => ({
+  width: '60px',
+  display: 'block'
+}))
+
 const Message = styled('p')(() => ({
   fontFamily: 'Circular Std',
   fontStyle: 'normal',
@@ -18,9 +23,9 @@ const Message = styled('p')(() => ({
   display: 'flex',
   alignItems: 'center',
   textAlign: 'center',
-  position: 'absolute',
   color: Colors.Red400,
   margin: '0 0 0 -10px',
+  position: 'absolute',
   width: '60px'
 }))
 
@@ -29,7 +34,7 @@ export const TipAddButton = ({
   limited,
   tipAmount
 }: TipAddButtonProps) => (
-  <div>
+  <Wrapper>
     <svg
       onClick={onClick}
       width='40'
@@ -65,5 +70,5 @@ export const TipAddButton = ({
     <Message style={{ display: limited ? 'block' : 'none' }}>
       Max {tipAmount}
     </Message>
-  </div>
+  </Wrapper>
 )

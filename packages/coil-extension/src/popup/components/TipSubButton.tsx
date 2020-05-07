@@ -9,6 +9,11 @@ interface TipSubButtonProps {
   tipAmount: string
 }
 
+const Wrapper = styled('div')(() => ({
+  width: '60px',
+  display: 'block'
+}))
+
 const Message = styled('p')(() => ({
   fontFamily: 'Circular Std',
   fontStyle: 'normal',
@@ -29,7 +34,7 @@ export const TipSubButton = ({
   limited,
   tipAmount
 }: TipSubButtonProps) => (
-  <div>
+  <Wrapper>
     <svg
       onClick={onClick}
       width='40'
@@ -56,7 +61,7 @@ export const TipSubButton = ({
     <Message style={{ display: limited ? 'block' : 'none' }}>
       Min {tipAmount}
     </Message>
-  </div>
+  </Wrapper>
 )
 
 // '#E3E5E9' fill='#8F949F'
