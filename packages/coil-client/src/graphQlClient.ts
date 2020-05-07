@@ -4,7 +4,6 @@ import { portableFetch } from './utils/portableFetch'
 import { GraphQlResponse } from './types'
 import { login, queryToken, refreshBtpToken, whoAmI } from './queries'
 
-// Reference class for DI/reduct
 @injectable()
 export class GraphQlClientOptions {
   public coilDomain = 'https://coil.com'
@@ -21,7 +20,7 @@ export interface GraphQlQueryParameters {
 
 @injectable()
 export class GraphQlClient {
-  public static Options = GraphQlClientOptions
+  public static readonly Options = GraphQlClientOptions
   protected readonly fetch: typeof fetch
 
   public login = login
@@ -31,7 +30,7 @@ export class GraphQlClient {
 
   public constructor(
     @inject(GraphQlClientOptions)
-    private config: GraphQlClientOptions = new GraphQlClientOptions()
+    protected config: GraphQlClientOptions = new GraphQlClientOptions()
   ) {
     this.fetch = this.config.fetch
   }
@@ -61,9 +60,11 @@ export class GraphQlClient {
       )
     }
     const res = await this.fetch(`${this.config.coilDomain}/graphql`, init)
+
     if (!res.ok && autoThrow) {
       throw new Error(
-        `graphql query failed. status=${res.status} query=\`${query}\``
+        `graphql query failed. status=${res.status} ` +
+          `query=\`${query}\` text=${JSON.stringify(await res.text())}`
       )
     }
     return (await res.json()) as GraphQlResponse<T>
