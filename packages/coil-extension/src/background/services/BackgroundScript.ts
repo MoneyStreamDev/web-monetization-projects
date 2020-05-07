@@ -672,7 +672,6 @@ export class BackgroundScript {
             }
           }
         `,
-        autoThrow: false,
         token,
         variables: {
           receiver,
@@ -680,11 +679,6 @@ export class BackgroundScript {
           amount: tipAmount
         }
       })
-
-      if (result.errors) {
-        // noinspection ExceptionCaughtLocallyJS
-        throw new Error(JSON.stringify(result.errors))
-      }
 
       this.log(`sendTip: sent tip to ${receiver}`, result)
       const message: TipSent = {
