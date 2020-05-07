@@ -1,6 +1,6 @@
 import { Browser, Page } from 'puppeteer'
 
-import { COIL_DOMAIN, COIL_TOKEN } from './env'
+import { COIL_DOMAIN, COIL_TOKEN, IS_CI } from './env'
 import { timeout } from './timeout'
 import { addCloudFlareAccessHeaders } from './addCloudFlareAccessHeaders'
 
