@@ -16,7 +16,7 @@ Object.entries(symbols).forEach(([k, v]) => {
 
 export function formatAmount(
   amount: Amount,
-  { precision = 0 }: FormatOptions = {}
+  { precision = 2 }: FormatOptions = {}
 ) {
   const amountNumber = parseInt(amount.amount)
   const scale = Math.pow(10, amount.assetScale)

@@ -38,11 +38,14 @@ const TipSubButtonWrap = styled('div')(() => ({
 }))
 
 export const TipCounter = (props: TipCounterProps) => {
-  const formattedAmount = formatAmount({
-    amount: String(props.tipAmount),
-    assetCode: 'USD',
-    assetScale: 2
-  })
+  const formattedAmount = formatAmount(
+    {
+      amount: String(props.tipAmount),
+      assetCode: 'USD',
+      assetScale: 2
+    },
+    { precision: 0 }
+  )
 
   return (
     <Flex>

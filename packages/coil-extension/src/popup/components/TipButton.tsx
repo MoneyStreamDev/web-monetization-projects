@@ -35,11 +35,14 @@ export interface TipButtonProps {
 }
 
 export const TipButton = (props: TipButtonProps) => {
-  const formattedAmount = formatAmount({
-    amount: String(props.tipAmount),
-    assetCode: 'USD',
-    assetScale: 2
-  })
+  const formattedAmount = formatAmount(
+    {
+      amount: String(props.tipAmount),
+      assetCode: 'USD',
+      assetScale: 2
+    },
+    { precision: 0 }
+  )
 
   if (props.canTip) {
     switch (props.tipState) {
