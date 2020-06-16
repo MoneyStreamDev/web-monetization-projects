@@ -7,8 +7,8 @@ import { Link } from './util/Link'
 import { StatusTypography } from './util/StatusTypography'
 import { StatusButton } from './StatusButton'
 
-const titleString = 'Welcome to Coil'
-const subheading1 = 'Coil Supports the websites you love with a small donation.'
+const titleString = 'Welcome to MoneyStream'
+const subheading1 = 'MoneyStream Supports the websites you love with a small donation.'
 const footerString = "Don't have an account yet?"
 
 // This isn't actually used anymore as the browser action just opens

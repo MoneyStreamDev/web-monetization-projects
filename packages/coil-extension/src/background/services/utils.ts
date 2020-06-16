@@ -50,13 +50,13 @@ export function createLogger(context: Context) {
   // eslint-disable-next-line no-console
   if (localStorage.debug) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    return require('debug')(`coil-extension:${namespace}`)
+    return require('debug')(`moneystream:${namespace}`)
   }
 
   return console.log.bind(
     // eslint-disable-next-line no-console
     console,
-    `%c coil-extension:${namespace} %c`,
+    `%c moneystream:${namespace} %c`,
     `color: ${getColor()};`,
     `color: white;`
   )

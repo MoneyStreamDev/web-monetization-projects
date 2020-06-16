@@ -138,7 +138,7 @@ const MOCK_STATES = [
   { name: 'Not Supported', state: notSupported },
   { name: 'Start Exploring', state: startExploring },
   { name: 'Paying', state: payingNonCoilSite },
-  { name: 'Welcome To Coil', state: welcomeToCoil },
+  { name: 'Welcome To MoneyStream', state: welcomeToCoil },
   { name: 'Alice Unsubscribed', state: aliceUnsubscribed },
   { name: 'Paying Youtube', state: payingYouTube },
   { name: 'Paying Twitch', state: payingTwitch }

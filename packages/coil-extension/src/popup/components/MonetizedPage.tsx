@@ -81,7 +81,7 @@ function Donating(props: PopupProps) {
   return (
     <Fragment>
       <StatusTypography variant='h6' align='center'>
-        Coil is paying
+        MoneyStream is paying
       </StatusTypography>
       <StatusTypography variant='subtitle1' align='center'>
         This content is included in your membership. {payingOrSettingUpPayment}
@@ -101,7 +101,7 @@ function RateLimited(props: PopupProps & { limitRefreshDate: string }) {
     },
     limitRefreshDate
   } = props
-  const mailOpener = tabOpener('mailto:accountreview@coil.com')
+  const mailOpener = tabOpener('mailto:dfoderick@gmail.com')
   const termsOpener = tabOpener(`${coilDomain}/terms`)
 
   return (
@@ -131,7 +131,7 @@ function RateLimited(props: PopupProps & { limitRefreshDate: string }) {
         to
         <Link onClick={mailOpener} target='_blank'>
           {' '}
-          accountreview@coil.com
+          dfoderick@gmail.com
         </Link>
       </StatusTypography>
 

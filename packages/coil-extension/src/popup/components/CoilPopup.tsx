@@ -18,7 +18,7 @@ export const CoilPopup = (props: PopupProps) => {
     <Grid container justify='center' alignItems='center'>
       <div>
         <StatusTypography variant='h6' align='center'>
-          Welcome to Coil
+          Welcome to MoneyStream
         </StatusTypography>
         <StatusTypography variant='subtitle1' align='center'>
           Check out our Discover page to explore Web-Monetized content.

@@ -1,12 +1,14 @@
 // const makeDebug = require('debug')
 import { EventEmitter } from 'events'
 
-import {
-  Connection,
-  createConnection,
-  DataAndMoneyStream
-} from 'ilp-protocol-stream'
-import IlpPluginBtp from 'ilp-plugin-btp'
+// import {
+//   Connection,
+//   createConnection,
+//   DataAndMoneyStream
+// } from 'ilp-protocol-stream'
+// import IlpPluginBtp from 'ilp-plugin-btp'
+import { BitcoinConnection } from './BitcoinConnection'
+import { BitcoinStream } from './BitcoinStream'
 import {
   AdaptiveBandwidth,
   asyncUtils,
@@ -177,7 +179,7 @@ export class Stream extends EventEmitter {
       let plugin, attempt
       try {
         btpToken = await this._anonTokens.getToken(this._authToken)
-        plugin = await this._makePlugin(btpToken)
+        //plugin = await this._makePlugin(btpToken)
         const spspDetails = await this._getSPSPDetails()
         this.container
           .rebind(tokens.NoContextLoggerName)
@@ -223,15 +225,15 @@ export class Stream extends EventEmitter {
     // is severed before full establishment
     if (!this._active) throw new Error('aborted monetization')
 
-    const plugin = new IlpPluginBtp({
-      server: this._server,
-      btpToken
-    })
+    // const plugin = new IlpPluginBtp({
+    //   server: this._server,
+    //   btpToken
+    // })
 
     this._debug('connecting ilp plugin. server=', this._server)
     // createConnection(...) does this, so this is somewhat superfluous
-    await plugin.connect()
-    return plugin
+    // await plugin.connect()
+    // return plugin
   }
 
   async _getSPSPDetails(): Promise<SPSPResponse> {
@@ -315,7 +317,7 @@ interface StreamAttemptOptions {
   bandwidth: AdaptiveBandwidth
   onMoney: (event: OnMoneyEvent) => void
   requestId: string
-  plugin: IlpPluginBtp
+  plugin: any //IlpPluginBtp
   spspDetails: SPSPResponse
   debug: Logger
 }
@@ -325,52 +327,56 @@ class StreamAttempt {
   private readonly _bandwidth: AdaptiveBandwidth
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private readonly _debug: Logger
-  private readonly _plugin: IlpPluginBtp
+  private readonly _plugin: any //IlpPluginBtp
   private readonly _spspDetails: SPSPResponse
 
-  private _ilpStream!: DataAndMoneyStream
-  private _connection!: Connection
+  private _bitcoinStream!: BitcoinStream
+  //private _ilpStream!: DataAndMoneyStream
+	//private _connection!: Connection
+	private _connection!: BitcoinConnection
   private _active = true
   private _lastDelivered = 0
 
   constructor(opts: StreamAttemptOptions) {
     this._onMoney = opts.onMoney
     this._bandwidth = opts.bandwidth
-    this._plugin = opts.plugin
+    //this._plugin = opts.plugin
     this._spspDetails = opts.spspDetails
     this._debug = opts.debug
   }
 
   async start(): Promise<void> {
     if (!this._active) return
-    const plugin = this._plugin
+    const plugin = null //this._plugin
 
-    this._debug('creating ilp/stream connection.')
-    this._connection = await createConnection({
-      ...this._spspDetails,
-      plugin,
-      slippage: 1.0,
-      exchangeRate: 1.0,
-      maximumPacketAmount: '10000000',
-      getExpiry: getFarFutureExpiry
-    })
+    this._debug('STARTING BITCOIN STREAM CONNECTION')
+    this._connection = new BitcoinConnection(this._debug)
+    // this._connection = await createConnection({
+    //   ...this._spspDetails,
+    //   plugin,
+    //   slippage: 1.0,
+    //   exchangeRate: 1.0,
+    //   maximumPacketAmount: '10000000',
+    //   getExpiry: getFarFutureExpiry
+    // })
 
     if (!this._active) return
 
     // send practically forever at allowed bandwidth
-    this._debug('attempting to send on connection.')
-    this._ilpStream = this._connection.createStream()
+    this._debug('SEND MONEY ON STREAM HERE')
+    //this._ilpStream = this._connection.createStream()
+    this._bitcoinStream = this._connection.createStream()
 
     // TODO: if we save the tier from earlier we don't need to do this async
     // TODO: does doing this async allow a race condition if we stop right away
     const initialSendAmount = await this._bandwidth.getStreamSendMax()
-    this._ilpStream.setSendMax(initialSendAmount)
+    this._bitcoinStream.setSendMax(initialSendAmount)
 
     return new Promise((resolve, reject) => {
       const onMoney = (sentAmount: string) => {
         // Wait until `setImmediate` so that `connection.totalDelivered` has been updated.
-        const receipt = this._ilpStream.receipt
-          ? this._ilpStream.receipt.toString('base64')
+        const receipt = this._bitcoinStream.receipt
+          ? this._bitcoinStream.receipt.toString('base64')
           : undefined
         setImmediate(this.onMoney.bind(this), sentAmount, receipt)
       }
@@ -379,16 +385,16 @@ class StreamAttempt {
         this._debug('onPluginDisconnect()')
         cleanUp()
         this._debug(
-          'this._ilpStream.isOpen()',
-          this._ilpStream.isOpen(),
+          'this._bitcoinStream.isOpen()',
+          this._bitcoinStream.isOpen(),
           "this._connection['closed']",
           this._connection['closed'],
-          'this._plugin.isConnected()',
-          this._plugin.isConnected()
+          // 'this._plugin.isConnected()',
+          // this._plugin.isConnected()
         )
 
-        if (this._ilpStream.isOpen()) {
-          this._ilpStream.destroy()
+        if (this._bitcoinStream.isOpen()) {
+          this._bitcoinStream.destroy()
         }
 
         if (!this._connection['closed']) {
@@ -397,11 +403,11 @@ class StreamAttempt {
           this._debug('connection destroyed')
         }
 
-        if (plugin.isConnected()) {
-          this._debug('waiting plugin disconnect')
-          await plugin.disconnect()
-          this._debug('plugin disconnected')
-        }
+        // if (plugin.isConnected()) {
+        //   this._debug('waiting plugin disconnect')
+        //   await plugin.disconnect()
+        //   this._debug('plugin disconnected')
+        // }
 
         // resolve instead of reject to avoid delay
         this._debug('resolving')
@@ -423,23 +429,23 @@ class StreamAttempt {
           UPDATE_AMOUNT_TIMEOUT
         )
 
-        if (this._ilpStream.isOpen()) {
+        if (this._bitcoinStream.isOpen()) {
           const sendAmount = await this._bandwidth.getStreamSendMax()
-          this._ilpStream.setSendMax(sendAmount)
+          this._bitcoinStream.setSendMax(sendAmount)
         }
       }
 
       const cleanUp = () => {
         this._debug('cleanup()')
-        this._ilpStream.removeListener('outgoing_money', onMoney)
+        this._bitcoinStream.removeListener('outgoing_money', onMoney)
         this._connection.removeListener('error', onConnectionError)
-        plugin.removeListener('disconnect', onPluginDisconnect)
+        //plugin.removeListener('disconnect', onPluginDisconnect)
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         clearTimeout(updateAmountTimeout)
       }
 
-      plugin.once('disconnect', onPluginDisconnect)
-      this._ilpStream.on('outgoing_money', onMoney)
+      //plugin.once('disconnect', onPluginDisconnect)
+      this._bitcoinStream.on('outgoing_money', onMoney)
       this._connection.once('error', onConnectionError)
       let updateAmountTimeout = setTimeout(
         onUpdateAmountTimeout,
@@ -453,33 +459,33 @@ class StreamAttempt {
     if (!this._connection) return
 
     this._debug('initiating stream shutdown')
-    if (this._ilpStream.isOpen()) {
+    if (this._bitcoinStream.isOpen()) {
       // Stop it sending any more than is already sent
-      this._ilpStream.setSendMax(this._ilpStream.totalSent)
+      this._bitcoinStream.setSendMax(this._bitcoinStream.totalSent)
     }
     await this.waitHoldsUptoMs(2e3)
     await new Promise(resolve => {
       this._debug('severing ilp/stream connection.')
-      this._ilpStream.once('close', resolve)
-      this._ilpStream.destroy()
+      this._bitcoinStream.once('close', resolve)
+      this._bitcoinStream.destroy()
     })
-    this._debug(
-      'stream close event fired; plugin connected=',
-      this._plugin.isConnected()
-    )
+    // this._debug(
+    //   'stream close event fired; plugin connected=',
+    //   this._plugin.isConnected()
+    // )
     await this._connection.end()
     this._debug('connection destroyed')
     // stream createConnection() automatically closes the plugin as of
     // time of writing: https://github.com/interledgerjs/ilp-protocol-stream/blob/9b49b1cad11d4b7a71fb31a8da61c729fbba7d9a/src/index.ts#L69-L71
-    if (this._plugin.isConnected()) {
-      this._debug('disconnecting plugin')
-      await this._plugin.disconnect()
-      this._debug('plugin disconnected')
-    }
+    // if (this._plugin.isConnected()) {
+    //   this._debug('disconnecting plugin')
+    //   await this._plugin.disconnect()
+    //   this._debug('plugin disconnected')
+    // }
   }
 
   getTotalSent(): string {
-    return this._ilpStream ? this._ilpStream.totalSent : '0'
+    return this._bitcoinStream ? this._bitcoinStream.totalSent : '0'
   }
 
   private onMoney(sentAmount: string, receipt?: string): void {
@@ -504,7 +510,7 @@ class StreamAttempt {
 
   private async waitHoldsUptoMs(totalMs: number): Promise<void> {
     while (totalMs > 0) {
-      const holds = Object.keys(this._ilpStream['holds']).length
+      const holds = Object.keys(this._bitcoinStream['holds']).length
       this._debug({ holds: holds })
       if (holds === 0) {
         break

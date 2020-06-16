@@ -7,10 +7,9 @@ import { PopupProps } from '../types'
 import { StatusButton } from './StatusButton'
 import { StatusTypography } from './util/StatusTypography'
 
-const titleString = 'Become a member'
-const subheading1 = 'To use Coil you need an active membership.'
-const footerString =
-  'You can cancel your membership any time in the account settings page.'
+const titleString = 'Fund your wallet'
+const subheading1 = 'To use MoneyStream you need a funded wallet.'
+const footerString ='No membership required!'
 
 const Muted = styled('p')({
   color: Colors.Grey500,
@@ -42,7 +41,7 @@ export const Unsubscribed = (props: PopupProps) => {
           {subheading1}
         </StatusTypography>
         <Button
-          text='Join&nbsp;Coil&nbsp;for&nbsp;$5/mo'
+          text='Fund&nbsp;Your&nbsp;Wallet'
           variant='contained'
           onClick={onClick}
         />
