@@ -4,7 +4,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git@github.com:coilhq/web-monetization-projects.git"
+    "url": "git@github.com:moneystreamdev/web-monetization-projects.git"
   },
   "scripts": {
     "lint": "eslint --cache --cache-location node_modules/.cache/eslint",
@@ -22,10 +22,10 @@
     "lint:staged": "lint-staged --shell"
   },
   "keywords": [
-    "ilp",
+    "bitcoin",
     "web-monetization"
   ],
-  "author": "Coil Team <info@coil.com>",
+  "author": "MoneyStream Team <dfoderick@gmail.com>",
   "license": "Apache-2.0",
   "workspaces": [
     "packages/*"

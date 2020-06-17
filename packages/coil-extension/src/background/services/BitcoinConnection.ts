@@ -2,7 +2,7 @@ import { EventEmitter } from 'events'
 import * as Long from 'long'
 import { Logger, logger } from './utils'
 import { BitcoinStream } from './BitcoinStream'
-//import Wallet from 'moneystream-wallet'
+import {Wallet} from 'moneystream-wallet'
 
 //for now, a placeholder stub 
 // that will induce BitcoinStream to emit money
@@ -66,8 +66,8 @@ export class BitcoinConnection extends EventEmitter {
     this.sending = true
     this._log('starting send loop')
 
-    const sendWallet = null //new Wallet()
-    // sendWallet.loadWallet()
+    const wallet = new Wallet()
+    wallet.loadWallet('L5o1VbLNhELT6uCu8v7KdZpvVocHWnHBqaHe686ZkMkyszyU6D7n')
     let lastNonFinalTx
 
     try {
@@ -78,7 +78,7 @@ export class BitcoinConnection extends EventEmitter {
         } else {
           // TODO Send multiple packets at the same time (don't await promise)
           // TODO Figure out if we need to wait before sending the next one
-          lastNonFinalTx = await this.sendBitcoin(sendWallet)
+          lastNonFinalTx = await this.sendBitcoin(wallet)
         }
       }
     } catch (err) {
@@ -87,7 +87,7 @@ export class BitcoinConnection extends EventEmitter {
     }
     this._log('finished sending')
     if (lastNonFinalTx) {
-        // const finalTx = await receiverWallet.makeFinalTransaction(lastNonFinalTx)
+        // const finalTx = await wallet.makeFinalTransaction(lastNonFinalTx)
         // this._log(`final tx`)
         // console.log(finalTx)
     }
