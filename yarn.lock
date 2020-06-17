@@ -11042,7 +11042,7 @@ moment@^2.10.6:
 
 "moneystream-wallet@https://github.com/moneystreamdev/moneystream-wallet":
   version "0.1.0"
-  resolved "https://github.com/moneystreamdev/moneystream-wallet#bbe17d8e3a4f24028671f9b2cbe523f08db75e8a"
+  resolved "https://github.com/moneystreamdev/moneystream-wallet#9c8281a6b3d1e85200767d3cf9f2ccc7d0037ff0"
   dependencies:
     "@types/node-fetch" "^2.5.7"
     bsv "git+https://github.com/moneystreamdev/bsv.git#bsv-legacy"
