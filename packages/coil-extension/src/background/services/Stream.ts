@@ -465,7 +465,7 @@ class StreamAttempt {
     }
     await this.waitHoldsUptoMs(2e3)
     await new Promise(resolve => {
-      this._debug('severing ilp/stream connection.')
+      this._debug('severing bitcoin connection.')
       this._bitcoinStream.once('close', resolve)
       this._bitcoinStream.destroy()
     })
@@ -474,7 +474,6 @@ class StreamAttempt {
     //   this._plugin.isConnected()
     // )
     await this._connection.end()
-    this._debug('connection destroyed')
     // stream createConnection() automatically closes the plugin as of
     // time of writing: https://github.com/interledgerjs/ilp-protocol-stream/blob/9b49b1cad11d4b7a71fb31a8da61c729fbba7d9a/src/index.ts#L69-L71
     // if (this._plugin.isConnected()) {

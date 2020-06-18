@@ -522,7 +522,7 @@ export class BitcoinStream extends Duplex {
    * @private
    */
   _destroy (error: Error | undefined | null, callback: (...args: any[]) => void): void {
-    this.log('destroying stream because of error:', error)
+    this.log(`destroying stream ${error ? 'because of error:'+ error : ''}`)
     this.closed = true
     if (error) {
       this._errorMessage = error.message

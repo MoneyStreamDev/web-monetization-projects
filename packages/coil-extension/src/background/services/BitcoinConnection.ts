@@ -3,6 +3,7 @@ import * as Long from 'long'
 import { Logger, logger } from './utils'
 import { BitcoinStream } from './BitcoinStream'
 import {Wallet} from 'moneystream-wallet'
+import { portableFetch } from '@web-monetization/polyfill-utils'
 
 //for now, a placeholder stub 
 // that will induce BitcoinStream to emit money
@@ -12,6 +13,8 @@ export class BitcoinConnection extends EventEmitter {
     protected connected: boolean
     protected _totalDelivered: Long
     protected _stream! : BitcoinStream
+    //TODO: might have to move, manage it with _stream?
+    protected _lastNonFinalTx:string = ''
     private readonly _log: Logger
     destinationAssetCode:string = 'BSV'
     destinationAssetScale:number = 8
@@ -68,8 +71,6 @@ export class BitcoinConnection extends EventEmitter {
 
     const wallet = new Wallet()
     wallet.loadWallet('L5o1VbLNhELT6uCu8v7KdZpvVocHWnHBqaHe686ZkMkyszyU6D7n')
-    let lastNonFinalTx
-
     try {
       while (this.sending) {
         if (!this.connected) {
@@ -78,7 +79,11 @@ export class BitcoinConnection extends EventEmitter {
         } else {
           // TODO Send multiple packets at the same time (don't await promise)
           // TODO Figure out if we need to wait before sending the next one
-          lastNonFinalTx = await this.sendBitcoin(wallet)
+          const lasttx = await this.sendBitcoin(wallet)
+          if (lasttx){
+            this._lastNonFinalTx = lasttx
+            console.log(`made ${this._lastNonFinalTx}`)
+          }
         }
       }
     } catch (err) {
@@ -86,19 +91,23 @@ export class BitcoinConnection extends EventEmitter {
       return this.destroy(err)
     }
     this._log('finished sending')
-    if (lastNonFinalTx) {
-        // const finalTx = await wallet.makeFinalTransaction(lastNonFinalTx)
-        // this._log(`final tx`)
-        // console.log(finalTx)
-    }
     this.safeEmit('_send_loop_finished')
     //for (let [_, stream] of this.streams) {
       this._stream.emit('_send_loop_finished')
     //}
   }
 
+  async finalizeStream() {
+    console.log(`last tx ${this._lastNonFinalTx}`)
+    if (this._lastNonFinalTx) {
+      await this.sendManager('stop', this._lastNonFinalTx)
+    }
+  }
+
+  // tell manager to close the bitcoin stream
   async end() {
-    //TODO: what goes here?
+    await this.finalizeStream()
+    this._log('bitcoin connection ended')
   }
 
   destroy (err?: Error) {
@@ -120,17 +129,38 @@ export class BitcoinConnection extends EventEmitter {
     let amountToSendFromStream = this._stream._getAmountAvailableToSend()
     this._log(`sendBitcoin ${amountToSendFromStream}`)
     this._totalDelivered = amountToSendFromStream
-    try {
-        const sendertx:string = await wallet.makeAnyoneCanSpendTx(amountToSendFromStream)
-        this._log(sendertx)
+    if (amountToSendFromStream.toNumber() > 0) {
+      try {
+          nftx = await wallet.makeAnyoneCanSpendTx(amountToSendFromStream)
+          this.sendManager('progress', nftx)
+      }
+      catch (error) {
+          this._log(error)
+      }
+      this._stream.emit('outgoing_money')
     }
-    catch (error) {
-        this._log(error)
-    }
-    this._stream.emit('outgoing_money')
     this.sending = false
     return nftx
-}
+  }
+
+  // forward money stream to stream manager
+  async sendManager(method:string, tx:string) {
+    const manager = `https://stream.bitcoinofthings.com/stream/${method}`
+    const response = await portableFetch(manager, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        hex: tx
+      })
+    })
+    //use response.text() for non-json response
+    const managerResponse = await response.json()
+    if (!response.ok) {
+      console.log(`failed manager POST`)
+    } else {
+      console.log(`manager ${method} => ${JSON.stringify(managerResponse)}`)
+    }
+  }
 
   protected safeEmit (event: string, ...args: any[]) {
     try {
