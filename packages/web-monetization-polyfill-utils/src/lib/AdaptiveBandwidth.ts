@@ -33,8 +33,8 @@ export class AdaptiveBandwidth {
     const secondsElapsed = timeElapsed / 1000
     //TODO: reenable adaptive bandwidth
     //const bandwidth = await this._tiers.getBandwidth(this._pageUrl)
-    //set to 1 cent per minute
-    const bandwidth = 100
+    //set to 1 cent per minute ~83 or lower for testing
+    const bandwidth = 10
     const sendAmount = Math.floor(secondsElapsed * bandwidth - this._sentAmount)
     this._debug('current send amount is', sendAmount)
     return sendAmount

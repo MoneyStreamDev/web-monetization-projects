@@ -31,7 +31,8 @@ import { Logger, logger } from './utils'
 
 const { timeout } = asyncUtils
 
-const UPDATE_AMOUNT_TIMEOUT = 2000
+// This determines how often transactions will be generated
+const UPDATE_AMOUNT_TIMEOUT = 10000 //2000
 let ATTEMPT = 0
 
 // @sharafian explained to me that the extension popup shows source amounts,

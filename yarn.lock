@@ -2733,10 +2733,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@16.9.35", "@types/react@^16.9.36":
-  version "16.9.35"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.35.tgz#a0830d172e8aadd9bd41709ba2281a3124bbd368"
-  integrity sha512-q0n0SsWcGc8nDqH2GJfWQWUOmZSJhXV64CjVN5SvcNti3TdEaA3AH0D8DwNmMdzjMAC/78tB8nAZIlV8yTz+zQ==
+"@types/react@*", "@types/react@16.9.38", "@types/react@^16.9.38":
+  version "16.9.38"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.38.tgz#868405dace93a4095d3e054f4c4a1de7a1ac0680"
+  integrity sha512-pHAeZbjjNRa/hxyNuLrvbxhhnKyKNiLC6I5fRF2Zr/t/S6zS41MiyzH4+c+1I9vVfvuRt1VS2Lodjr4ZWnxrdA==
   dependencies:
     "@types/prop-types" "*"
     csstype "^2.2.0"
@@ -4308,7 +4308,7 @@ bser@2.1.1:
 
 "bsv@git+https://github.com/moneystreamdev/bsv.git#bsv-legacy":
   version "1.5.3"
-  resolved "git+https://github.com/moneystreamdev/bsv.git#de5ea8a0c9a0fcd2aca93ac6e3241f1f336ea096"
+  resolved "git+https://github.com/moneystreamdev/bsv.git#68a8567e4fd72c85c0c8eba6abad6f66c636c723"
   dependencies:
     aes-js "^3.1.2"
     bn.js "=4.11.8"
@@ -11042,7 +11042,7 @@ moment@^2.10.6:
 
 "moneystream-wallet@https://github.com/moneystreamdev/moneystream-wallet":
   version "0.1.0"
-  resolved "https://github.com/moneystreamdev/moneystream-wallet#9c8281a6b3d1e85200767d3cf9f2ccc7d0037ff0"
+  resolved "https://github.com/moneystreamdev/moneystream-wallet#f990cdaa59425f924494e4777cfb0207889f4638"
   dependencies:
     "@types/node-fetch" "^2.5.7"
     bsv "git+https://github.com/moneystreamdev/bsv.git#bsv-legacy"

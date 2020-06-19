@@ -14,7 +14,8 @@ export class BitcoinConnection extends EventEmitter {
     protected _totalDelivered: Long
     protected _stream! : BitcoinStream
     //TODO: might have to move, manage it with _stream?
-    protected _lastNonFinalTx:string = ''
+    protected _lastNonFinalTx: string = ''
+    protected _txjson: object = {}
     private readonly _log: Logger
     destinationAssetCode:string = 'BSV'
     destinationAssetScale:number = 8
@@ -82,6 +83,7 @@ export class BitcoinConnection extends EventEmitter {
           const lasttx = await this.sendBitcoin(wallet)
           if (lasttx){
             this._lastNonFinalTx = lasttx
+            this._txjson = wallet.lastTx.toJSON()
             console.log(`made ${this._lastNonFinalTx}`)
           }
         }
@@ -98,9 +100,8 @@ export class BitcoinConnection extends EventEmitter {
   }
 
   async finalizeStream() {
-    console.log(`last tx ${this._lastNonFinalTx}`)
     if (this._lastNonFinalTx) {
-      await this.sendManager('stop', this._lastNonFinalTx)
+      await this.sendManager('stop', this._lastNonFinalTx, this._txjson)
     }
   }
 
@@ -132,7 +133,7 @@ export class BitcoinConnection extends EventEmitter {
     if (amountToSendFromStream.toNumber() > 0) {
       try {
           nftx = await wallet.makeAnyoneCanSpendTx(amountToSendFromStream)
-          this.sendManager('progress', nftx)
+          this.sendManager('progress', nftx, wallet.lastTx.toJSON())
       }
       catch (error) {
           this._log(error)
@@ -144,13 +145,14 @@ export class BitcoinConnection extends EventEmitter {
   }
 
   // forward money stream to stream manager
-  async sendManager(method:string, tx:string) {
+  async sendManager(method:string, tx:string, txjson?:object) {
     const manager = `https://stream.bitcoinofthings.com/stream/${method}`
     const response = await portableFetch(manager, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
-        hex: tx
+        hex: tx,
+        obj: txjson
       })
     })
     //use response.text() for non-json response
