@@ -94,7 +94,7 @@ export class BackgroundScript {
     this.handleStreamsAbortEvent()
     this.framesService.monitor()
     // noinspection ES6MissingAwait
-    void this.auth.getTokenMaybeRefreshAndStoreState()
+    //void this.auth.getTokenMaybeRefreshAndStoreState()
   }
 
   private setTabsOnActivatedListener() {
@@ -594,19 +594,20 @@ export class BackgroundScript {
     const { requestId } = request.data
 
     this.log('loading token for monetization', requestId)
-    const token = await this.auth.getTokenMaybeRefreshAndStoreState()
-    if (!token) {
-      // not signed in.
-      // eslint-disable-next-line no-console
-      console.warn('startWebMonetization cancelled; no token')
-      this.sendSetMonetizationStateMessage(frame, 'stopped')
-      return false
-    }
-    if (!this.store.user?.subscription?.active) {
-      this.sendSetMonetizationStateMessage(frame, 'stopped')
-      this.log('startWebMonetization cancelled; no active subscription')
-      return false
-    }
+    const token = ''
+      // await this.auth.getTokenMaybeRefreshAndStoreState()
+    // if (!token) {
+    //   // not signed in.
+    //   // eslint-disable-next-line no-console
+    //   console.warn('startWebMonetization cancelled; no token')
+    //   this.sendSetMonetizationStateMessage(frame, 'stopped')
+    //   return false
+    // }
+    // if (!this.store.user?.subscription?.active) {
+    //   this.sendSetMonetizationStateMessage(frame, 'stopped')
+    //   this.log('startWebMonetization cancelled; no active subscription')
+    //   return false
+    // }
 
     if (!emittedPending) {
       emitPending()

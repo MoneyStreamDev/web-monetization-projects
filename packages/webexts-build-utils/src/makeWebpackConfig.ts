@@ -148,6 +148,10 @@ export function makeWebpackConfig(rootDir: string) {
       libraryTarget: 'umd'
     },
 
+    optimization: {
+      minimize: false
+    },
+
     module: {
       // noParse: [ /\bws$/ ],
       rules: [

@@ -1,5 +1,14 @@
 export function resolvePaymentEndpoint(pointerOrUrl: string) {
   // We allow non secure endpoints when it is defined via an url
+  // Endpoint for MoneyStream should be one of
+  //  - Paymail address: yourpaymail@moneybutton.com
+  //  - Bitcoin address: e.g. 1KUrv2Ns8SwNkLgVKrVbSHJmdXLpsEvaDf
+  //  - url with .well-known/pay 
+  //  - TODO: allow url to be api endpoint
+  //TODO: validate bitcoin address
+  const isBitcoinAddress = true
+  if (isBitcoinAddress) { return pointerOrUrl }
+
   const httpUrl = pointerOrUrl.replace(/^\$/, 'https://')
 
   let url: URL

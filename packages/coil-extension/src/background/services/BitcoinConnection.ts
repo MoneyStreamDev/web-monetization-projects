@@ -2,8 +2,8 @@ import { EventEmitter } from 'events'
 import * as Long from 'long'
 import { Logger, logger } from './utils'
 import { BitcoinStream } from './BitcoinStream'
-import {Wallet} from 'moneystream-wallet'
-import { portableFetch } from '@web-monetization/polyfill-utils'
+import { Wallet } from 'moneystream-wallet'
+import { portableFetch, SPSPResponse } from '@web-monetization/polyfill-utils'
 
 //for now, a placeholder stub 
 // that will induce BitcoinStream to emit money
@@ -17,6 +17,7 @@ export class BitcoinConnection extends EventEmitter {
     protected _lastNonFinalTx: string = ''
     protected _txjson: object = {}
     private readonly _log: Logger
+    private _payto: SPSPResponse = {destinationAccount:'unknown', sharedSecret: Buffer.from('secret','utf8')}
     destinationAssetCode:string = 'BSV'
     destinationAssetScale:number = 8
     sourceAssetCode:string = 'BSV'
@@ -39,6 +40,11 @@ export class BitcoinConnection extends EventEmitter {
    */
   get totalDelivered (): string {
     return this._totalDelivered.toString()
+  }
+
+  //set monetization payment pointer
+  payTo(spspDetails: any) {
+    this._payto = spspDetails
   }
 
   createStream (): BitcoinStream {
@@ -132,8 +138,13 @@ export class BitcoinConnection extends EventEmitter {
     this._totalDelivered = amountToSendFromStream
     if (amountToSendFromStream.toNumber() > 0) {
       try {
-          nftx = await wallet.makeAnyoneCanSpendTx(amountToSendFromStream)
-          this.sendManager('progress', nftx, wallet.lastTx.toJSON())
+        console.log(this._payto.destinationAccount)
+        nftx = await wallet.makeAnyoneCanSpendTx(
+          amountToSendFromStream, 
+          this._payto.destinationAccount
+        )
+        console.log(wallet.lastTx.toJSON())
+        this.sendManager('progress', nftx, wallet.lastTx.toJSON())
       }
       catch (error) {
           this._log(error)

@@ -25,7 +25,7 @@ rm -rf dist
 
 yarn
 # Build typescript, including dependency project references
-yarn build-prod ${BROWSER_NAME} ${WEBPACK_OVERRIDES}
+yarn build ${BROWSER_NAME} ${WEBPACK_OVERRIDES}
 
 if [[ ${BROWSER_NAME} = "firefox" ]]
 then

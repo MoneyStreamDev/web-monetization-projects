@@ -18,7 +18,6 @@ import {
   SPSPResponse,
   getFarFutureExpiry
 } from '@web-monetization/polyfill-utils'
-import { GraphQlClient } from '@coil/client'
 import { Container, inject, injectable } from 'inversify'
 import { BandwidthTiers } from '@coil/polyfill-utils'
 
@@ -32,7 +31,7 @@ import { Logger, logger } from './utils'
 const { timeout } = asyncUtils
 
 // This determines how often transactions will be generated
-const UPDATE_AMOUNT_TIMEOUT = 10000 //2000
+const UPDATE_AMOUNT_TIMEOUT = 5000 //2000
 let ATTEMPT = 0
 
 // @sharafian explained to me that the extension popup shows source amounts,
@@ -176,10 +175,10 @@ export class Stream extends EventEmitter {
     )
 
     while (this._active) {
-      let btpToken: string | undefined
+      //let btpToken: string | undefined
       let plugin, attempt
       try {
-        btpToken = await this._anonTokens.getToken(this._authToken)
+        //btpToken = await this._anonTokens.getToken(this._authToken)
         //plugin = await this._makePlugin(btpToken)
         const spspDetails = await this._getSPSPDetails()
         this.container
@@ -194,19 +193,20 @@ export class Stream extends EventEmitter {
           debug: this.container.get(tokens.Logger)
         })
         if (this._active) {
+          this._debug(`starting attempt`)
           await attempt.start()
           await timeout(1000)
         }
       } catch (e) {
         const { ilpReject } = e
         if (
-          btpToken &&
+          //btpToken &&
           ilpReject &&
-          ilpReject.message === 'exhausted capacity.' &&
-          ilpReject.data.equals(await sha256(Buffer.from(btpToken)))
+          ilpReject.message === 'exhausted capacity.' //&&
+          //ilpReject.data.equals(await sha256(Buffer.from(btpToken)))
         ) {
           this._debug('anonymous token exhausted; retrying, err=%s', e.message)
-          this._anonTokens.removeToken(btpToken)
+          //this._anonTokens.removeToken(btpToken)
           continue
         }
         this._debug('error streaming. retry in 2s. err=', e.message, e.stack)
@@ -238,10 +238,18 @@ export class Stream extends EventEmitter {
   }
 
   async _getSPSPDetails(): Promise<SPSPResponse> {
-    this._debug('fetching spsp details. url=', this._spspUrl)
+    this._debug('resolving payment pointer to bitcoin address. url=', this._spspUrl)
     let details: SPSPResponse
     try {
-      details = await getSPSPResponse(this._spspUrl, this._requestId)
+      //spsp converts payment pointer in meta to ilp acount
+      //not sure if we will need a call similar to this
+      //details = await getSPSPResponse(this._spspUrl, this._requestId)
+      details =   {
+        destinationAccount: this._paymentPointer,
+        //TODO: how to handle shared secret?
+        sharedSecret: Buffer.from("secret", 'utf8')
+      }
+    
     } catch (e) {
       if (e instanceof SPSPError) {
         const status = e.response?.status
@@ -319,6 +327,7 @@ interface StreamAttemptOptions {
   onMoney: (event: OnMoneyEvent) => void
   requestId: string
   plugin: any //IlpPluginBtp
+  //spspDetails contains destinationAccount
   spspDetails: SPSPResponse
   debug: Logger
 }
@@ -348,10 +357,11 @@ class StreamAttempt {
 
   async start(): Promise<void> {
     if (!this._active) return
-    const plugin = null //this._plugin
+    //const plugin = null //this._plugin
 
     this._debug('STARTING BITCOIN STREAM CONNECTION')
     this._connection = new BitcoinConnection(this._debug)
+    this._connection.payTo(this._spspDetails)
     // this._connection = await createConnection({
     //   ...this._spspDetails,
     //   plugin,
