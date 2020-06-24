@@ -4264,7 +4264,7 @@ bser@2.1.1:
 
 "bsv@https://github.com/moneystreamdev/bsv#master":
   version "2.0.0-beta.37"
-  resolved "https://github.com/moneystreamdev/bsv#83fdb17c1c4010f7e12ad376e2cd7e3854a65e05"
+  resolved "https://github.com/moneystreamdev/bsv#97d73994cd29b630fb8ea33df2a45bf5b3782c7c"
   dependencies:
     aes "0.1.0"
     bitcoin-elliptic "^7.0.1"
@@ -11002,7 +11002,7 @@ moment@^2.10.6:
 
 "moneystream-wallet@https://github.com/moneystreamdev/moneystream-wallet#bsv2":
   version "0.1.0"
-  resolved "https://github.com/moneystreamdev/moneystream-wallet#860c0ee2b2352ddea747e6adc06a22f5faf10229"
+  resolved "https://github.com/moneystreamdev/moneystream-wallet#3431605b658732d6309852dcf00d5fbcecbeab6d"
   dependencies:
     "@types/node-fetch" "^2.5.7"
     babel-polyfill "^6.26.0"
