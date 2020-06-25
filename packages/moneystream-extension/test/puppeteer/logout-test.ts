@@ -1,0 +1,130 @@
+/*
+  Test to ensure that streams on adapted pages are
+  closed after logout.
+*/
+
+import { Page } from 'puppeteer'
+import {
+  debug,
+  initBrowserAndLoginFromEnv,
+  logoutMoneystream,
+  testMonetization,
+  TestPageResults,
+  timeout,
+  isValidStopEvent,
+  env
+} from '@moneystream/puppeteer-utils'
+import { MonetizationExtendedDocument } from '@web-monetization/types'
+
+import { testUrls } from './testUrls'
+
+async function checkMonetizationState(
+  page: Page
+): Promise<{ state: string; hasMonetizationMeta: boolean }> {
+  await page.bringToFront()
+  // TODO: monetizationstop event ;)
+  await timeout(500)
+
+  return page.evaluate(() => {
+    const meta = document.head.querySelector('meta[name="monetization"]')
+    return {
+      state: ((document as unknown) as MonetizationExtendedDocument)
+        .monetization.state,
+      hasMonetizationMeta: Boolean(meta)
+    }
+  })
+}
+
+interface CheckConditionParameters {
+  success: boolean
+  failMessage?: string
+  successMessage?: string
+  exitOnSuccess?: boolean | true
+  exit?: boolean | true
+}
+
+function checkCondition({
+  success,
+  failMessage = '',
+  successMessage = '',
+  exitOnSuccess = true,
+  exit = true
+}: CheckConditionParameters) {
+  if (success) {
+    debug(successMessage)
+    if (exit && exitOnSuccess) {
+      process.exit(0)
+    }
+  } else {
+    debug(failMessage)
+    if (exit) {
+      process.exit(1)
+    }
+  }
+}
+
+async function run() {
+  const { browser, page: moneystreamPage } = await initBrowserAndLoginFromEnv()
+
+  const results: Record<string, TestPageResults> = {}
+  let initSuccess = true
+  const urls = testUrls[env.MONEYSTREAM_DOMAIN]
+  for (const site of Object.keys(urls)) {
+    debug('opening url to start monetization', site)
+    const result = await testMonetization({
+      listenStopped: true,
+      browser,
+      url: urls[site]
+    })
+    if (!result.success) {
+      debug('test page failed to open stream. page=', site)
+      initSuccess = false
+    } else {
+      debug('test page successfully opened stream. page=', site)
+    }
+    results[site] = result
+  }
+
+  checkCondition({
+    success: initSuccess,
+    failMessage: 'One or more test pages failed to open a payment stream.',
+    exitOnSuccess: false
+  })
+  await logoutMoneystream(moneystreamPage)
+  let logoutSuccess = true
+  debug('testing pages for logout')
+  for (const page of Object.keys(results)) {
+    debug('testing logout status for page=', page)
+    const result = results[page]
+    const currentPage = result.page
+    const stopped = await result.stoppedPromise
+    debug('stopped event', JSON.stringify(stopped))
+    const monetizationState = await checkMonetizationState(currentPage)
+
+    debug('monetization state', monetizationState)
+    // TODO: proper assertions/error messages
+    // this sucks, but at least all this is logged
+    if (
+      monetizationState.state !== 'stopped' ||
+      !monetizationState.hasMonetizationMeta ||
+      !isValidStopEvent(stopped.event.detail) ||
+      // we just logged out but we still have a meta tag so finalized should
+      // not be emitted
+      stopped.event.detail.finalized ||
+      stopped.state !== 'stopped'
+    ) {
+      debug('test page failed to close stream. page=' + currentPage.url())
+      logoutSuccess = false
+    } else {
+      debug('test page successfully closed stream. page=' + currentPage.url())
+    }
+  }
+
+  checkCondition({
+    success: logoutSuccess,
+    failMessage: 'One or more test pages failed to close its payment stream!',
+    successMessage: 'All test pages closed payment stream!'
+  })
+}
+
+run().catch(console.error)

@@ -3,13 +3,13 @@
   "files": [],
   "references": [
     {
-      "path": "packages/coil-monorepo-upkeep/tsconfig.build.json"
+      "path": "packages/moneystream-monorepo-upkeep/tsconfig.build.json"
     },
     {
-      "path": "packages/coil-polyfill-utils/tsconfig.build.json"
+      "path": "packages/moneystream-polyfill-utils/tsconfig.build.json"
     },
     {
-      "path": "packages/coil-privacypass-sjcl/tsconfig.build.json"
+      "path": "packages/moneystream-privacypass-sjcl/tsconfig.build.json"
     },
     {
       "path": "packages/dier-makr-annotations/tsconfig.build.json"
@@ -24,10 +24,10 @@
       "path": "packages/webexts-build-utils/tsconfig.build.json"
     },
     {
-      "path": "packages/coil-anonymous-tokens/tsconfig.build.json"
+      "path": "packages/moneystream-anonymous-tokens/tsconfig.build.json"
     },
     {
-      "path": "packages/coil-client/tsconfig.build.json"
+      "path": "packages/moneystream-client/tsconfig.build.json"
     },
     {
       "path": "packages/dier-makr-inversify/tsconfig.build.json"
@@ -39,16 +39,16 @@
       "path": "packages/web-monetization-wext/tsconfig.build.json"
     },
     {
-      "path": "packages/coil-puppeteer-utils/tsconfig.build.json"
+      "path": "packages/moneystream-puppeteer-utils/tsconfig.build.json"
     },
     {
       "path": "packages/web-monetization-demo/tsconfig.build.json"
     },
     {
-      "path": "packages/coil-extension/tsconfig.build.json"
+      "path": "packages/moneystream-extension/tsconfig.build.json"
     },
     {
-      "path": "packages/coil-oauth-scripts/tsconfig.build.json"
+      "path": "packages/moneystream-oauth-scripts/tsconfig.build.json"
     },
     {
       "path": "packages/interledger-minute-extension/tsconfig.build.json"

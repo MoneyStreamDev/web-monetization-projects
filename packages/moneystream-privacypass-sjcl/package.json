@@ -1,0 +1,56 @@
+{
+  "$schema": "../moneystream-monorepo-upkeep/resources/package-json-schema-nested-overrides.json",
+  "$overRideUpKeep": {
+    "license": "BSD-3-Clause",
+    "author": "Alex Davidson <coela@alxdavids.xyz>",
+    "scripts": {
+      "postinstall": "cd ../../node_modules/sjcl && ./configure --without-all --with-ecc --with-convenience --with-codecBytes --with-codecHex --compress=none && make sjcl.js"
+    }
+  },
+  "name": "@moneystream/privacypass-sjcl",
+  "version": "0.0.0",
+  "private": false,
+  "keywords": [
+    "ilp",
+    "web-monetization"
+  ],
+  "homepage": "https://github.com/moneystreamhq/web-monetization-projects/tree/master/packages/moneystream-privacypass-sjcl",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:moneystreamhq/web-monetization-projects.git"
+  },
+  "license": "BSD-3-Clause",
+  "author": "Alex Davidson <coela@alxdavids.xyz>",
+  "main": "./build",
+  "types": "./build",
+  "scripts": {
+    "build:ts": "tsc --build tsconfig.build.json",
+    "build:ts:verbose": "yarn build:ts --verbose",
+    "build:ts:watch": "yarn build:ts --watch",
+    "clean:build": "rimraf build",
+    "format": "yarn prettier && YARN_LINT_FIX=1 yarn lint:all --fix --quiet",
+    "postinstall": "cd ../../node_modules/sjcl && ./configure --without-all --with-ecc --with-convenience --with-codecBytes --with-codecHex --compress=none && make sjcl.js",
+    "lint": "eslint --cache --cache-location ../../node_modules/.cache/eslint",
+    "lint:all": "yarn lint 'src/**/*.{ts,tsx}' 'test/**/*.{ts,tsx}'",
+    "precommit": "echo lint-staged runs from root",
+    "prettier": "prettier --write '*.{ts,tsx,js,html,jsx,md}' '{src,test}/**/*.{ts,tsx,js,html,jsx,md}'",
+    "test": "jest --passWithNoTests",
+    "test:coverage": "yarn test --verbose --coverage",
+    "upkeep": "cd ../.. && yarn upkeep"
+  },
+  "dependencies": {
+    "asn1-parser": "^1.1.8",
+    "atob": "^2.1.2",
+    "btoa": "^1.2.1",
+    "keccak": "^3.0.0",
+    "node-fetch": "^2.6.0",
+    "sjcl": "bitwiseshiftleft/sjcl"
+  },
+  "devDependencies": {
+    "@types/atob": "^2.1.2",
+    "@types/btoa": "^1.2.3",
+    "@types/keccak": "^3.0.1",
+    "@types/node-fetch": "^2.5.7",
+    "@types/sjcl": "^1.0.29"
+  }
+}
