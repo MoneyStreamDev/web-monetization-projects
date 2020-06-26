@@ -138,10 +138,9 @@ export class BitcoinConnection extends EventEmitter {
     this._totalDelivered = amountToSendFromStream
     if (amountToSendFromStream.toNumber() > 0) {
       try {
-        console.log(this._payto.destinationAccount)
+        //console.log(this._payto.destinationAccount)
         nftx = await wallet.makeAnyoneCanSpendTx(
-          amountToSendFromStream, 
-          this._payto.destinationAccount
+          amountToSendFromStream
         )
         console.log(wallet.lastTx.toJSON())
         this.sendManager('progress', nftx, wallet.lastTx.toJSON())
@@ -163,7 +162,8 @@ export class BitcoinConnection extends EventEmitter {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         hex: tx,
-        obj: txjson
+        obj: txjson,
+        payTo: this._payto.destinationAccount
       })
     })
     //use response.text() for non-json response
