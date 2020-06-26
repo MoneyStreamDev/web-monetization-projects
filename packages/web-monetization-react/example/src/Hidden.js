@@ -20,7 +20,7 @@ const Hidden = () => {
       {state === 'stopped' && <b>Stopped.</b>}
       {state === 'pending' && <b>Loading...</b>}
       {state === 'started' && <b>Thank you for supporting our site!</b>}
-      {!state && <b>[ Use Coil to support our site ]</b>}
+      {!state && <b>[ Use Moneystream to support our site ]</b>}
     </>
   )
 }

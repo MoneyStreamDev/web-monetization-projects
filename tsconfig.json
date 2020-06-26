@@ -6,14 +6,14 @@
     "baseUrl": ".",
     "skipLibCheck": false,
     "paths": {
-      "@coil/monorepo-upkeep": [
-        "packages/coil-monorepo-upkeep/src"
+      "@moneystream/monorepo-upkeep": [
+        "packages/moneystream-monorepo-upkeep/src"
       ],
-      "@coil/polyfill-utils": [
-        "packages/coil-polyfill-utils/src"
+      "@moneystream/polyfill-utils": [
+        "packages/moneystream-polyfill-utils/src"
       ],
-      "@coil/privacypass-sjcl": [
-        "packages/coil-privacypass-sjcl/src"
+      "@moneystream/privacypass-sjcl": [
+        "packages/moneystream-privacypass-sjcl/src"
       ],
       "@dier-makr/annotations": [
         "packages/dier-makr-annotations/src"
@@ -27,11 +27,11 @@
       "@webexts/build-utils": [
         "packages/webexts-build-utils/src"
       ],
-      "@coil/anonymous-tokens": [
-        "packages/coil-anonymous-tokens/src"
+      "@moneystream/anonymous-tokens": [
+        "packages/moneystream-anonymous-tokens/src"
       ],
-      "@coil/client": [
-        "packages/coil-client/src"
+      "@moneystream/client": [
+        "packages/moneystream-client/src"
       ],
       "@dier-makr/inversify": [
         "packages/dier-makr-inversify/src"
@@ -54,17 +54,17 @@
       "@web-monetization/wext/content": [
         "packages/web-monetization-wext/src/content"
       ],
-      "@coil/puppeteer-utils": [
-        "packages/coil-puppeteer-utils/src"
+      "@moneystream/puppeteer-utils": [
+        "packages/moneystream-puppeteer-utils/src"
       ],
       "@web-monetization/demo": [
         "packages/web-monetization-demo/src"
       ],
-      "@coil/extension": [
-        "packages/coil-extension/src"
+      "@moneystream/extension": [
+        "packages/moneystream-extension/src"
       ],
-      "@coil/oauth-scripts": [
-        "packages/coil-oauth-scripts/src"
+      "@moneystream/oauth-scripts": [
+        "packages/moneystream-oauth-scripts/src"
       ],
       "@interledger/minute-extension": [
         "packages/interledger-minute-extension/src"

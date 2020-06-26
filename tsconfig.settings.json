@@ -1,5 +1,5 @@
 {
-  "$schema": "packages/coil-monorepo-upkeep/resources/tsconfig-schema.json",
+  "$schema": "packages/moneystream-monorepo-upkeep/resources/tsconfig-schema.json",
   "compilerOptions": {
     "lib": [
       "esnext",

@@ -47,7 +47,7 @@ const MyMessage = props => {
       {monetization.state === 'stopped' && 'Stopped'}
       {monetization.state === 'pending' && 'Loading...'}
       {monetization.state === 'started' && 'Thanks for supporting our site!'}
-      {!monetization.state && 'Sign up for Coil to support our site!'}
+      {!monetization.state && 'Sign up for Moneystream to support our site!'}
     </p>
   )
 }

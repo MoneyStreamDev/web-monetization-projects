@@ -1,5 +1,5 @@
 {
-  "$schema": "../coil-monorepo-upkeep/resources/package-json-schema-nested-overrides.json",
+  "$schema": "../moneystream-monorepo-upkeep/resources/package-json-schema-nested-overrides.json",
   "name": "@web-monetization/polyfill-utils",
   "version": "0.0.0",
   "private": false,
@@ -8,13 +8,13 @@
     "ilp",
     "web-monetization"
   ],
-  "homepage": "https://github.com/coilhq/web-monetization-projects/tree/master/packages/web-monetization-polyfill-utils",
+  "homepage": "https://github.com/moneystreamhq/web-monetization-projects/tree/master/packages/web-monetization-polyfill-utils",
   "repository": {
     "type": "git",
-    "url": "git@github.com:coilhq/web-monetization-projects.git"
+    "url": "git@github.com:moneystreamhq/web-monetization-projects.git"
   },
   "license": "Apache-2.0",
-  "author": "Coil Team <info@coil.com>",
+  "author": "Moneystream Team <info@moneystream.com>",
   "main": "./build",
   "types": "./build",
   "scripts": {
