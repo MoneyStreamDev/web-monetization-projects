@@ -15,7 +15,6 @@ export class BitcoinConnection extends EventEmitter {
     protected _stream! : BitcoinStream
     //TODO: might have to move, manage it with _stream?
     protected _lastNonFinalTx: string = ''
-    protected _txjson: object = {}
     private readonly _log: Logger
     private _payto: SPSPResponse = {destinationAccount:'unknown', sharedSecret: Buffer.from('secret','utf8')}
     destinationAssetCode:string = 'BSV'
@@ -89,7 +88,6 @@ export class BitcoinConnection extends EventEmitter {
           const lasttx = await this.sendBitcoin(wallet)
           if (lasttx){
             this._lastNonFinalTx = lasttx
-            this._txjson = wallet.lastTx.toJSON()
             console.log(`made ${this._lastNonFinalTx}`)
           }
         }
@@ -107,7 +105,7 @@ export class BitcoinConnection extends EventEmitter {
 
   async finalizeStream() {
     if (this._lastNonFinalTx) {
-      await this.sendManager('stop', this._lastNonFinalTx, this._txjson)
+      await this.sendManager('stop', this._lastNonFinalTx)
     }
   }
 
@@ -143,7 +141,7 @@ export class BitcoinConnection extends EventEmitter {
           amountToSendFromStream
         )
         console.log(wallet.lastTx.toJSON())
-        this.sendManager('progress', nftx, wallet.lastTx.toJSON())
+        this.sendManager('progress', nftx)
       }
       catch (error) {
           this._log(error)
