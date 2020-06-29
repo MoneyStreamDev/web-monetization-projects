@@ -278,6 +278,8 @@ export class Stream extends EventEmitter {
       requestId: this._requestId,
       initiatingUrl: this._initiatingUrl,
       msSinceLastPacket: msSinceLastPacket,
+      //not sure why there are two amounts but frame needs sentAmount
+      sentAmount:data.amount,
       amount: data.amount.toString(),
       receipt: data.receipt
     })

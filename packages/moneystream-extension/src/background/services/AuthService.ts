@@ -68,7 +68,13 @@ export class AuthService extends EventEmitter {
   }
 
   private async updateWhoAmi(token: string): Promise<string | null> {
-    const resp = await this.client.whoAmI(token)
+    //const resp = await this.client.whoAmI(token)
+    const resp = {data:{whoami:{
+      id:'msUserId',
+      fullName:'Money Stream',
+      subscription:{active:true}
+    }
+    }}
     this.log('updateWhoAmi resp', resp.data)
     if (resp.data?.whoami) {
       this.store.user = {
@@ -91,6 +97,7 @@ export class AuthService extends EventEmitter {
   }
 
   getStoredToken() {
+    this.store.token = "msDummyToken"
     return this.store.token || null
   }
 

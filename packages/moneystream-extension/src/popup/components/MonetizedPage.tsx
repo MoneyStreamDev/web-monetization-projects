@@ -86,7 +86,7 @@ function Donating(props: PopupProps) {
         MoneyStream is paying
       </StatusTypography>
       <StatusTypography variant='subtitle1' align='center'>
-        This content is included in your membership. {payingOrSettingUpPayment}
+        You are paying the content provider. {payingOrSettingUpPayment}
       </StatusTypography>
       <FlexBox>
         <MonetizeAnimation context={props.context} />

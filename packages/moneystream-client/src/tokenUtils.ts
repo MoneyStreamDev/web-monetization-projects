@@ -71,10 +71,11 @@ export class MoneystreamTokenUtils {
     withinHrs = 0,
     nowSeconds = Date.now() / 1e3
   }: IsExpiredParams) {
-    const now = new Date(nowSeconds * 1e3)
-    const decoded = this.decode(token)
-    now.setHours(now.getHours() + withinHrs)
-    const expiredBy = now.getTime() / 1000
-    return expiredBy >= decoded.exp
+    // const now = new Date(nowSeconds * 1e3)
+    // const decoded = this.decode(token)
+    // now.setHours(now.getHours() + withinHrs)
+    // const expiredBy = now.getTime() / 1000
+    // return expiredBy >= decoded.exp
+    return false
   }
 }
