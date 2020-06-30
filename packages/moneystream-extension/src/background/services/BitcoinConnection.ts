@@ -4,6 +4,17 @@ import { Logger, logger } from './utils'
 import { BitcoinStream } from './BitcoinStream'
 import { Wallet } from 'moneystream-wallet'
 import { portableFetch, SPSPResponse } from '@web-monetization/polyfill-utils'
+import WalletStore from './WalletStore'
+
+// remove demo_wif once UI is ready
+const demo_wif = 'L5o1VbLNhELT6uCu8v7KdZpvVocHWnHBqaHe686ZkMkyszyU6D7n'
+
+// if you do not specify a data-service-provider
+// in your meta tag then it will use this default
+// to manage the stream
+// there is a service fee paid by the web site
+const defaultServiceProvider 
+  = 'https://stream.bitcoinofthings.com/stream/'
 
 //for now, a placeholder stub 
 // that will induce BitcoinStream to emit money
@@ -22,18 +33,17 @@ export class BitcoinConnection extends EventEmitter {
     destinationAssetScale:number = 8
     sourceAssetCode:string = 'BSV'
     sourceAssetScale:number = 8
-      constructor (log: Logger, serviceProvider: string) {
-        super()
-        this._closed = false
-        this.sending = false
-        this.connected = true
-        this._totalDelivered = Long.UZERO
-        this._log = log
-        this._serviceProvider = this.cleanUrl(serviceProvider)
+    constructor (log: Logger, serviceProvider: string) {
+      super()
+      this._closed = false
+      this.sending = false
+      this.connected = true
+      this._totalDelivered = Long.UZERO
+      this._log = log
+      this._serviceProvider = this.cleanUrl(serviceProvider)
     }
 
     cleanUrl(url:string):string {
-      const defaultServiceProvider = 'https://stream.bitcoinofthings.com/stream/'
       if (!url) return defaultServiceProvider
       let fixedurl = url
       if (!fixedurl.startsWith("https://")) fixedurl = `https://${fixedurl}`
@@ -86,9 +96,18 @@ export class BitcoinConnection extends EventEmitter {
     this.sending = true
     this._log('starting send loop')
 
-    const wallet = new Wallet()
-    //TODO: get from storage
-    wallet.loadWallet('L5o1VbLNhELT6uCu8v7KdZpvVocHWnHBqaHe686ZkMkyszyU6D7n')
+    const store = new WalletStore()
+    const swallet = await store.get()
+    let wjson = null
+    if (swallet) wjson = JSON.parse(swallet)
+    this._log(`Creating wallet. TODO: singleton service`)
+    const wallet = new Wallet(store)
+    wallet.loadWallet(wjson?.wif || demo_wif)
+    //store the wallet local
+    if (!wjson) {
+      const stored = await wallet.store(wallet.toJSON())
+      console.log(`stored ${stored}`)
+    }
     try {
       while (this.sending) {
         if (!this.connected) {
