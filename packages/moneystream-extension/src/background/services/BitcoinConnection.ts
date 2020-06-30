@@ -17,17 +17,28 @@ export class BitcoinConnection extends EventEmitter {
     protected _lastNonFinalTx: string = ''
     private readonly _log: Logger
     private _payto: SPSPResponse = {destinationAccount:'unknown', sharedSecret: Buffer.from('secret','utf8')}
+    private _serviceProvider: string
     destinationAssetCode:string = 'BSV'
     destinationAssetScale:number = 8
     sourceAssetCode:string = 'BSV'
     sourceAssetScale:number = 8
-      constructor (log: Logger) {
+      constructor (log: Logger, serviceProvider: string) {
         super()
         this._closed = false
         this.sending = false
         this.connected = true
         this._totalDelivered = Long.UZERO
         this._log = log
+        this._serviceProvider = this.cleanUrl(serviceProvider)
+    }
+
+    cleanUrl(url:string):string {
+      const defaultServiceProvider = 'https://stream.bitcoinofthings.com/stream/'
+      if (!url) return defaultServiceProvider
+      let fixedurl = url
+      if (!fixedurl.startsWith("https://")) fixedurl = `https://${fixedurl}`
+      if (!fixedurl.endsWith("/")) fixedurl = `${fixedurl}/`
+      return fixedurl
     }
 
     get closed (): boolean {
@@ -76,10 +87,12 @@ export class BitcoinConnection extends EventEmitter {
     this._log('starting send loop')
 
     const wallet = new Wallet()
+    //TODO: get from storage
     wallet.loadWallet('L5o1VbLNhELT6uCu8v7KdZpvVocHWnHBqaHe686ZkMkyszyU6D7n')
     try {
       while (this.sending) {
         if (!this.connected) {
+          // exchange satoshis to local currency not currently supported
           //await this.setupExchangeRate()
           this.connected = true
         } else {
@@ -88,7 +101,7 @@ export class BitcoinConnection extends EventEmitter {
           const lasttx = await this.sendBitcoin(wallet)
           if (lasttx){
             this._lastNonFinalTx = lasttx
-            console.log(`made ${this._lastNonFinalTx}`)
+            this._log(`made ${this._lastNonFinalTx}`)
           }
         }
       }
@@ -154,7 +167,7 @@ export class BitcoinConnection extends EventEmitter {
 
   // forward money stream to stream manager
   async sendManager(method:string, tx:string, txjson?:object) {
-    const manager = `https://stream.bitcoinofthings.com/stream/${method}`
+    const manager = `${this._serviceProvider}${method}`
     const response = await portableFetch(manager, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },

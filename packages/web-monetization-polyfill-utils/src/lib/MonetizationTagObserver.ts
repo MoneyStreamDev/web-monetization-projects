@@ -9,6 +9,7 @@ export interface PaymentDetails {
   requestId: string
   paymentPointer: string
   initiatingUrl: string
+  serviceProviderUrl: string
 }
 
 export enum IDGenerationStrategy {
@@ -162,10 +163,13 @@ export class MonetizationTagObserver {
   }
 
   private getPaymentDetails(meta: HTMLMetaElement): PaymentDetails {
+    // specify serviceProviderUrl in meta like this
+    // service-provider="https://stream.bitcoinofthings.com/stream/"
     return {
       requestId: this.getWebMonetizationId(),
       paymentPointer: meta.content,
-      initiatingUrl: this.window.location.href
+      initiatingUrl: this.window.location.href,
+      serviceProviderUrl: meta.dataset.serviceProvider || ""
     }
   }
 

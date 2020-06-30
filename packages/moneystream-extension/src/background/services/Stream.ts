@@ -1,12 +1,6 @@
 // const makeDebug = require('debug')
 import { EventEmitter } from 'events'
 
-// import {
-//   Connection,
-//   createConnection,
-//   DataAndMoneyStream
-// } from 'ilp-protocol-stream'
-// import IlpPluginBtp from 'ilp-plugin-btp'
 import { BitcoinConnection } from './BitcoinConnection'
 import { BitcoinStream } from './BitcoinStream'
 import {
@@ -44,10 +38,10 @@ export interface StreamMoneyEvent {
    */
   packetNumber: number
 
-  // requestId
   requestId: string
   paymentPointer: string
   initiatingUrl: string
+  serviceProviderUrl: string
 
   msSinceLastPacket: number
   sentAmount: string
@@ -86,6 +80,7 @@ export class Stream extends EventEmitter {
   private readonly _server: string
   private readonly _tiers: BandwidthTiers
   private readonly _initiatingUrl: string
+  private readonly _serviceProviderUrl: string
 
   private _lastDelivered: number
   private _lastOutgoingMs!: number
@@ -110,11 +105,13 @@ export class Stream extends EventEmitter {
       spspEndpoint,
       paymentPointer,
       token,
-      initiatingUrl
+      initiatingUrl,
+      serviceProviderUrl
     }: PaymentDetails & {
       token: string
       spspEndpoint: string
       initiatingUrl: string
+      serviceProviderUrl: string
     }
   ) {
     super()
@@ -136,6 +133,7 @@ export class Stream extends EventEmitter {
     this._attempt = null
     this._lastDelivered = 0
     this._initiatingUrl = initiatingUrl
+    this._serviceProviderUrl = serviceProviderUrl
 
     const server = new URL(this._moneystreamDomain)
     server.pathname = '/btp'
@@ -188,6 +186,7 @@ export class Stream extends EventEmitter {
           bandwidth,
           onMoney: this.onMoney.bind(this),
           requestId: this._requestId,
+          serviceProvider: this._serviceProviderUrl,
           plugin,
           spspDetails,
           debug: this.container.get(tokens.Logger)
@@ -277,6 +276,7 @@ export class Stream extends EventEmitter {
       packetNumber: this._packetNumber++,
       requestId: this._requestId,
       initiatingUrl: this._initiatingUrl,
+      serviceProviderUrl: this._serviceProviderUrl,
       msSinceLastPacket: msSinceLastPacket,
       //not sure why there are two amounts but frame needs sentAmount
       sentAmount:data.amount,
@@ -308,8 +308,8 @@ export class Stream extends EventEmitter {
   }
 
   private async abort() {
-    // Don't call this.stop() directly, let BackgroundScript orchestrate the
-    // stop.
+    // Don't call this.stop() directly, let BackgroundScript 
+    // orchestrate the stop.
     this.emit('abort', this._requestId)
   }
 
@@ -330,6 +330,7 @@ interface StreamAttemptOptions {
   bandwidth: AdaptiveBandwidth
   onMoney: (event: OnMoneyEvent) => void
   requestId: string
+  serviceProvider: string
   plugin: any //IlpPluginBtp
   //spspDetails contains destinationAccount
   spspDetails: SPSPResponse
@@ -345,26 +346,24 @@ class StreamAttempt {
   private readonly _spspDetails: SPSPResponse
 
   private _bitcoinStream!: BitcoinStream
-  //private _ilpStream!: DataAndMoneyStream
-  //private _connection!: Connection
   private _connection!: BitcoinConnection
+  private _serviceProvider: string
   private _active = true
   private _lastDelivered = 0
 
   constructor(opts: StreamAttemptOptions) {
     this._onMoney = opts.onMoney
     this._bandwidth = opts.bandwidth
-    //this._plugin = opts.plugin
+    this._serviceProvider = opts.serviceProvider
     this._spspDetails = opts.spspDetails
     this._debug = opts.debug
   }
 
   async start(): Promise<void> {
     if (!this._active) return
-    //const plugin = null //this._plugin
 
-    this._debug('STARTING BITCOIN STREAM CONNECTION')
-    this._connection = new BitcoinConnection(this._debug)
+    this._debug('Starting Bitcoin Connection')
+    this._connection = new BitcoinConnection(this._debug, this._serviceProvider)
     this._connection.payTo(this._spspDetails)
     // this._connection = await createConnection({
     //   ...this._spspDetails,
@@ -378,8 +377,7 @@ class StreamAttempt {
     if (!this._active) return
 
     // send practically forever at allowed bandwidth
-    this._debug('SEND MONEY ON STREAM HERE')
-    //this._ilpStream = this._connection.createStream()
+    this._debug('Createing Bitcoin stream')
     this._bitcoinStream = this._connection.createStream()
 
     // TODO: if we save the tier from earlier we don't need to do this async

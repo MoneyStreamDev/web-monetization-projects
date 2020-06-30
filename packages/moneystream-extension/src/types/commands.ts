@@ -236,6 +236,7 @@ export interface MonetizationProgress {
     assetScale: number
     requestId: string
     paymentPointer: string
+    serviceProviderUrl: string
   }
 }
 

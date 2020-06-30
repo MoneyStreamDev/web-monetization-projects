@@ -235,6 +235,7 @@ export class BackgroundScript {
         command: 'monetizationProgress',
         data: {
           paymentPointer: details.paymentPointer,
+          serviceProviderUrl: details.serviceProviderUrl,
           amount: details.amount,
           assetCode: details.assetCode,
           requestId: details.requestId,
