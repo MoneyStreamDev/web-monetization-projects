@@ -137,7 +137,7 @@ export class BitcoinConnection extends EventEmitter {
 
   async finalizeStream() {
     if (this._lastNonFinalTx) {
-      await this.sendManager('stop', this._lastNonFinalTx)
+      this.logManagerResponse(await this.sendManager('stop', this._lastNonFinalTx))
     }
   }
 
@@ -172,8 +172,9 @@ export class BitcoinConnection extends EventEmitter {
         nftx = await wallet.makeAnyoneCanSpendTx(
           amountToSendFromStream
         )
-        console.log(wallet.lastTx.toJSON())
+        //this._log(wallet.lastTx.toJSON())
         this.sendManager('progress', nftx)
+          .then( response => this.logManagerResponse(response))
       }
       catch (error) {
           this._log(error)
@@ -182,6 +183,13 @@ export class BitcoinConnection extends EventEmitter {
     }
     this.sending = false
     return nftx
+  }
+
+  logManagerResponse(response: any) {
+    if (response) {
+      if (response.error) console.error(response)
+      else this._log(response)
+    }
   }
 
   // forward money stream to stream manager
@@ -200,9 +208,8 @@ export class BitcoinConnection extends EventEmitter {
     const managerResponse = await response.json()
     if (!response.ok) {
       console.log(`failed manager POST`)
-    } else {
-      console.log(`manager ${method} => ${JSON.stringify(managerResponse)}`)
     }
+    return managerResponse
   }
 
   protected safeEmit (event: string, ...args: any[]) {

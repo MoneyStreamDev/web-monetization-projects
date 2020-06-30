@@ -11058,8 +11058,8 @@ moment@^2.10.6:
   integrity sha512-al0MUK7cpIcglMv3YF13qSgdAIqxHTO7brRtaz3DlSULbqfazqkc5kEjNrLDOM7fsjshoFIihnU8snrP7zUvhQ==
 
 "moneystream-wallet@https://github.com/moneystreamdev/moneystream-wallet":
-  version "0.1.0"
-  resolved "https://github.com/moneystreamdev/moneystream-wallet#314dfaac3fb2c872ab483d9e06a56a0b532b6c78"
+  version "0.2.0"
+  resolved "https://github.com/moneystreamdev/moneystream-wallet#2b20260b127afd4111696cdce45e84b6bf4b06f9"
   dependencies:
     "@types/node-fetch" "^2.5.7"
     babel-polyfill "^6.26.0"
