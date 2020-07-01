@@ -2,7 +2,7 @@ import { EventEmitter } from 'events'
 import * as Long from 'long'
 import { Logger, logger } from './utils'
 import { BitcoinStream } from './BitcoinStream'
-import { Wallet } from 'moneystream-wallet'
+import { Wallet, OutputCollection } from 'moneystream-wallet'
 import { portableFetch, SPSPResponse } from '@web-monetization/polyfill-utils'
 import WalletStore from './WalletStore'
 
@@ -26,6 +26,7 @@ export class BitcoinConnection extends EventEmitter {
     protected _stream! : BitcoinStream
     //TODO: might have to move, manage it with _stream?
     protected _lastNonFinalTx: string = ''
+    protected _sessionUtxos?: OutputCollection
     private readonly _log: Logger
     private _payto: SPSPResponse = {destinationAccount:'unknown', sharedSecret: Buffer.from('secret','utf8')}
     private _serviceProvider: string
@@ -117,9 +118,9 @@ export class BitcoinConnection extends EventEmitter {
         } else {
           // TODO Send multiple packets at the same time (don't await promise)
           // TODO Figure out if we need to wait before sending the next one
-          const lasttx = await this.sendBitcoin(wallet)
-          if (lasttx){
-            this._lastNonFinalTx = lasttx
+          const buildResult = await this.sendBitcoin(wallet)
+          if (buildResult.hex){
+            this._lastNonFinalTx = buildResult.hex
             this._log(`made ${this._lastNonFinalTx}`)
           }
         }
@@ -130,6 +131,7 @@ export class BitcoinConnection extends EventEmitter {
     }
     this._log('finished sending')
     this.safeEmit('_send_loop_finished')
+    //TODO: reimplement multiple streams?
     //for (let [_, stream] of this.streams) {
       this._stream.emit('_send_loop_finished')
     //}
@@ -158,22 +160,24 @@ export class BitcoinConnection extends EventEmitter {
    * of here
    * @private
    */
-  protected async sendBitcoin (wallet: any): Promise<string> {
+  protected async sendBitcoin (wallet: any): Promise<any> {
     // Actually send on the next tick of the event loop in case multiple streams
     // have their limits raised at the same time
     await new Promise((resolve, reject) => setImmediate(resolve))
-    let nftx: string = ""
+    let buildResult = {hex:"",utxos:undefined}
     let amountToSendFromStream = this._stream._getAmountAvailableToSend()
     this._log(`sendBitcoin ${amountToSendFromStream}`)
     this._totalDelivered = amountToSendFromStream
     if (amountToSendFromStream.toNumber() > 0) {
       try {
         //console.log(this._payto.destinationAccount)
-        nftx = await wallet.makeAnyoneCanSpendTx(
-          amountToSendFromStream
+        buildResult = await wallet.makeStreamableCashTx(
+          amountToSendFromStream,
+          null,true,this._sessionUtxos
         )
+        this._sessionUtxos = buildResult.utxos
         //this._log(wallet.lastTx.toJSON())
-        this.sendManager('progress', nftx)
+        this.sendManager('progress', buildResult.hex)
           .then( response => this.logManagerResponse(response))
       }
       catch (error) {
@@ -182,7 +186,7 @@ export class BitcoinConnection extends EventEmitter {
       this._stream.emit('outgoing_money')
     }
     this.sending = false
-    return nftx
+    return buildResult
   }
 
   logManagerResponse(response: any) {
