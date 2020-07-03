@@ -34,13 +34,17 @@ export class BitcoinConnection extends EventEmitter {
     destinationAssetScale:number = 8
     sourceAssetCode:string = 'BSV'
     sourceAssetScale:number = 8
-    constructor (log: Logger, serviceProvider: string) {
+    // requestId is like a sessionId
+    private _requestId: string
+    constructor (log: Logger, 
+      serviceProvider: string, requestId:any) {
       super()
       this._closed = false
       this.sending = false
       this.connected = true
       this._totalDelivered = Long.UZERO
       this._log = log
+      this._requestId = requestId
       this._serviceProvider = this.cleanUrl(serviceProvider)
     }
 
@@ -197,12 +201,15 @@ export class BitcoinConnection extends EventEmitter {
   }
 
   // forward money stream to stream manager
+  // configure your stream manager url in meta tag
+  // in attribute data-service-provider
   async sendManager(method:string, tx:string, txjson?:object) {
     const manager = `${this._serviceProvider}${method}`
     const response = await portableFetch(manager, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
+        session: this._requestId,
         hex: tx,
         obj: txjson,
         payTo: this._payto.destinationAccount

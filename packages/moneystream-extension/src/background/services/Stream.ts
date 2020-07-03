@@ -350,9 +350,11 @@ class StreamAttempt {
   private _serviceProvider: string
   private _active = true
   private _lastDelivered = 0
+  private _requestId: string
 
   constructor(opts: StreamAttemptOptions) {
     this._onMoney = opts.onMoney
+    this._requestId = opts.requestId
     this._bandwidth = opts.bandwidth
     this._serviceProvider = opts.serviceProvider
     this._spspDetails = opts.spspDetails
@@ -363,7 +365,7 @@ class StreamAttempt {
     if (!this._active) return
 
     this._debug('Starting Bitcoin Connection')
-    this._connection = new BitcoinConnection(this._debug, this._serviceProvider)
+    this._connection = new BitcoinConnection(this._debug, this._serviceProvider, this._requestId)
     this._connection.payTo(this._spspDetails)
     // this._connection = await createConnection({
     //   ...this._spspDetails,
