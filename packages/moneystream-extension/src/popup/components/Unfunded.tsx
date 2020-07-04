@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Grid, styled } from '@material-ui/core'
 
 import { Colors } from '../../shared-theme/colors'
@@ -46,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export const Unfunded = (props: PopupProps) => {
+  const [walletBalance, setWalletBalance] = useState(props.context.wallet?.balance)
   const {
     context: {
       moneystreamDomain,
@@ -53,7 +54,13 @@ export const Unfunded = (props: PopupProps) => {
       wallet
     }
   } = props
-  const onClick = tabOpener(moneystreamDomain + '/settings/payment')
+  const showUnspent = tabOpener(`https://api.whatsonchain.com/v1/bsv/main/address/${wallet?.keyPair.toAddress().toString()}/unspent`)
+  const showHistory = tabOpener(`https://api.whatsonchain.com/v1/bsv/main/address/${wallet?.keyPair.toAddress().toString()}/history`)
+
+  async function walletRefresh() {
+    await wallet?.loadUnspent()
+    setWalletBalance(wallet?.balance)
+  }
 
   function wifToClipboard(/*e*/) {
     const elWif = document.getElementById("wif") as HTMLInputElement
@@ -64,6 +71,15 @@ export const Unfunded = (props: PopupProps) => {
       elWif.type='hidden'
       alert('Your Private Key has been copied to your clipboard. Paste it into a safe place during the testing period.')
     }
+  }
+
+  function onPayment (payment:any) {
+    const payDesc = `Your wallet was funded
+    Amount: ${payment.amount} ${payment.currency}
+    Satoshis: ${payment.satoshis}
+    Status: ${payment.status}`
+    alert(payDesc)
+    walletRefresh()
   }
 
   const classes = useStyles()
@@ -90,9 +106,19 @@ export const Unfunded = (props: PopupProps) => {
             to={wallet?.keyPair.toAddress().toString()}
             amount='0.02'
             currency='USD'
+            onPayment = {onPayment}
           />
         </div>
-        <Muted>{`Balance ${wallet?.balance}`}</Muted>
+        <Muted>
+          {`Balance ${walletBalance}`}&nbsp;
+          <button onClick={walletRefresh}>refresh</button>
+        </Muted>
+        <Muted>
+          <button onClick={showUnspent}>Unspent Outputs</button>
+        </Muted>
+        <Muted>
+          <button onClick={showHistory}>Tx History</button>
+        </Muted>
         <input id="wif" name="wif" type="hidden" value={`${wallet?.toJSON().wif}`}></input>
         <Muted>
           <button onClick={wifToClipboard}>Copy Private Key</button>
