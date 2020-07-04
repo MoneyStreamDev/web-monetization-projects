@@ -1,6 +1,7 @@
 import { API } from '../webpackDefines'
 
 import { PopupState } from './services/PopupState'
+import { Wallet } from 'moneystream-wallet'
 
 export interface PopupRuntime {
   sendMessage: typeof API.runtime.sendMessage
@@ -14,6 +15,7 @@ export interface PopupContext {
   runtime: PopupRuntime
   store: PopupState
   moneystreamDomain: string
+  wallet: Wallet|null
 }
 
 export interface PopupProps {

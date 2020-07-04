@@ -12,7 +12,8 @@ const STORAGE_KEYS = [
   'stickyState',
   'playState',
   'user',
-  'validToken'
+  'validToken',
+  'moneystreamwallet'
 ]
 
 export type PopupStateType = Omit<LocalStorageProxy, 'token'>
@@ -27,6 +28,7 @@ export class PopupState implements PopupStateType {
   readonly monetizedTotal!: number
   readonly user!: User
   readonly validToken!: boolean
+  readonly moneystreamwallet!: any
 
   constructor(private storage: Pick<StorageService, 'get'>) {}
 

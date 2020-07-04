@@ -77,6 +77,10 @@ export const AccountBar = (props: PopupProps) => {
   const onExploreClick = tabOpener(`${moneystreamDomain}/explore`)
   const onAboutClick = tabOpener(`${moneystreamDomain}/about`)
   const onSettingsClick = tabOpener(`${moneystreamDomain}/settings`)
+  const onUnfunded = () => {
+    //how to navigate to Status to fund?
+    alert(`go to funding page`)
+  }
 
   return (
     <MoneystreamToolbar>
@@ -107,6 +111,16 @@ export const AccountBar = (props: PopupProps) => {
       >
         <MenuItem dense component='a' onClick={onExploreClick} target='_blank'>
           <Typography variant='caption'>Discover</Typography>
+        </MenuItem>
+
+        <MenuItem
+          divider
+          dense
+          component='a'
+          onClick={onUnfunded}
+          target='_blank'
+        >
+          <Typography variant='caption'>Fund</Typography>
         </MenuItem>
 
         <MenuItem

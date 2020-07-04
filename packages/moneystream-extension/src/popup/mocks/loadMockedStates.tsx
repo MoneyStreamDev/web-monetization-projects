@@ -126,7 +126,7 @@ const aliceUser: User = {
   currencyPreferences: undefined
 }
 
-const aliceUnsubscribed = mockState({
+const aliceUnfunded = mockState({
   monetizedTotal: 0,
   user: aliceUser,
   validToken: true,
@@ -140,7 +140,7 @@ const MOCK_STATES = [
   { name: 'Start Exploring', state: startExploring },
   { name: 'Paying', state: payingNonMoneystreamSite },
   { name: 'Welcome To MoneyStream', state: welcomeToMoneystream },
-  { name: 'Alice Unsubscribed', state: aliceUnsubscribed },
+  { name: 'Alice Unfunded', state: aliceUnfunded },
   { name: 'Paying Youtube', state: payingYouTube },
   { name: 'Paying Twitch', state: payingTwitch }
 ]

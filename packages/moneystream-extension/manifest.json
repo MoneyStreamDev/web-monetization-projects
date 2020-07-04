@@ -3,7 +3,7 @@
   "description": "Support websites and creators with Web Monetization",
   "version": "0.1.99",
   "manifest_version": 2,
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://www.moneybutton.com; object-src 'self'",
   "browser_specific_settings": {
     "gecko": {
       "id": "moneystreamfirefoxextension@moneystream.com"

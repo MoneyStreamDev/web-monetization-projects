@@ -45,7 +45,6 @@ export function Index(props: PopupProps) {
   useEffect(bindMessageListener, [])
 
   const context = { ...props.context }
-
   return (
     <OuterDiv>
       <AccountBar context={context} />

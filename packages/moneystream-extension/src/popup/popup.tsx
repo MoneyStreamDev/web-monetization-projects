@@ -11,18 +11,27 @@ import { PopupState } from './services/PopupState'
 import { PopupContext } from './types'
 import { isExtension, mockPopupsPage } from './mocks/loadMockedStates'
 import { Index } from './Index'
+import { Wallet } from 'moneystream-wallet'
 
 const IndexWithRoot = withSharedTheme(Index)
 
 export function run() {
   const store = new PopupState(new StorageService())
-
   store.sync()
+
+  let wallet:Wallet|null = null
+  if (store.moneystreamwallet) {
+    wallet = new Wallet()
+    console.log(store.moneystreamwallet)
+    const jwallet = store.moneystreamwallet
+    wallet.loadWallet(jwallet.wif)
+  }
 
   const context: Omit<PopupContext, 'runtime'> = {
     isExtension,
     moneystreamDomain: MONEYSTREAM_DOMAIN,
-    store
+    store,
+    wallet
   }
 
   const rootEl = document.getElementById('root')
