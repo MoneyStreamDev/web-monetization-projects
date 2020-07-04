@@ -9,8 +9,8 @@ import { StatusTypography } from './util/StatusTypography'
 import { makeStyles } from '@material-ui/core/styles'
 import MoneyButton from '@moneybutton/react-money-button'
 
-const titleString = 'Fund your wallet'
-const subheading1 = 'Swipe Money Button to fund your wallet'
+const titleString = 'MoneyStream is early Alpha!'
+const subheading1 = 'Only fund using a few pennies.'
 const footerString = 'No subscription nor membership required!'
 
 const Muted = styled('p')({
@@ -54,7 +54,18 @@ export const Unfunded = (props: PopupProps) => {
     }
   } = props
   const onClick = tabOpener(moneystreamDomain + '/settings/payment')
-  
+
+  function wifToClipboard(/*e*/) {
+    const elWif = document.getElementById("wif") as HTMLInputElement
+    if (elWif) {
+      elWif.type = 'text'
+      elWif.select()
+      document.execCommand('copy')
+      elWif.type='hidden'
+      alert('Your Private Key has been copied to your clipboard. Paste it into a safe place during the testing period.')
+    }
+  }
+
   const classes = useStyles()
   return (
     <Grid container justify='center' alignItems='center'>
@@ -81,7 +92,11 @@ export const Unfunded = (props: PopupProps) => {
             currency='USD'
           />
         </div>
-        <Muted>{footerString}</Muted>
+        <Muted>{`Balance ${wallet?.balance}`}</Muted>
+        <input id="wif" name="wif" type="hidden" value={`${wallet?.toJSON().wif}`}></input>
+        <Muted>
+          <button onClick={wifToClipboard}>Copy Private Key</button>
+        </Muted>
       </div>
     </Grid>
   )

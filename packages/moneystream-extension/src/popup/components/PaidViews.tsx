@@ -6,6 +6,7 @@ import { UnmonetizedPage } from './UnmonetizedPage'
 import { MonetizedPage } from './MonetizedPage'
 import { MoneystreamViews } from './MoneystreamViews'
 
+//user sees this when they have a funded wallet
 export const PaidViews = (props: PopupProps) => {
   const context = props.context
   const { monetized, moneystreamSite } = context.store

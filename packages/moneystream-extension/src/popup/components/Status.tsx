@@ -13,12 +13,12 @@ export interface IUser {
 export const Status =({context}:{context:any}) => {
     //const { validToken, user } = props.context.store
     //const validToken = false
-    //TODO: add funding to menu
+    //TODO: add routing, for now always show wallet page
   return (
     <div>
     { !context.wallet && <NoWallet context={context} /> }
-    { !context.wallet?.balance && <Unfunded context={context} /> }
-    { context.wallet?.balance && <PaidViews context={context} /> }
+    { context.wallet && <Unfunded context={context} /> }
+    {/* { context.wallet?.balance && <PaidViews context={context} /> } */}
     </div>
   )
 }

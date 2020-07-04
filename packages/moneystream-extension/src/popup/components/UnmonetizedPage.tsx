@@ -12,12 +12,12 @@ export const UnmonetizedPage = (props: PopupProps) => {
       runtime: { tabOpener }
     }
   } = props
-  const onClick = tabOpener(`${props.context.moneystreamDomain}/learn-more`)
+  const onClick = tabOpener(`https://moneystreamdev.github.io/moneystream-project/`)
   return (
     <Grid container justify='center' alignItems='center'>
       <div>
         <StatusTypography variant='h6' align='center'>
-          This website is not supported yet <img src='/res/tfwnowm.svg' />
+          This website is not monetized yet <img src='/res/tfwnowm.svg' />
         </StatusTypography>
         <StatusTypography variant='subtitle1' align='center'>
           <Link onClick={onClick} target='_blank'>

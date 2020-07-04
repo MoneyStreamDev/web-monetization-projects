@@ -1,6 +1,14 @@
+<a name="moneystream-extension@0.0.51"></a>
+
+# [moneystream-extension@0.0.51](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.0.50...moneystream-extension@0.0.49) (2020-07-04)
+
+### Features
+
+- Replace Interledger Protocol with Bitcoin
+
 <a name="moneystream-extension@0.0.50"></a>
 
-# [moneystream-extension@0.0.50](https://github.com/moneystreamhq/web-monetization-projects/compare/moneystream-extension@0.0.49...moneystream-extension@0.0.50) (2020-05-22)
+# [moneystream-extension@0.0.50](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.0.49...moneystream-extension@0.0.50) (2020-05-22)
 
 ### Features
 
@@ -8,7 +16,7 @@
 
 <a name="moneystream-extension@0.0.49"></a>
 
-# [moneystream-extension@0.0.49](https://github.com/moneystreamhq/web-monetization-projects/compare/moneystream-extension@0.0.48...moneystream-extension@0.0.49) (2020-04-06)
+# [moneystream-extension@0.0.49](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.0.48...moneystream-extension@0.0.49) (2020-04-06)
 
 ### Features
 
@@ -16,7 +24,7 @@
 
 <a name="moneystream-extension@0.0.48"></a>
 
-# [moneystream-extension@0.0.48](https://github.com/moneystreamhq/web-monetization-projects/compare/moneystream-extension@0.0.47...moneystream-extension@0.0.48) (2020-03-16)
+# [moneystream-extension@0.0.48](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.0.47...moneystream-extension@0.0.48) (2020-03-16)
 
 ### Features
 

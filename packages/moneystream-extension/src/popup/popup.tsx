@@ -15,16 +15,17 @@ import { Wallet } from 'moneystream-wallet'
 
 const IndexWithRoot = withSharedTheme(Index)
 
-export function run() {
+export async function run() {
   const store = new PopupState(new StorageService())
   store.sync()
 
   let wallet:Wallet|null = null
   if (store.moneystreamwallet) {
     wallet = new Wallet()
-    console.log(store.moneystreamwallet)
     const jwallet = store.moneystreamwallet
     wallet.loadWallet(jwallet.wif)
+    await wallet.loadUnspent()
+    //console.log(wallet.balance)
   }
 
   const context: Omit<PopupContext, 'runtime'> = {

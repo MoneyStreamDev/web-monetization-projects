@@ -74,12 +74,14 @@ export const AccountBar = (props: PopupProps) => {
     runtime: { tabOpener }
   } = context
 
-  const onExploreClick = tabOpener(`${moneystreamDomain}/explore`)
-  const onAboutClick = tabOpener(`${moneystreamDomain}/about`)
-  const onSettingsClick = tabOpener(`${moneystreamDomain}/settings`)
-  const onUnfunded = () => {
+  const onExploreClick = tabOpener(`https://moneystreamdev.github.io/moneystream-project/`)
+  const onAboutClick = tabOpener(`https://moneystreamdev.github.io/moneystream-project/`)
+  const onSettingsClick = () => {
+    //tabOpener(`${moneystreamDomain}/settings`)
+  }
+  const onWallet = () => {
     //how to navigate to Status to fund?
-    alert(`go to funding page`)
+    //alert(`go to wallet page`)
   }
 
   return (
@@ -109,19 +111,20 @@ export const AccountBar = (props: PopupProps) => {
         }}
         getContentAnchorEl={null}
       >
-        <MenuItem dense component='a' onClick={onExploreClick} target='_blank'>
-          <Typography variant='caption'>Discover</Typography>
-        </MenuItem>
-
         <MenuItem
           divider
           dense
           component='a'
-          onClick={onUnfunded}
+          onClick={onWallet}
           target='_blank'
         >
-          <Typography variant='caption'>Fund</Typography>
+          <Typography variant='caption'>Wallet</Typography>
         </MenuItem>
+
+        {/* <MenuItem dense component='a' 
+          onClick={onExploreClick} target='_blank'>
+          <Typography variant='caption'>Discover</Typography>
+        </MenuItem> */}
 
         <MenuItem
           divider
@@ -133,9 +136,10 @@ export const AccountBar = (props: PopupProps) => {
           <Typography variant='caption'>About</Typography>
         </MenuItem>
 
-        <MenuItem dense component='a' onClick={onSettingsClick} target='_blank'>
+        {/* <MenuItem dense component='a' 
+          onClick={onSettingsClick} target='_blank'>
           <Typography variant='caption'>Settings</Typography>
-        </MenuItem>
+        </MenuItem> */}
       </MoneystreamMenu>
     </MoneystreamToolbar>
   )
