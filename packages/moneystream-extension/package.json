@@ -1,10 +1,10 @@
 {
   "$schema": "../moneystream-monorepo-upkeep/resources/package-json-schema-nested-overrides.json",
   "$overRideUpKeep": {
-    "version": "0.1.99"
+    "version": "0.1.01"
   },
   "name": "@moneystream/extension",
-  "version": "0.1.99",
+  "version": "0.1.01",
   "private": false,
   "keywords": [
     "bitcoin",

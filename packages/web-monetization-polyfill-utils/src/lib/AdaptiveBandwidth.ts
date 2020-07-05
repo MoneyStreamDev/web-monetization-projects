@@ -2,6 +2,11 @@ export interface AdaptiveBandwidthTiers {
   getBandwidth(url: string): Promise<number>
 }
 
+// This determines the monetization rate
+// 1 cent per minute ~83 
+// This will be negotiable
+const SATOSHIS_PER_SECOND = 100
+
 export class AdaptiveBandwidth {
   // Fields for calculation of outgoing money
   private _timeStarted!: number
@@ -33,8 +38,7 @@ export class AdaptiveBandwidth {
     const secondsElapsed = timeElapsed / 1000
     //TODO: reenable adaptive bandwidth
     //const bandwidth = await this._tiers.getBandwidth(this._pageUrl)
-    //set to 1 cent per minute ~83 or lower for testing
-    const bandwidth = 10
+    const bandwidth = SATOSHIS_PER_SECOND
     const sendAmount = Math.floor(secondsElapsed * bandwidth - this._sentAmount)
     this._debug('current send amount is', sendAmount)
     return sendAmount
