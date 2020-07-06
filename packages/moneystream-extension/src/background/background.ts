@@ -13,11 +13,28 @@ import { decorateThirdPartyClasses } from '../services/decorateThirdPartyClasses
 import { BackgroundScript } from './services/BackgroundScript'
 import { BackgroundStorageService } from './services/BackgroundStorageService'
 import { Stream } from './services/Stream'
+import { Wallet } from 'moneystream-wallet'
 import { createLogger } from './services/utils'
+import WalletStore from './services/WalletStore'
+
+async function createWallet() {
+  const store = new WalletStore()
+  const swallet = await store.get()
+  let wjson = null
+  if (swallet) wjson = JSON.parse(swallet)
+  const wallet = new Wallet(store)
+  wallet.loadWallet(wjson?.wif)
+  //store the wallet local
+  if (!wjson) {
+    const stored = await wallet.store(wallet.toJSON())
+  }
+  return wallet
+}
 
 async function configureContainer(container: Container) {
   const logger = makeLoggerMiddleware()
   container.applyMiddleware(logger)
+  const wallet = await createWallet()
 
   container.bind(tokens.MoneystreamDomain).toConstantValue(MONEYSTREAM_DOMAIN)
   container.bind(tokens.WextApi).toConstantValue(API)
@@ -27,6 +44,7 @@ async function configureContainer(container: Container) {
   container.bind(Container).toConstantValue(container)
 
   container.bind(Stream).toSelf().inTransientScope()
+  container.bind(Wallet).toConstantValue(wallet)
 
   container
     .bind(tokens.NoContextLoggerName)

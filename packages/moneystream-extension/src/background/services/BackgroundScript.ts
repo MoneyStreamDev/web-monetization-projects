@@ -42,9 +42,11 @@ import { Logger, logger } from './utils'
 import { YoutubeService } from './YoutubeService'
 import { BackgroundFramesService } from './BackgroundFramesService'
 import { StreamAssociations } from './StreamAssociations'
+import { Wallet } from 'moneystream-wallet'
 
 @injectable()
 export class BackgroundScript {
+  private _wallet!: Wallet
   constructor(
     private popup: PopupBrowserAction,
     private favIcons: Favicons,
@@ -628,7 +630,7 @@ export class BackgroundScript {
       spspEndpoint,
       ...request.data,
       initiatingUrl: request.data.initiatingUrl
-    })
+    }, this._wallet)
 
     if (lastCommand === 'pause') {
       // TODO: why do we need the timeout here ?

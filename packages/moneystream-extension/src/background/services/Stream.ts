@@ -3,6 +3,7 @@ import { EventEmitter } from 'events'
 
 import { BitcoinConnection } from './BitcoinConnection'
 import { BitcoinStream } from './BitcoinStream'
+import { Wallet } from 'moneystream-wallet'
 import {
   AdaptiveBandwidth,
   asyncUtils,
@@ -94,6 +95,7 @@ export class Stream extends EventEmitter {
   private _assetCode: string
   private _assetScale: number
   private _exchangeRate: number
+  private _wallet!: Wallet
 
   constructor(
     @logger('Stream')
@@ -112,10 +114,11 @@ export class Stream extends EventEmitter {
       spspEndpoint: string
       initiatingUrl: string
       serviceProviderUrl: string
-    }
+    },
+    wallet: Wallet
   ) {
     super()
-
+    this._wallet = wallet
     this._paymentPointer = paymentPointer
     this._requestId = requestId
     this._spspUrl = spspEndpoint
@@ -189,7 +192,8 @@ export class Stream extends EventEmitter {
           serviceProvider: this._serviceProviderUrl,
           plugin,
           spspDetails,
-          debug: this.container.get(tokens.Logger)
+          debug: this.container.get(tokens.Logger),
+          wallet: this._wallet
         })
         if (this._active) {
           this._debug(`starting attempt`)
@@ -335,6 +339,7 @@ interface StreamAttemptOptions {
   //spspDetails contains destinationAccount
   spspDetails: SPSPResponse
   debug: Logger
+  wallet: Wallet
 }
 
 class StreamAttempt {
@@ -351,6 +356,7 @@ class StreamAttempt {
   private _active = true
   private _lastDelivered = 0
   private _requestId: string
+  private _wallet: Wallet
 
   constructor(opts: StreamAttemptOptions) {
     this._onMoney = opts.onMoney
@@ -359,13 +365,15 @@ class StreamAttempt {
     this._serviceProvider = opts.serviceProvider
     this._spspDetails = opts.spspDetails
     this._debug = opts.debug
+    this._wallet = opts.wallet
   }
 
   async start(): Promise<void> {
     if (!this._active) return
 
     this._debug('Starting Bitcoin Connection')
-    this._connection = new BitcoinConnection(this._debug, this._serviceProvider, this._requestId)
+    this._connection = new BitcoinConnection(this._debug, this._serviceProvider, 
+      this._requestId, this._wallet)
     this._connection.payTo(this._spspDetails)
     // this._connection = await createConnection({
     //   ...this._spspDetails,
@@ -380,7 +388,7 @@ class StreamAttempt {
 
     // send practically forever at allowed bandwidth
     this._debug('Createing Bitcoin stream')
-    this._bitcoinStream = this._connection.createStream()
+    this._bitcoinStream = await this._connection.createStream()
 
     // TODO: if we save the tier from earlier we don't need to do this async
     // TODO: does doing this async allow a race condition if we stop right away

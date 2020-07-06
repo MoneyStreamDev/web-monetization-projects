@@ -7,6 +7,7 @@ import { BandwidthTiers } from '@moneystream/polyfill-utils'
 import * as tokens from '../../types/tokens'
 
 import { Stream } from './Stream'
+import { Wallet } from 'moneystream-wallet'
 
 @injectable()
 export class Streams extends EventEmitter {
@@ -31,7 +32,8 @@ export class Streams extends EventEmitter {
       spspEndpoint: string
       token: string
       initiatingUrl: string
-    }
+    },
+    wallet: Wallet
   ) {
     const child = this.container.createChild()
     child.bind(tokens.StreamDetails).toConstantValue({ ...options })

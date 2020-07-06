@@ -4,10 +4,6 @@ import { Logger, logger } from './utils'
 import { BitcoinStream } from './BitcoinStream'
 import { Wallet, OutputCollection } from 'moneystream-wallet'
 import { portableFetch, SPSPResponse } from '@web-monetization/polyfill-utils'
-import WalletStore from './WalletStore'
-
-// remove demo_wif once UI is ready
-const demo_wif = 'L5o1VbLNhELT6uCu8v7KdZpvVocHWnHBqaHe686ZkMkyszyU6D7n'
 
 // if you do not specify a data-service-provider
 // in your meta tag then it will use this default
@@ -30,6 +26,7 @@ export class BitcoinConnection extends EventEmitter {
     private readonly _log: Logger
     private _payto: SPSPResponse = {destinationAccount:'unknown', sharedSecret: Buffer.from('secret','utf8')}
     private _serviceProvider: string
+    protected _wallet: Wallet
     destinationAssetCode:string = 'BSV'
     destinationAssetScale:number = 8
     sourceAssetCode:string = 'BSV'
@@ -37,8 +34,9 @@ export class BitcoinConnection extends EventEmitter {
     // requestId is like a sessionId
     private _requestId: string
     constructor (log: Logger, 
-      serviceProvider: string, requestId:any) {
+      serviceProvider: string, requestId:any, wallet: Wallet) {
       super()
+      this._wallet = wallet
       this._closed = false
       this.sending = false
       this.connected = true
@@ -72,8 +70,8 @@ export class BitcoinConnection extends EventEmitter {
     this._payto = spspDetails
   }
 
-  createStream (): BitcoinStream {
-      const stream = new BitcoinStream({id:999,isServer:false,connectionId:"badconx"}, this._log)
+  async createStream (): Promise<BitcoinStream> {
+    const stream = new BitcoinStream({id:999,isServer:false,connectionId:"badconx"}, this._log)
       this._stream = stream
       stream.on('_maybe_start_send_loop', this.startSendLoop.bind(this))
       return stream
@@ -101,18 +99,6 @@ export class BitcoinConnection extends EventEmitter {
     this.sending = true
     this._log('starting send loop')
 
-    const store = new WalletStore()
-    const swallet = await store.get()
-    let wjson = null
-    if (swallet) wjson = JSON.parse(swallet)
-    this._log(`Creating wallet. TODO: singleton service`)
-    const wallet = new Wallet(store)
-    wallet.loadWallet(wjson?.wif || demo_wif)
-    //store the wallet local
-    if (!wjson) {
-      const stored = await wallet.store(wallet.toJSON())
-      console.log(`stored ${stored}`)
-    }
     try {
       while (this.sending) {
         if (!this.connected) {
@@ -122,7 +108,7 @@ export class BitcoinConnection extends EventEmitter {
         } else {
           // TODO Send multiple packets at the same time (don't await promise)
           // TODO Figure out if we need to wait before sending the next one
-          const buildResult = await this.sendBitcoin(wallet)
+          const buildResult = await this.sendBitcoin(this._wallet)
           if (buildResult.hex){
             this._lastNonFinalTx = buildResult.hex
             this._log(`made ${this._lastNonFinalTx}`)
@@ -174,13 +160,13 @@ export class BitcoinConnection extends EventEmitter {
     this._totalDelivered = amountToSendFromStream
     if (amountToSendFromStream.toNumber() > 0) {
       try {
-        //console.log(this._payto.destinationAccount)
         buildResult = await wallet.makeStreamableCashTx(
           amountToSendFromStream,
           null,true,this._sessionUtxos
         )
         this._sessionUtxos = buildResult.utxos
-        //this._log(wallet.lastTx.toJSON())
+        //show which utxos used to build the tx
+        this._log(buildResult.utxos)
         this.sendManager('progress', buildResult.hex)
           .then( response => this.logManagerResponse(response))
       }
