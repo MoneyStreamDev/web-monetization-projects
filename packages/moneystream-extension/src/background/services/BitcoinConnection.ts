@@ -117,7 +117,9 @@ export class BitcoinConnection extends EventEmitter {
       }
     } catch (err) {
       // TODO should a connection error be an error on all of the streams?
-      return this.destroy(err)
+      this.destroy(err)
+      //throw the error, should eventually abort monetization
+      throw err
     }
     this._log('finished sending')
     this.safeEmit('_send_loop_finished')
@@ -167,12 +169,23 @@ export class BitcoinConnection extends EventEmitter {
         this._sessionUtxos = buildResult.utxos
         //show which utxos used to build the tx
         this._log(buildResult.utxos)
+      }
+      catch (error) {
+        this._log(error)
+        // if there is an error on our wallet making a tx then abort the stream
+        throw error
+      }
+      try {
         this.sendManager('progress', buildResult.hex)
           .then( response => this.logManagerResponse(response))
       }
       catch (error) {
-          this._log(error)
+        // service provider has a problem. our wallet can keep monetizing
+        // in case the service provider can heal itself and keep going
+        this._log(error)
+        // do not throw error or allow x seconds to see if service provider can recover
       }
+      // what exactly does outgoing_money do?
       this._stream.emit('outgoing_money')
     }
     this.sending = false
