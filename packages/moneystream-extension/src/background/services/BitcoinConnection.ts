@@ -98,7 +98,8 @@ export class BitcoinConnection extends EventEmitter {
 
     this.sending = true
     this._log('starting send loop')
-
+    if (!this._sessionUtxos) this._log(`empty session utxos`)
+    else this._log(`session utxos ${this._sessionUtxos.count}: ${this._sessionUtxos.satoshis}`)
     try {
       while (this.sending) {
         if (!this.connected) {
@@ -171,13 +172,20 @@ export class BitcoinConnection extends EventEmitter {
         this._log(buildResult.utxos)
       }
       catch (error) {
+        console.log(`session utxos: ${this._sessionUtxos?.satoshis}-${amountToSendFromStream.toNumber()}`)
         this._log(error)
         // if there is an error on our wallet making a tx then abort the stream
         throw error
       }
       try {
         this.sendManager('progress', buildResult.hex)
-          .then( response => this.logManagerResponse(response))
+          .then( response => {
+            this.logManagerResponse(response)
+            if (response.status 
+                && response.status === 'Missing Inputs') {
+                  throw new Error(`Abort session: service error ${response.status}`)
+            }
+          })
       }
       catch (error) {
         // service provider has a problem. our wallet can keep monetizing
