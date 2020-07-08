@@ -5,7 +5,7 @@ export interface AdaptiveBandwidthTiers {
 // This determines the monetization rate
 // 1 cent per minute ~83 
 // This will be negotiable
-const SATOSHIS_PER_SECOND = 100
+const SATOSHIS_PER_SECOND = 50
 
 export class AdaptiveBandwidth {
   // Fields for calculation of outgoing money

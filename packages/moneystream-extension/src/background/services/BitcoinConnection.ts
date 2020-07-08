@@ -21,8 +21,8 @@ export class BitcoinConnection extends EventEmitter {
     protected _totalDelivered: Long
     protected _stream! : BitcoinStream
     //TODO: might have to move, manage it with _stream?
-    protected _lastNonFinalTx: string = ''
-    protected _sessionUtxos?: OutputCollection
+    protected _lastStreamableTx: string = ''
+    protected _sessionUtxos: OutputCollection|null = null
     private readonly _log: Logger
     private _payto: SPSPResponse = {destinationAccount:'unknown', sharedSecret: Buffer.from('secret','utf8')}
     private _serviceProvider: string
@@ -111,8 +111,8 @@ export class BitcoinConnection extends EventEmitter {
           // TODO Figure out if we need to wait before sending the next one
           const buildResult = await this.sendBitcoin(this._wallet)
           if (buildResult.hex){
-            this._lastNonFinalTx = buildResult.hex
-            this._log(`made ${this._lastNonFinalTx}`)
+            this._lastStreamableTx = buildResult.hex
+            this._log(`made ${this._lastStreamableTx}`)
           }
         }
       }
@@ -131,8 +131,15 @@ export class BitcoinConnection extends EventEmitter {
   }
 
   async finalizeStream() {
-    if (this._lastNonFinalTx) {
-      this.logManagerResponse(await this.sendManager('stop', this._lastNonFinalTx))
+    if (this._lastStreamableTx) {
+      // send the final tx to svc provider
+      this.logManagerResponse(await this.sendManager('stop', this._lastStreamableTx))
+      // TODO: should mark encumbered utxo spent
+      // add the change output as spendable
+      // i.e. chain the transactions
+      // for now, do it the slow way, through index api
+      this._sessionUtxos = null
+      this._wallet.clear()
     }
   }
 
@@ -167,12 +174,13 @@ export class BitcoinConnection extends EventEmitter {
           amountToSendFromStream,
           null,true,this._sessionUtxos
         )
-        this._sessionUtxos = buildResult.utxos
+        this._sessionUtxos = buildResult.utxos || null
         //show which utxos used to build the tx
         this._log(buildResult.utxos)
       }
       catch (error) {
         console.log(`session utxos: ${this._sessionUtxos?.satoshis}-${amountToSendFromStream.toNumber()}`)
+        console.log(`wallet utxos: ${wallet.selectedUtxos?.satoshis}`)
         this._log(error)
         // if there is an error on our wallet making a tx then abort the stream
         throw error

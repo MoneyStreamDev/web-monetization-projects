@@ -228,7 +228,6 @@ export class BitcoinStream extends Duplex {
    * Note that this is absolute, not relative so calling `setSendMax(100)` twice will only send 100 units.
    */
   setSendMax (limit: LongValue): void {
-    this.log(limit)
     if (this.closed) {
       throw new Error('Stream already closed')
     } else if (typeof limit === 'number' && !isFinite(limit)) {
