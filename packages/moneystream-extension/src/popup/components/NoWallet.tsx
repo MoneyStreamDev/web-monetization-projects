@@ -31,8 +31,9 @@ export const NoWallet = (props: PopupProps) => {
       const wallet = new Wallet(store)
       wallet.loadWallet()
       const stored = await wallet.store(wallet.toJSON())
-      console.log(stored)
+      // console.log(stored)
       alert(`created ${stored}`)
+      if (props.refresh) props.refresh()
     }
   }
 

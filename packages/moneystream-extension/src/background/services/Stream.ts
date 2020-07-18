@@ -201,6 +201,11 @@ export class Stream extends EventEmitter {
           await timeout(1000)
         }
       } catch (e) {
+        
+        // Does exception handling get here???
+        this._debug(`ABORTING!!!`)
+        this.abort()
+
         const { ilpReject } = e
         if (
           //btpToken &&

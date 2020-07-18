@@ -8,6 +8,8 @@ import { StatusButton } from './StatusButton'
 import { StatusTypography } from './util/StatusTypography'
 import { makeStyles } from '@material-ui/core/styles'
 import MoneyButton from '@moneybutton/react-money-button'
+import Long from 'long'
+import { IndexingService } from 'moneystream-wallet'
 
 const titleString = 'MoneyStream is early Alpha!'
 const subheading1 = 'Only fund using a few pennies.'
@@ -59,7 +61,23 @@ export const Unfunded = (props: PopupProps) => {
 
   async function walletRefresh() {
     await wallet?.loadUnspent()
-    setWalletBalance(wallet?.balance)
+    await setWalletBalance(wallet?.balance)
+  }
+
+  async function walletSend() {
+    await walletRefresh()
+    //prompt for address
+    const sats = (wallet?.balance || 0) - 500
+    var address = prompt(`Send ${sats} to Address`, "")
+    if (address) {
+      const buildResult = await wallet?.makeSimpleSpend(Long.fromNumber(sats), wallet?.selectedUtxos, address)
+      const api = new IndexingService()
+      console.log(buildResult)
+      const broadcastResult = await api.broadcastRaw(buildResult.hex)
+      console.log(broadcastResult)
+      alert(JSON.stringify(broadcastResult))
+      await walletRefresh()
+    }
   }
 
   function wifToClipboard(/*e*/) {
@@ -104,7 +122,7 @@ export const Unfunded = (props: PopupProps) => {
           <MoneyButton
             editable={true}
             to={wallet?.keyPair.toAddress().toString()}
-            amount='0.02'
+            amount='0.05'
             currency='USD'
             onPayment = {onPayment}
           />
@@ -112,6 +130,8 @@ export const Unfunded = (props: PopupProps) => {
         <Muted>
           {`Balance ${walletBalance}`}&nbsp;
           <button onClick={walletRefresh}>refresh</button>
+          &nbsp;
+          <button onClick={walletSend}>send</button>
         </Muted>
         <Muted>
           <button onClick={showUnspent}>Unspent Outputs</button>

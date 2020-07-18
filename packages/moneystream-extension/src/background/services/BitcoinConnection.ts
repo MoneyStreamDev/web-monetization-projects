@@ -10,7 +10,7 @@ import { portableFetch, SPSPResponse } from '@web-monetization/polyfill-utils'
 // to manage the stream
 // there is a service fee paid by the web site
 const defaultServiceProvider 
-  = 'https://stream.bitcoinofthings.com/stream/'
+  = 'https://cash.bitcoinofthings.com/stream/'
 
 //for now, a placeholder stub 
 // that will induce BitcoinStream to emit money
@@ -200,6 +200,8 @@ export class BitcoinConnection extends EventEmitter {
         // in case the service provider can heal itself and keep going
         this._log(error)
         // do not throw error or allow x seconds to see if service provider can recover
+        // for now need to make monetization stop so throw it
+        throw error
       }
       // what exactly does outgoing_money do?
       this._stream.emit('outgoing_money')
@@ -208,11 +210,12 @@ export class BitcoinConnection extends EventEmitter {
     return buildResult
   }
 
-  logManagerResponse(response: any) {
+  logManagerResponse(response: any):any {
     if (response) {
       if (response.error) console.error(response)
       else this._log(response)
     }
+    return response
   }
 
   // forward money stream to stream manager

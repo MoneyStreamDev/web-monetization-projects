@@ -25,7 +25,6 @@ export async function run() {
     const jwallet = store.moneystreamwallet
     wallet.loadWallet(jwallet.wif)
     await wallet.loadUnspent()
-    //console.log(wallet.balance)
   }
 
   const context: Omit<PopupContext, 'runtime'> = {

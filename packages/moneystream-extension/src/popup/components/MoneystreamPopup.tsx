@@ -17,7 +17,7 @@ export const MoneystreamPopup = (props: PopupProps) => {
   return (
     <Grid container justify='center' alignItems='center'>
       <div>
-        <StatusTypography variant='h6' align='center'>
+        <StatusTypography variant='subtitle2' align='center'>
           Welcome to MoneyStream
         </StatusTypography>
         <StatusTypography variant='subtitle1' align='center'>

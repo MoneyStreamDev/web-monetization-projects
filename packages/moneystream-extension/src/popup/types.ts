@@ -20,4 +20,5 @@ export interface PopupContext {
 
 export interface PopupProps {
   context: PopupContext
+  refresh?(): void
 }
