@@ -183,17 +183,22 @@ export class BitcoinConnection extends EventEmitter {
         console.log(`wallet utxos: ${wallet.selectedUtxos?.satoshis}`)
         this._log(error)
         // if there is an error on our wallet making a tx then abort the stream
-        throw error
+        //throw error
+        this._stream.emit('error')
       }
       try {
-        this.sendManager('progress', buildResult.hex)
-          .then( response => {
-            this.logManagerResponse(response)
-            if (response.status 
-                && response.status === 'Missing Inputs') {
-                  throw new Error(`Abort session: service error ${response.status}`)
+        const managerResponse = await this.sendManager('progress', buildResult.hex)
+        this.logManagerResponse(managerResponse)
+        if (managerResponse.status) {
+            if (managerResponse.status === 'Missing Inputs') {
+              throw new Error(`Error from stream manager: ${managerResponse.status}`)
             }
-          })
+            if (managerResponse.status === "broadcast skipped, funding change below dust") {
+              throw new Error(`Error from stream manager: ${managerResponse.status}`)
+            }            
+        }
+        // what exactly does outgoing_money do?
+        this._stream.emit('outgoing_money')
       }
       catch (error) {
         // service provider has a problem. our wallet can keep monetizing
@@ -201,10 +206,9 @@ export class BitcoinConnection extends EventEmitter {
         this._log(error)
         // do not throw error or allow x seconds to see if service provider can recover
         // for now need to make monetization stop so throw it
-        throw error
+        // throw error
+        this._stream.emit('error')
       }
-      // what exactly does outgoing_money do?
-      this._stream.emit('outgoing_money')
     }
     this.sending = false
     return buildResult

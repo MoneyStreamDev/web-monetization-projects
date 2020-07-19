@@ -202,23 +202,24 @@ export class Stream extends EventEmitter {
         }
       } catch (e) {
         
-        // Does exception handling get here???
-        this._debug(`ABORTING!!!`)
+        // To get here, need to emit error which will do a reject
         this.abort()
 
-        const { ilpReject } = e
-        if (
-          //btpToken &&
-          ilpReject &&
-          ilpReject.message === 'exhausted capacity.' //&&
-          //ilpReject.data.equals(await sha256(Buffer.from(btpToken)))
-        ) {
-          this._debug('anonymous token exhausted; retrying, err=%s', e.message)
-          //this._anonTokens.removeToken(btpToken)
-          continue
+        if (e) {
+          const { ilpReject } = e
+          if (
+            //btpToken &&
+            ilpReject &&
+            ilpReject.message === 'exhausted capacity.' //&&
+            //ilpReject.data.equals(await sha256(Buffer.from(btpToken)))
+          ) {
+            this._debug('anonymous token exhausted; retrying, err=%s', e.message)
+            //this._anonTokens.removeToken(btpToken)
+            continue
+          }
+          this._debug('error streaming. retry in 2s. err=', e.message, e.stack)
+          if (this._active) await timeout(2000)
         }
-        this._debug('error streaming. retry in 2s. err=', e.message, e.stack)
-        if (this._active) await timeout(2000)
       } finally {
         if (attempt) bandwidth.addSentAmount(attempt.getTotalSent())
         if (plugin) await plugin.disconnect()
@@ -448,6 +449,12 @@ class StreamAttempt {
         reject(err)
       }
 
+      const onStreamError = (err: Error) => {
+        this._debug('onStreamError(%s)', err)
+        cleanUp()
+        reject(err)
+      }
+
       const onUpdateAmountTimeout = async () => {
         // we set this before the async operation to prevent any race
         // conditions on cleanup
@@ -474,6 +481,7 @@ class StreamAttempt {
 
       //plugin.once('disconnect', onPluginDisconnect)
       this._bitcoinStream.on('outgoing_money', onMoney)
+      this._bitcoinStream.on('error', onStreamError)
       this._connection.once('error', onConnectionError)
       let updateAmountTimeout = setTimeout(
         onUpdateAmountTimeout,

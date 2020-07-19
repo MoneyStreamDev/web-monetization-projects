@@ -289,12 +289,14 @@ export class BitcoinStream extends Duplex {
     this.setSendMax(limit)
     await new Promise((resolve, reject) => {
       const self = this
+      
       function outgoingHandler () {
         if (self._totalSent.greaterThanOrEqual(limit)) {
           cleanup()
           resolve()
         }
       }
+      
       function endHandler () {
         // Clean up on next tick in case an error was also emitted
         setImmediate(cleanup)
@@ -305,15 +307,18 @@ export class BitcoinStream extends Duplex {
           reject(new Error(`Stream was closed before the desired amount was sent (target: ${limit}, totalSent: ${self._totalSent})`))
         }
       }
+      
       function errorHandler (err: Error) {
         self.log('error waiting for stream to stabilize:', err)
         cleanup()
         reject(new Error(`Stream encountered an error before the desired amount was sent (target: ${limit}, totalSent: ${self._totalSent}): ${err}`))
       }
+      
       const timer = setTimeout(() => {
         cleanup()
         reject(new Error(`Timed out before the desired amount was sent (target: ${limit}, totalSent: ${self._totalSent})`))
       }, timeout)
+
       function cleanup () {
         clearTimeout(timer)
         self.removeListener('outgoing_money', outgoingHandler)

@@ -69,6 +69,7 @@ export class AuthService extends EventEmitter {
 
   private async updateWhoAmi(token: string): Promise<string | null> {
     //const resp = await this.client.whoAmI(token)
+    //TODO: this is a hard coded return value to make UI work
     const resp = {data:{whoami:{
       id:'msUserId',
       fullName:'Money Stream',
