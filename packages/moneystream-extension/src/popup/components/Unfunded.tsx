@@ -59,9 +59,11 @@ export const Unfunded = (props: PopupProps) => {
   const showUnspent = tabOpener(`https://api.whatsonchain.com/v1/bsv/main/address/${wallet?.keyPair.toAddress().toString()}/unspent`)
   const showHistory = tabOpener(`https://api.whatsonchain.com/v1/bsv/main/address/${wallet?.keyPair.toAddress().toString()}/history`)
 
+  // payment was received or sent
   async function walletRefresh() {
     await wallet?.loadUnspent()
     await setWalletBalance(wallet?.balance)
+    //TODO: update background wallet
   }
 
   async function walletSend() {
@@ -72,9 +74,9 @@ export const Unfunded = (props: PopupProps) => {
     if (address) {
       const buildResult = await wallet?.makeSimpleSpend(Long.fromNumber(sats), wallet?.selectedUtxos, address)
       const api = new IndexingService()
-      console.log(buildResult)
+      //console.log(buildResult)
       const broadcastResult = await api.broadcastRaw(buildResult.hex)
-      console.log(broadcastResult)
+      //console.log(broadcastResult)
       alert(JSON.stringify(broadcastResult))
       await walletRefresh()
     }
@@ -98,6 +100,8 @@ export const Unfunded = (props: PopupProps) => {
     Status: ${payment.status}`
     alert(payDesc)
     walletRefresh()
+    //TODO: update background wallet
+    
   }
 
   const classes = useStyles()

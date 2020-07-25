@@ -179,11 +179,11 @@ export class BitcoinConnection extends EventEmitter {
         this._log(buildResult.utxos)
       }
       catch (error) {
+        // will error when wallet runs out of funds
         console.log(`session utxos: ${this._sessionUtxos?.satoshis}-${amountToSendFromStream.toNumber()}`)
         console.log(`wallet utxos: ${wallet.selectedUtxos?.satoshis}`)
         this._log(error)
         // if there is an error on our wallet making a tx then abort the stream
-        //throw error
         this._stream.emit('error')
       }
       try {
@@ -197,7 +197,7 @@ export class BitcoinConnection extends EventEmitter {
               throw new Error(`Error from stream manager: ${managerResponse.status}`)
             }            
         }
-        // what exactly does outgoing_money do?
+        // triggers onMoney event handler for normal monetizing process
         this._stream.emit('outgoing_money')
       }
       catch (error) {

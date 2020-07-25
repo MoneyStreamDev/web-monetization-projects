@@ -312,6 +312,13 @@ export class BackgroundScript {
       case 'logout':
         sendResponse(this.logout(sender))
         break
+      case 'paymentReceived':
+          // send just the new utxo in request.data?
+          console.log(`PAYMENT RECEIVED`)
+          if (this._wallet) {
+            await this._wallet.loadUnspent()
+          }
+        break
       case 'adaptedSite':
         this.adaptedSite(request.data, sender)
         sendResponse(true)
