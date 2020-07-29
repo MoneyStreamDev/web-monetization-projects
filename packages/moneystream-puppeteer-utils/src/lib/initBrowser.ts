@@ -25,6 +25,8 @@ export async function initBrowser({
       args.push('--disable-gpu')
       args.push('--disable-setuid-sandbox')
       args.push('--no-sandbox')
+      args.push('--disable-accelerated-2d-canvas')
+      args.push('--ignore-certificate-errors')
     }
 
     // TODO: not sure need to directly require(...) this
