@@ -56,6 +56,7 @@ export const Unfunded = (props: PopupProps) => {
       wallet
     }
   } = props
+  const showAddressSummary = tabOpener(`https://whatsonchain.com/address/${wallet?.keyPair.toAddress().toString()}`)
   const showUnspent = tabOpener(`https://api.whatsonchain.com/v1/bsv/main/address/${wallet?.keyPair.toAddress().toString()}/unspent`)
   const showHistory = tabOpener(`https://api.whatsonchain.com/v1/bsv/main/address/${wallet?.keyPair.toAddress().toString()}/history`)
 
@@ -136,6 +137,9 @@ export const Unfunded = (props: PopupProps) => {
           <button onClick={walletRefresh}>refresh</button>
           &nbsp;
           <button onClick={walletSend}>send</button>
+        </Muted>
+        <Muted>
+          <button onClick={showAddressSummary}>Summary</button>
         </Muted>
         <Muted>
           <button onClick={showUnspent}>Unspent Outputs</button>
