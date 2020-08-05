@@ -488,14 +488,13 @@ export class BackgroundScript {
     //packet: { sentAmount: string }
   ) {
     const { tabId, frameId } = frame
-    console.log(details)
-    // const {packet: { sentAmount: string }} = details
-    const {packet} = details 
+    // console.log(details)
     const tabState = this.tabStates.get(tabId)
     const frameTotal = tabState?.frameStates[frameId]?.total ?? 0
-    const newFrameTotal = frameTotal + Number(packet?.sentAmount ?? 0)
+    const newFrameTotal = frameTotal + Number(details?.sentAmount ?? 0)
     //TODO: look at return message from service to set this status
-    if (frameTotal < 1500) {
+    // console.log(`handle monetized ${newFrameTotal}`)
+    if (newFrameTotal < 1500) {
       this.setFramePending({ tabId, frameId }, url, newFrameTotal)
     } else {
       this.setFrameMonetized({ tabId, frameId }, url, newFrameTotal)
