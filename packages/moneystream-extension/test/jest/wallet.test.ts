@@ -12,7 +12,7 @@ describe('wallet functions', () => {
         const sats = w.balance - 500
         expect(sats).toBeGreaterThan(500)
         const buildResult = await w.makeSimpleSpend(Long.fromNumber(sats), undefined, '1SCVmCzdLaECeRkMq3egwJ6yJLwT1x3wu')
-        expect(buildResult.tx.txIns.length).toBe(1)
+        expect(buildResult.tx.txIns.length).toBeGreaterThan(0)
         expect(buildResult.tx.txOuts[0].valueBn.toNumber()).toBeGreaterThan(546)
         w.logDetailsLastTx()
     })

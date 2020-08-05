@@ -240,7 +240,7 @@ export class BitcoinConnection extends EventEmitter {
     //use response.text() for non-json response
     const managerResponse = await response.json()
     if (!response.ok) {
-      console.log(`failed manager POST`)
+      throw Error(`failed manager POST`)
     }
     return managerResponse
   }
