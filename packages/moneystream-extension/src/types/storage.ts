@@ -8,6 +8,8 @@ export const STORAGE_KEY = {
   validToken: 'validToken',
   adapted: 'adapted',
   monetized: 'monetized',
+  pending: 'pending',
+  error: 'error',
   moneystreamSite: 'moneystreamSite',
   monetizedTotal: 'monetizedTotal',
   monetizedFavicon: 'monetizedFavicon'

@@ -271,6 +271,12 @@ export class BackgroundScript {
       if (Object.values(tabState.frameStates).find(f => f.monetized)) {
         this.tabStates.setIcon(tabId, 'monetized')
       }
+      if (Object.values(tabState.frameStates).find(f => f.pending)) {
+        this.tabStates.setIcon(tabId, 'pending')
+      }
+      if (Object.values(tabState.frameStates).find(f => f.error)) {
+        this.tabStates.setIcon(tabId, 'error')
+      }
 
       if (token == null) {
         this.tabStates.setIcon(tabId, 'unavailable')
@@ -433,19 +439,67 @@ export class BackgroundScript {
     }
   }
 
+  setFramePending(
+    { tabId, frameId }: FrameSpec,
+    senderUrl: string,
+    total?: number
+  ) {
+    const tabState = this.tabStates.get(tabId)
+
+    this.tabStates.setFrame(
+      { tabId, frameId },
+      {
+        pending: true,
+        total: total || (tabState.frameStates[frameId]?.total ?? 0)
+      }
+    )
+
+    if (this.activeTab === tabId) {
+      this.reloadTabState()
+    }
+
+    // TODO: this doesn't actually seem to be used anywhere
+    // Channel image is provided if top frame is adapted
+    if (tabState.frameStates[0].adapted) {
+      const { host } = new URL(senderUrl)
+      this.favIcons
+        .getFavicon(host)
+        .then(favicon => {
+          this.tabStates.set(tabId, { favicon })
+        })
+        .catch(e => {
+          console.error(`failed to fetch favicon. e=${e.stack}`)
+        })
+    }
+  }
+
   mayMonetizeSite(sender: chrome.runtime.MessageSender, initiatingUrl: string) {
+    this.setFramePending(getFrameSpec(sender), initiatingUrl)
+  }
+
+  monetizeSite(sender: chrome.runtime.MessageSender, initiatingUrl: string) {
     this.setFrameMonetized(getFrameSpec(sender), initiatingUrl)
   }
 
   handleMonetizedSite(
-    { tabId, frameId }: FrameSpec,
+    frame: FrameSpec,
     url: string,
-    packet: { sentAmount: string }
+    details: any
+    //packet: { sentAmount: string }
   ) {
+    const { tabId, frameId } = frame
+    console.log(details)
+    // const {packet: { sentAmount: string }} = details
+    const {packet} = details 
     const tabState = this.tabStates.get(tabId)
     const frameTotal = tabState?.frameStates[frameId]?.total ?? 0
     const newFrameTotal = frameTotal + Number(packet?.sentAmount ?? 0)
-    this.setFrameMonetized({ tabId, frameId }, url, newFrameTotal)
+    //TODO: look at return message from service to set this status
+    if (frameTotal < 1500) {
+      this.setFramePending({ tabId, frameId }, url, newFrameTotal)
+    } else {
+      this.setFrameMonetized({ tabId, frameId }, url, newFrameTotal)
+    }
   }
 
   adaptedSite(data: AdaptedSite['data'], sender: MessageSender) {
@@ -490,6 +544,12 @@ export class BackgroundScript {
     state && frameStates.find(f => f.monetized)
       ? this.storage.set('monetized', true)
       : this.storage.remove('monetized')
+    state && frameStates.find(f => f.pending)
+      ? this.storage.set('pending', true)
+      : this.storage.remove('pending')
+    state && frameStates.find(f => f.error)
+      ? this.storage.set('error', true)
+      : this.storage.remove('error')
 
     if (state && state.playState && state.stickyState) {
       this.store.playState = state.playState
@@ -581,6 +641,7 @@ export class BackgroundScript {
 
     this.tabStates.logLastMonetizationCommand(frame, 'start')
     // This used to be sent from content script as a separate message
+    console.log(request.data)
     this.mayMonetizeSite(sender, request.data.initiatingUrl)
 
     // This may throw so do after mayMonetizeSite has had a chance to set

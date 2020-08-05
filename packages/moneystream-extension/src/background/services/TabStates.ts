@@ -68,6 +68,8 @@ export class TabStates {
   private makeFrameStateDefault() {
     return {
       monetized: false,
+      pending: false,
+      error: false,
       adapted: false,
       total: 0,
       lastMonetization: {
@@ -110,6 +112,18 @@ export class TabStates {
         })
         break
 
+      case 'pending':
+          this.set(tab, {
+            icon: { path: this.icons.getPending() }
+          })
+          break
+
+      case 'error':
+        this.set(tab, {
+          icon: { path: this.icons.getError() }
+        })
+        break
+  
       case 'unavailable':
         this.set(tab, {
           badge: { text: '!', color: Colors.Red }

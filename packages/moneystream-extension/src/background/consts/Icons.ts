@@ -5,5 +5,7 @@ export const Icons = {
   InactiveXMAS: '../res/icn-moneystream-off-xmas.png',
   // TODO: add fireworks icons
   ActiveNewYears: '../res/icn-moneystream-on.png',
-  InactiveNewYears: '../res/icn-moneystream-off.png'
+  InactiveNewYears: '../res/icn-moneystream-off.png',
+  Pending: '../res/icn-moneystream-pending.png',
+  Error: '../res/icn-moneystream-error.png',
 }

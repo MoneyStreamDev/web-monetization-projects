@@ -3,6 +3,7 @@ import * as Long from 'long'
 
 const demo_wif = 'L5bxi2ef2R8LuTvQbGwkY9w6KJzpPckqRQMnjtD8D2EFqjGeJnSq'
 const keyPair = new KeyPair().fromRandom()
+const DUST_LIMIT = 546
 
 // stream from a real wallet
 describe('browse stream', () => {
@@ -32,9 +33,11 @@ describe('browse stream', () => {
                 utxos
             )
             utxos = buildResult.utxos
-            expect(buildResult.tx.txIns.length).toBeGreaterThan(0)
-            expect(w.getTxFund(buildResult.tx)).toBe(packetsize*x)
             w.logDetailsLastTx()
+            expect(buildResult.tx.txIns.length).toBeGreaterThan(0)
+            // wallet should add utxos and not leave any dust outputs
+            expect (buildResult.tx.txOuts[0].valueBn.toNumber()).toBeGreaterThan(DUST_LIMIT)
+            expect(w.getTxFund(buildResult.tx)).toBe(packetsize*x)
             console.log(buildResult.hex)
         }
     })

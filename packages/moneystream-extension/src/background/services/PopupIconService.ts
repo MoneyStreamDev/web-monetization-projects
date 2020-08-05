@@ -12,24 +12,33 @@ export class PopupIconService {
   ) {}
 
   getActive() {
-    const [month, day, date] = getMonthAndDay()
-    if (isXMASPeriod(month, day)) {
-      return Icons.ActiveXMAS
-    } else if (isNewYears(month, day, date)) {
-      return Icons.ActiveNewYears
-    } else {
+    // const [month, day, date] = getMonthAndDay()
+    // if (isXMASPeriod(month, day)) {
+    //   return Icons.ActiveXMAS
+    // } else if (isNewYears(month, day, date)) {
+    //   return Icons.ActiveNewYears
+    // } else {
       return Icons.Active
-    }
+    // }
   }
 
   getInactive() {
-    const [month, day, date] = getMonthAndDay()
-    if (isXMASPeriod(month, day)) {
-      return Icons.InactiveXMAS
-    } else if (isNewYears(month, day, date)) {
-      return Icons.InactiveNewYears
-    } else {
+    // const [month, day, date] = getMonthAndDay()
+    // if (isXMASPeriod(month, day)) {
+    //   return Icons.InactiveXMAS
+    // } else if (isNewYears(month, day, date)) {
+    //   return Icons.InactiveNewYears
+    // } else {
       return Icons.Inactive
-    }
+    // }
   }
+
+  getPending() {
+      return Icons.Pending
+  }
+
+  getError() {
+    return Icons.Error
+}
+
 }

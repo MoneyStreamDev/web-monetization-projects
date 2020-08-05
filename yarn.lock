@@ -11174,7 +11174,7 @@ moment@^2.10.6:
 
 "moneystream-wallet@git+https://github.com/moneystreamdev/moneystream-wallet.git":
   version "0.2.0"
-  resolved "git+https://github.com/moneystreamdev/moneystream-wallet.git#6176d0429c65e058c10a805985e6afd8ab391c8f"
+  resolved "git+https://github.com/moneystreamdev/moneystream-wallet.git#33cd6565cd91901d853f6c782cb7e8feb58a1f51"
   dependencies:
     "@types/node-fetch" "^2.5.7"
     babel-polyfill "^6.26.0"

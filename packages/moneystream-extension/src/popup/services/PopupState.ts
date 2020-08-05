@@ -7,6 +7,8 @@ const STORAGE_KEYS = [
   'adapted',
   'moneystreamSite',
   'monetized',
+  'pending',
+  'error',
   'monetizedFavicon',
   'monetizedTotal',
   'stickyState',
@@ -24,6 +26,8 @@ export class PopupState implements PopupStateType {
   readonly playState!: PlayOrPauseState
   readonly moneystreamSite!: string
   readonly monetized!: boolean
+  readonly pending!: boolean
+  readonly error!: boolean
   readonly monetizedFavicon!: string
   readonly monetizedTotal!: number
   readonly user!: User

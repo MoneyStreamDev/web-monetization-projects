@@ -22,7 +22,7 @@ const BarBadge = styled('img')({
 })
 
 export const WebMonetizedBar = (props: PopupProps) => {
-  const { monetized, adapted, moneystreamSite } = props.context.store
+  const { monetized, pending, error, adapted, moneystreamSite } = props.context.store
   if (moneystreamSite && !monetized) {
     return null
   } else {
@@ -31,11 +31,10 @@ export const WebMonetizedBar = (props: PopupProps) => {
     return (
       <MoneystreamBar>
         <Typography variant='caption'>
-          {monetized ? (
-            <BarBadge src='/res/dollar.svg' width='13' height='14' />
-          ) : (
-            <BarBadge src='/res/nodollar.svg' width='13' height='14' />
-          )}
+          { !monetized && !pending && !error ? (<BarBadge src='/res/nodollar.svg' width='13' height='14' />) : null }
+          { monetized && !pending && !error ? (<BarBadge src='/res/dollar.svg' width='13' height='14' />) : null }
+          { pending ? (<BarBadge src='/res/pending.svg' width='13' height='14' />) : null }
+          { error ? (<BarBadge src='/res/error.svg' width='13' height='14' />) : null }
           {adapted && monetized
             ? ' Moneystream can donate to this channel'
             : ' This ' + contentOrSite + ' is'}
