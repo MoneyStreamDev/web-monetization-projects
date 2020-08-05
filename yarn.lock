@@ -11172,9 +11172,9 @@ moment@^2.10.6:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.27.0.tgz#8bff4e3e26a236220dfe3e36de756b6ebaa0105d"
   integrity sha512-al0MUK7cpIcglMv3YF13qSgdAIqxHTO7brRtaz3DlSULbqfazqkc5kEjNrLDOM7fsjshoFIihnU8snrP7zUvhQ==
 
-"moneystream-wallet@https://github.com/moneystreamdev/moneystream-wallet#dust":
+"moneystream-wallet@https://github.com/moneystreamdev/moneystream-wallet":
   version "0.2.0"
-  resolved "https://github.com/moneystreamdev/moneystream-wallet#8211a9429715eae6f9c9e0e53bb657e62076ce10"
+  resolved "https://github.com/moneystreamdev/moneystream-wallet#70e0f7e4011c5fad982b155791823e5ae38c8a42"
   dependencies:
     "@types/node-fetch" "^2.5.7"
     babel-polyfill "^6.26.0"

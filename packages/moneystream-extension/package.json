@@ -43,7 +43,7 @@
     "test": "jest --passWithNoTests",
     "test:coverage": "yarn test --verbose --coverage",
     "upkeep": "cd ../.. && yarn upkeep",
-    "money": "yarn remove moneystream-wallet && yarn add https://github.com/moneystreamdev/moneystream-wallet#dust"
+    "money": "yarn remove moneystream-wallet && yarn add https://github.com/moneystreamdev/moneystream-wallet"
   },
   "dependencies": {
     "@abraham/reflection": "^0.7.0",
@@ -63,7 +63,7 @@
     "inversify-logger-middleware": "^3.1.0",
     "jsonwebtoken": "^8.5.1",
     "long": "^4.0.0",
-    "moneystream-wallet": "https://github.com/moneystreamdev/moneystream-wallet#dust",
+    "moneystream-wallet": "https://github.com/moneystreamdev/moneystream-wallet",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "reduct": "^3.3.1",
