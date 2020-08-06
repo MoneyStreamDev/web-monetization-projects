@@ -3,6 +3,7 @@ import * as Long from 'long'
 import { Logger, logger } from './utils'
 import { BitcoinStream } from './BitcoinStream'
 import { Wallet, OutputCollection } from 'moneystream-wallet'
+import { Tx } from 'bsv'
 import { portableFetch, SPSPResponse } from '@web-monetization/polyfill-utils'
 
 // if you do not specify a data-service-provider
@@ -132,15 +133,21 @@ export class BitcoinConnection extends EventEmitter {
 
   async finalizeStream() {
     if (this._lastStreamableTx) {
-      // send the final tx to svc provider
-      this.logManagerResponse(await this.sendManager('stop', this._lastStreamableTx))
-      // TODO: should mark encumbered utxo spent
-      // add the change output as spendable
-      // i.e. chain the transactions
-      // for now, do it the slow way, through index api
-      this._sessionUtxos = null
-      this._wallet.clear()
+      this.closeTheStream(this._lastStreamableTx)
     }
+  }
+
+  async closeTheStream(txhex:string) {
+    // send the final tx to svc provider
+    const managerResponse = await this.sendManager('stop', txhex)
+    // this.logManagerResponse(managerResponse)
+    // TODO: should mark encumbered utxo spent
+    // add the change output as spendable
+    // i.e. chain the transactions
+    // for now, do it the slow way, through index api
+    this._sessionUtxos = null
+    this._wallet.clear()
+    return managerResponse
   }
 
   // tell manager to close the bitcoin stream
@@ -164,19 +171,20 @@ export class BitcoinConnection extends EventEmitter {
     // Actually send on the next tick of the event loop in case multiple streams
     // have their limits raised at the same time
     await new Promise((resolve, reject) => setImmediate(resolve))
-    let buildResult = {hex:"",utxos:undefined}
+    let buildResult = {hex:"", tx:new Tx(), utxos:undefined}
     let amountToSendFromStream = this._stream._getAmountAvailableToSend()
     this._log(`sendBitcoin ${amountToSendFromStream}`)
-    this._totalDelivered = amountToSendFromStream
+    // wallet could make amount less than requested
     if (amountToSendFromStream.toNumber() > 0) {
       try {
         buildResult = await wallet.makeStreamableCashTx(
           amountToSendFromStream,
           null,true,this._sessionUtxos
         )
+        // TODO: get amount actually funded from tx
+        this._totalDelivered = amountToSendFromStream
         this._sessionUtxos = buildResult.utxos || null
-        //show which utxos used to build the tx
-        this._log(buildResult.utxos)
+        //this._log(buildResult.utxos)
       }
       catch (error) {
         // will error when wallet runs out of funds
@@ -187,7 +195,13 @@ export class BitcoinConnection extends EventEmitter {
         this._stream.emit('error')
       }
       try {
-        const managerResponse = await this.sendManager('progress', buildResult.hex)
+        // stop stream if there are no outputs
+        const managerEvent = (buildResult.tx && buildResult.tx!.txOuts.length === 0) 
+          ? 'stop' : 'progress'
+        const managerResponse = 
+          managerEvent === 'stop' ? 
+            await this.closeTheStream(buildResult.hex)
+            : await this.sendManager(managerEvent, buildResult.hex)
         this.logManagerResponse(managerResponse)
         if (managerResponse.status) {
             if (managerResponse.status === 'Missing Inputs') {
