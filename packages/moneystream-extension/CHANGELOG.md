@@ -1,3 +1,15 @@
+<a name="moneystream-extension@0.1.03"></a>
+
+# [moneystream-extension@0.1.03](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.03...moneystream-extension@0.0.50) (2020-08-06)
+
+### Features
+
+- Incorporate wallet spending features
+- Allow spending of multiple inputs
+- Add pending and error status
+- Add link to Account summary
+- Began new versioning 0.1.*
+
 <a name="moneystream-extension@0.0.51"></a>
 
 # [moneystream-extension@0.0.51](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.0.50...moneystream-extension@0.0.49) (2020-07-04)
