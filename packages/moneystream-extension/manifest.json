@@ -1,6 +1,6 @@
 {
   "name": "MoneyStream",
-  "description": "Support websites and creators with Web Monetization",
+  "description": "Streamable money for the streaming web",
   "version": "0.1.3",
   "manifest_version": 2,
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://www.moneybutton.com; object-src 'self'",
