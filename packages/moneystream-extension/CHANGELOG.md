@@ -1,6 +1,6 @@
-<a name="moneystream-extension@0.1.03"></a>
+<a name="moneystream-extension@0.1.3"></a>
 
-# [moneystream-extension@0.1.03](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.03...moneystream-extension@0.0.50) (2020-08-06)
+# [moneystream-extension@0.1.3](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.3...moneystream-extension@0.0.50) (2020-08-06)
 
 ### Features
 
