@@ -20,6 +20,7 @@ interface GetPageData {
 // for demo purposes! need a registration service
 // for adapted site ownership
 const DUMMY_POINTER = "fullcycle@moneybutton.com"
+const DUMMY_URL = "https://www.youtube.com/watch?v=xV2RYQ1cTEU"
 
 @injectable()
 export class AdaptedContentService {
@@ -78,7 +79,8 @@ export class AdaptedContentService {
     const paymentPointerQuery = {
       data:{
         adaptedPage: {
-          paymentPointer: DUMMY_POINTER,
+          paymentPointer: url.startsWith(DUMMY_URL) ? 
+            DUMMY_POINTER : null,
           channelImage: null
         }
       }
