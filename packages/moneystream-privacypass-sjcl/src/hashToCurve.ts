@@ -1,7 +1,7 @@
 /**
  * Implements the methods of hashing to elliptic curves
  * that are described in draft-irtf-cfrg-hash-to-curve
- * [ Adapted from the original by Moneystream for use in Typescript ]
+ * [ Adapted from the original by COIL for use in Typescript ]
  * https://github.com/privacypass/challenge-bypass-extension/blob/866569cffa8d3f80e3ea471f3e5e15f1e4ce376f/src/ext/h2c.js
  * Note: The SWU algorithm is constant-time except for the conditional checks in
  * the final two lines. The implementation follows a regular execution pattern.

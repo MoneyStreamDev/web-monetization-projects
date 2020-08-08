@@ -1,6 +1,6 @@
 /**
  * This implements a 2HashDH-based token scheme using the SJCL ecc package.
- * [ Adapted from the original by Moneystream for use in Typescript ]
+ * [ Adapted from the original by COIL for use in Typescript ]
  * https://github.com/privacypass/challenge-bypass-extension/blob/master/src/crypto/local.js
  */
 import sjcl from 'sjcl'

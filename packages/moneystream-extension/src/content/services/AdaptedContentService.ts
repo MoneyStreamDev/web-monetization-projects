@@ -17,6 +17,10 @@ interface GetPageData {
   }
 }
 
+// for demo purposes! need a registration service
+// for adapted site ownership
+const DUMMY_POINTER = "fullcycle@moneybutton.com"
+
 @injectable()
 export class AdaptedContentService {
   // Keep track of invocations of checkAdaptedContent so we can abort
@@ -64,11 +68,21 @@ export class AdaptedContentService {
   }
 }`
 
-    const paymentPointerQuery = await this.client.query<GetPageData>({
-      query,
-      token: null,
-      variables
-    })
+    // const paymentPointerQuery = await this.client.query<GetPageData>({
+    //   query,
+    //   token: null,
+    //   variables
+    // })
+
+    // TODO: implement an adapted page service
+    const paymentPointerQuery = {
+      data:{
+        adaptedPage: {
+          paymentPointer: DUMMY_POINTER,
+          channelImage: null
+        }
+      }
+    }
 
     debug({ paymentPointerQuery })
 
