@@ -1,14 +1,28 @@
-import { Wallet } from 'moneystream-wallet'
+import { Wallet, OutputCollection, UnspentOutput, KeyPair } from 'moneystream-wallet'
 import * as Long from 'long'
 
-const demo_wif = 'L5bxi2ef2R8LuTvQbGwkY9w6KJzpPckqRQMnjtD8D2EFqjGeJnSq'
+const someHashBufString = '1aebb7d0776cec663cbbdd87f200bf15406adb0ef91916d102bcd7f86c86934e'
+
+function createUtxos(count:number, satoshis:number):OutputCollection {
+    const lotsOfUtxos = new OutputCollection()
+    for (let index = 0; index < count; index++) {
+      const testUtxo = new UnspentOutput(
+        satoshis,
+        new KeyPair().fromRandom().toOutputScript(),
+        someHashBufString,
+        index
+      )
+      lotsOfUtxos.add(testUtxo)
+    }
+    return lotsOfUtxos
+  }
 
 describe('wallet functions', () => {
     it ('should make a simple transaction', async () => {
         const w = new Wallet()
         expect(w).toBeInstanceOf(Wallet)
-        w.loadWallet(demo_wif)
-        await w.loadUnspent()
+        w.loadWallet()
+        w.selectedUtxos = createUtxos(1, 2000)
         const sats = w.balance - 500
         expect(sats).toBeGreaterThan(500)
         const buildResult = await w.makeSimpleSpend(Long.fromNumber(sats), undefined, '1SCVmCzdLaECeRkMq3egwJ6yJLwT1x3wu')
@@ -19,19 +33,28 @@ describe('wallet functions', () => {
     it ('should make a spendable transaction', async () => {
         const w = new Wallet()
         expect(w).toBeInstanceOf(Wallet)
-        w.loadWallet(demo_wif)
-        //'1KUrv2Ns8SwNkLgVKrVbSHJmdXLpsEvaDf'
+        w.loadWallet()
+        w.selectedUtxos = createUtxos(1,1000)
         const buildResult = await w.makeStreamableCashTx(Long.fromNumber(100))
         expect(buildResult.tx.txIns.length).toBe(1)
         w.logDetailsLastTx()
     })
+    it ('should error making empty transaction', async () => {
+        const w = new Wallet()
+        expect(w).toBeInstanceOf(Wallet)
+        w.loadWallet()
+        w.selectedUtxos = createUtxos(1,1000)
+        const buildResult = await w.makeStreamableCashTx(
+            Long.fromNumber(250),
+            null,true, new OutputCollection()
+          )
+        expect(buildResult.tx.txIns.length).toBe(1)
+    })
     it ('should load wallet balance', async () => {
         const w = new Wallet()
         expect(w).toBeInstanceOf(Wallet)
-        w.loadWallet(demo_wif)
-        const utxos = await w.loadUnspent()
-        expect(utxos.count).toBeGreaterThan(0)
+        w.loadWallet()
+        w.selectedUtxos = createUtxos(1,1000)
         expect(w.balance).toBeGreaterThan(0)
-        w.logUtxos(utxos.items)
     })
 })
