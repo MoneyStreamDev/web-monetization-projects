@@ -56,6 +56,8 @@ export class Streams extends EventEmitter {
   resumeStream(id: string) {
     if (this._streams[id]) {
       void this._streams[id].resume()
+    } else {
+      console.log(`Streams: missing stream ${id}`)
     }
   }
 

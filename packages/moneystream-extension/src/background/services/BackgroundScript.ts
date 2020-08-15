@@ -778,12 +778,15 @@ export class BackgroundScript {
 
   private doResumeWebMonetization(frame: FrameSpec) {
     this.tabStates.logLastMonetizationCommand(frame, 'resume')
-
+    // this.log(frame)
     const id = this.assoc.getStreamId(frame)
+    // this.log(id)
     if (id) {
       this.log('resuming stream', id)
       this.sendSetMonetizationStateMessage(frame, 'pending')
       this.streams.resumeStream(id)
+    } else {
+      this.log(`Could not resume frame ${JSON.stringify(frame)}`)
     }
     return true
   }

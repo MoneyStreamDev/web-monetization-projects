@@ -156,6 +156,11 @@ export class BitcoinConnection extends EventEmitter {
     this._log('bitcoin connection ended')
   }
 
+  async disconnect() {
+    // only to fire the onplugindisconnect code
+    this.emit('disconnect')
+  }
+
   destroy (err?: Error) {
       this._closed = true
   }

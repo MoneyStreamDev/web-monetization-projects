@@ -417,9 +417,9 @@ class StreamAttempt {
           'this._bitcoinStream.isOpen()',
           this._bitcoinStream.isOpen(),
           "this._connection['closed']",
-          this._connection['closed']
-          // 'this._plugin.isConnected()',
-          // this._plugin.isConnected()
+          this._connection['closed'],
+          'this._plugin.isConnected()',
+          this._plugin?.isConnected()
         )
 
         if (this._bitcoinStream.isOpen()) {
@@ -475,11 +475,14 @@ class StreamAttempt {
         this._bitcoinStream.removeListener('outgoing_money', onMoney)
         this._connection.removeListener('error', onConnectionError)
         //plugin.removeListener('disconnect', onPluginDisconnect)
+        this._connection.removeListener('disconnect', onPluginDisconnect)
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         clearTimeout(updateAmountTimeout)
       }
 
       //plugin.once('disconnect', onPluginDisconnect)
+      this._connection.once('disconnect', onPluginDisconnect)
+
       this._bitcoinStream.on('outgoing_money', onMoney)
       this._bitcoinStream.on('error', onStreamError)
       this._connection.once('error', onConnectionError)
@@ -503,7 +506,9 @@ class StreamAttempt {
     await new Promise(resolve => {
       this._debug('severing bitcoin connection.')
       this._bitcoinStream.once('close', resolve)
-      this._bitcoinStream.destroy()
+      // don't destroy, need to resume later
+      //this._bitcoinStream.destroy()
+      this._connection.disconnect()
     })
     // this._debug(
     //   'stream close event fired; plugin connected=',

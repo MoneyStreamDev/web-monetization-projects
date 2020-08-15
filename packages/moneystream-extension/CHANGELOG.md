@@ -1,3 +1,12 @@
+<a name="moneystream-extension@0.1.4"></a>
+
+# [moneystream-extension@0.1.4](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.4...moneystream-extension@0.1.3) (2020-08-16)
+
+### Features
+
+- Fix resume monetized session
+- Test monetized Youtube video
+
 <a name="moneystream-extension@0.1.3"></a>
 
 # [moneystream-extension@0.1.3](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.3...moneystream-extension@0.0.50) (2020-08-06)
