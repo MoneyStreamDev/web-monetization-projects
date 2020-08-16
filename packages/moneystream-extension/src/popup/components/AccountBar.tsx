@@ -83,6 +83,10 @@ export const AccountBar = (props: PopupProps) => {
     //how to navigate to Status to fund?
     //alert(`go to wallet page`)
   }
+  const onPayToUrlClick = () => {
+    //how to navigate to Status to fund?
+    //alert(`go to wallet page`)
+  }
 
   return (
     <MoneystreamToolbar>
@@ -135,6 +139,15 @@ export const AccountBar = (props: PopupProps) => {
         >
           <Typography variant='caption'>About</Typography>
         </MenuItem>
+
+        {/* <MenuItem
+          dense
+          component='a'
+          onClick={onPayToUrlClick}
+          target='_blank'
+        >
+          <Typography variant='caption'>Pay to URL</Typography>
+        </MenuItem> */}
 
         {/* <MenuItem dense component='a' 
           onClick={onSettingsClick} target='_blank'>
