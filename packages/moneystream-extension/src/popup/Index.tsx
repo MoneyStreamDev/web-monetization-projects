@@ -8,7 +8,10 @@ import { Container } from './components/util/Container'
 import { AccountBar } from './components/AccountBar'
 import { WebMonetizedBar } from './components/WebMonetizedBar'
 import { Status } from './components/Status'
+import { PayToUrlPage } from './components/PayToUrl'
 import { PopupProps } from './types'
+import { MemoryRouter, Switch, Route } from 'react-router-dom'
+import NavBar from './components/NavBar'
 
 const MoneystreamContainer = styled(Container)(({ theme }) => ({
   paddingRight: `${theme.spacing(4)}px`,
@@ -26,7 +29,8 @@ const OuterDiv = styled('div')({
 })
 
 export function Index(props: PopupProps) {
-  const [_, setLastMonetizationProgress] = useState(Date.now())
+//export class Index extends React.Component<PopupProps> {
+    const [_, setLastMonetizationProgress] = useState(Date.now())
 
   function syncStoreAndSetState() {
     props.context.store.sync()
@@ -45,11 +49,22 @@ export function Index(props: PopupProps) {
   useEffect(bindMessageListener, [])
 
   const context = { ...props.context }
+  //refresh = () => this.forceUpdate()
+
   return (
     <OuterDiv>
       <AccountBar context={context} />
       <MoneystreamContainer>
-        <Status context={context} />
+        {/* <Status context={context} /> */}
+        <MemoryRouter>
+          <NavBar />
+          <Switch>
+            <Route path='/status' component={() => <Status context={context}/>} />
+            <Route path='/paytourl' component={() => <PayToUrlPage context={context}/>} />
+            {/* <Route path='/settings' component={Settings} /> */}
+            <Route path='/' component={() => <Status context={context}/>} />
+          </Switch>
+        </MemoryRouter>
       </MoneystreamContainer>
       <WebMonetizedBar context={context} />
     </OuterDiv>

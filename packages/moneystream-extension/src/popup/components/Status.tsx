@@ -21,9 +21,10 @@ export class Status extends React.Component<PopupProps> {
     //const { context } = this.props
     const context = this.props.context
     return (
-    <div>
-    { !context.wallet && <NoWallet context={context} refresh = {this.refresh} /> }
-    { context.wallet && <Unfunded context={context} /> }
+      (!context) ? <div>No context!</div>
+    : <div>
+    { !context?.wallet && <NoWallet context={context} refresh = {this.refresh} /> }
+    { context?.wallet && <Unfunded context={context} /> }
     {/* { context.wallet?.balance && <PaidViews context={context} /> } */}
     </div>
   )

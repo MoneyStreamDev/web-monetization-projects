@@ -1,11 +1,21 @@
 import React, { FormEvent, useState } from 'react'
+import { Link, withRouter, MemoryRouter as Router } from 'react-router-dom'
+// import PropTypes from 'prop-types'
 import IconButton from '@material-ui/core/IconButton'
 import Typography from '@material-ui/core/Typography'
 import Toolbar from '@material-ui/core/Toolbar'
 import More from '@material-ui/icons/MoreVert'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
 import { styled, withStyles } from '@material-ui/core'
+import {
+  Home as HomeIcon,
+  VpnKey as SignInIcon,
+  Settings as SettingsIcon,
+} from '@material-ui/icons'
 
 import { Colors } from '../../shared-theme/colors'
 import { PopupProps } from '../types'
@@ -84,8 +94,7 @@ export const AccountBar = (props: PopupProps) => {
     //alert(`go to wallet page`)
   }
   const onPayToUrlClick = () => {
-    //how to navigate to Status to fund?
-    //alert(`go to wallet page`)
+     //context.router.history.push('/paytourl')
   }
 
   return (
@@ -140,14 +149,26 @@ export const AccountBar = (props: PopupProps) => {
           <Typography variant='caption'>About</Typography>
         </MenuItem>
 
-        {/* <MenuItem
-          dense
-          component='a'
-          onClick={onPayToUrlClick}
-          target='_blank'
-        >
-          <Typography variant='caption'>Pay to URL</Typography>
-        </MenuItem> */}
+        {/* <Link to={'/paytourl'} > */}
+          <MenuItem 
+            // component={Link} to='/paytourl'
+            dense
+            component='a'
+            // onClick={onPayToUrlClick}
+            target='_blank'
+          >
+            <Typography variant='caption'>Pay to URL</Typography>
+          </MenuItem>
+        {/* </Link> */}
+
+        {/* <Link to={'/paytourl'}>
+            <ListItem button>
+              <ListItemIcon>
+                <SignInIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Pay To Url'} />
+            </ListItem>
+          </Link> */}
 
         {/* <MenuItem dense component='a' 
           onClick={onSettingsClick} target='_blank'>

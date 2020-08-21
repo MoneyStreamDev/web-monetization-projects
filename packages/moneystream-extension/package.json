@@ -66,6 +66,7 @@
     "moneystream-wallet": "https://github.com/moneystreamdev/moneystream-wallet",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0",
     "reduct": "^3.3.1",
     "uuid": "^8.1.0"
   },
