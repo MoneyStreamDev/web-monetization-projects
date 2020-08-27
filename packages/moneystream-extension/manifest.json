@@ -20,7 +20,7 @@
     "page": "static/background.html"
   },
   "web_accessible_resources": [
-
+    "moneystream.js"
   ],
   "content_scripts": [
     {

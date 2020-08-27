@@ -99,6 +99,7 @@ export function makeWebpackConfig(rootDir: string) {
 
   const entry: Record<string, string> = {
     content: './src/content/content.ts',
+    moneystream: './src/moneystream.ts',
     popup: './src/popup/popup.tsx',
     options: './src/options/options.tsx',
     background: './src/background/background.ts'
