@@ -1,3 +1,11 @@
+<a name="moneystream-extension@0.1.6"></a>
+
+# [moneystream-extension@0.1.6](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.6...moneystream-extension@0.1.5) (2020-09-01)
+
+### Features
+- Add metadata hash
+- Preliminary support for transaction storage
+
 <a name="moneystream-extension@0.1.5"></a>
 
 # [moneystream-extension@0.1.5](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.5...moneystream-extension@0.1.4) (2020-08-27)

@@ -35,7 +35,9 @@ describe('wallet functions', () => {
         expect(w).toBeInstanceOf(Wallet)
         w.loadWallet()
         w.selectedUtxos = createUtxos(1,1000)
-        const buildResult = await w.makeStreamableCashTx(Long.fromNumber(100))
+        const buildResult = await w.makeStreamableCashTx(
+          Long.fromNumber(100)
+        )
         expect(buildResult.tx.txIns.length).toBe(1)
         w.logDetailsLastTx()
     })
@@ -46,7 +48,8 @@ describe('wallet functions', () => {
         w.selectedUtxos = createUtxos(1,1000)
         const buildResult = await w.makeStreamableCashTx(
             Long.fromNumber(250),
-            null,true, new OutputCollection()
+            null,true, new OutputCollection(),
+            Buffer.from('moneystream')
           )
         expect(buildResult.tx.txIns.length).toBe(1)
     })
