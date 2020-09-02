@@ -2,9 +2,20 @@ import { EventEmitter } from 'events'
 import * as Long from 'long'
 import { Logger, logger } from './utils'
 import { BitcoinStream } from './BitcoinStream'
-import { Wallet, OutputCollection } from 'moneystream-wallet'
+import { Wallet, OutputCollection, Merkle } from 'moneystream-wallet'
 import { Tx } from 'bsv'
 import { portableFetch, SPSPResponse } from '@web-monetization/polyfill-utils'
+import { Favicons } from './Favicons'
+
+// set to true to store metadata onchain and locally
+const doMeta = true
+const metaurl = "http://localhost:3013/api"
+
+const TXT_CHANNEL = "moneystream"
+const TXT_TAGS = ["moneystream"]
+//TODO: could be favicon of web site
+const TXT_IMAGE = "https://moneystreamdev.github.io/moneystream-project/img/logo.png"
+const TXT_CONTENT = "[See onchain](https://whatsonchain.com/tx/$TXID)  \n"
 
 // if you do not specify a data-service-provider
 // in your meta tag then it will use this default
@@ -13,29 +24,46 @@ import { portableFetch, SPSPResponse } from '@web-monetization/polyfill-utils'
 const defaultServiceProvider 
   = 'https://cash.bitcoinofthings.com/stream/'
 
+// interaction for building and sending one bitcoin packet
+class SendBitcoinBundle {
+  buildResult: any
+  meta: any
+  metahash: Buffer|null = null
+  managerEvent: string = ''
+  managerResponse: any
+}
+
 //for now, a placeholder stub 
 // that will induce BitcoinStream to emit money
 export class BitcoinConnection extends EventEmitter {
+    protected _startTime: number = Math.floor(Date.now())/1000
     protected _closed: boolean
     protected sending: boolean
     protected connected: boolean
     protected _totalDelivered: Long
     protected _stream! : BitcoinStream
     //TODO: might have to move, manage it with _stream?
-    protected _lastStreamableTx: string = ''
+    protected _lastStreamableBundle: SendBitcoinBundle|null = null
     protected _sessionUtxos: OutputCollection|null = null
     private readonly _log: Logger
     private _payto: SPSPResponse = {destinationAccount:'unknown', sharedSecret: Buffer.from('secret','utf8')}
+    private _initiatingUrl: string = ''
     private _serviceProvider: string
     protected _wallet: Wallet
+    protected _merkle: Merkle = new Merkle()
+    protected _favIcon: Favicons = new Favicons()
     destinationAssetCode:string = 'BSV'
     destinationAssetScale:number = 8
     sourceAssetCode:string = 'BSV'
     sourceAssetScale:number = 8
     // requestId is like a sessionId
     private _requestId: string
-    constructor (log: Logger, 
-      serviceProvider: string, requestId:any, wallet: Wallet) {
+    constructor (
+      log: Logger, 
+      serviceProvider: string, 
+      requestId:any, 
+      wallet: Wallet
+    ) {
       super()
       this._wallet = wallet
       this._closed = false
@@ -47,6 +75,7 @@ export class BitcoinConnection extends EventEmitter {
       this._serviceProvider = this.cleanUrl(serviceProvider)
     }
 
+    //returns url with ending slash
     cleanUrl(url:string):string {
       if (!url) return defaultServiceProvider
       let fixedurl = url
@@ -69,6 +98,9 @@ export class BitcoinConnection extends EventEmitter {
   //set monetization payment pointer
   payTo(spspDetails: any) {
     this._payto = spspDetails
+  }
+  initiatingUrl(url: string) {
+    this._initiatingUrl = url
   }
 
   async createStream (): Promise<BitcoinStream> {
@@ -110,10 +142,10 @@ export class BitcoinConnection extends EventEmitter {
         } else {
           // TODO Send multiple packets at the same time (don't await promise)
           // TODO Figure out if we need to wait before sending the next one
-          const buildResult = await this.sendBitcoin(this._wallet)
-          if (buildResult.hex){
-            this._lastStreamableTx = buildResult.hex
-            this._log(`made ${this._lastStreamableTx}`)
+          const bundle = await this.sendBitcoin(this._wallet)
+          if (bundle.buildResult.hex){
+            this._lastStreamableBundle = bundle
+            this._log(`made ${this._lastStreamableBundle.buildResult.hex}`)
           }
         }
       }
@@ -132,14 +164,15 @@ export class BitcoinConnection extends EventEmitter {
   }
 
   async finalizeStream() {
-    if (this._lastStreamableTx) {
-      this.closeTheStream(this._lastStreamableTx)
+    if (this._lastStreamableBundle) {
+      const managerResponse = this.closeTheStream(this._lastStreamableBundle)
+      //this.storeMeta(managerResponse, this._lastStreamableBundle)
     }
   }
 
-  async closeTheStream(txhex:string) {
+  async closeTheStream(bundle: SendBitcoinBundle) {
     // send the final tx to svc provider
-    const managerResponse = await this.sendManager('stop', txhex)
+    const managerResponse = await this.sendManager('stop', bundle)
     // this.logManagerResponse(managerResponse)
     // TODO: should mark encumbered utxo spent
     // add the change output as spendable
@@ -165,6 +198,19 @@ export class BitcoinConnection extends EventEmitter {
       this._closed = true
   }
 
+  // metadata about the transaction
+  // TODO: add more context
+  getSessionData(amount:Long) {
+    return {
+      start: this._startTime,
+      stop: Math.floor(Date.now())/1000,
+      sessionId: this._requestId,
+      amount: amount.toNumber(),
+      site: this._initiatingUrl,
+      payTo: this._payto?.destinationAccount
+    }
+  }
+
   /**
    * raise event that will send bitcoin
    * TODO: refer to ilp-protocol-stream:Connection
@@ -172,48 +218,54 @@ export class BitcoinConnection extends EventEmitter {
    * of here
    * @private
    */
-  protected async sendBitcoin (wallet: any): Promise<any> {
+  protected async sendBitcoin (wallet: any): Promise<SendBitcoinBundle> {
     // Actually send on the next tick of the event loop in case multiple streams
     // have their limits raised at the same time
     await new Promise((resolve, reject) => setImmediate(resolve))
-    let buildResult = {hex:"", tx:new Tx(), utxos:undefined}
+    const bundle = new SendBitcoinBundle()
+    bundle.buildResult = {hex:"", tx:new Tx(), utxos:undefined}
     let amountToSendFromStream = this._stream._getAmountAvailableToSend()
     this._log(`sendBitcoin ${amountToSendFromStream}`)
     // wallet could make amount less than requested
     if (amountToSendFromStream.toNumber() > 0) {
       try {
-        buildResult = await wallet.makeStreamableCashTx(
+        bundle.meta = doMeta ? this.getSessionData(
+          amountToSendFromStream
+        ) : null
+        this._log(bundle.meta)
+        bundle.metahash = this._merkle.hash(bundle.meta)
+        bundle.buildResult = await wallet.makeStreamableCashTx(
           amountToSendFromStream,
-          null,true,this._sessionUtxos
+          null,true,this._sessionUtxos,
+          bundle.metahash
         )
         // TODO: get amount actually funded from tx
         this._totalDelivered = amountToSendFromStream
-        this._sessionUtxos = buildResult.utxos || null
-        //this._log(buildResult.utxos)
+        this._sessionUtxos = bundle.buildResult.utxos || null
       }
       catch (error) {
         // will error when wallet runs out of funds
-        console.log(`session utxos: ${this._sessionUtxos?.satoshis}-${amountToSendFromStream.toNumber()}`)
-        console.log(`wallet utxos: ${wallet.selectedUtxos?.satoshis}`)
+        this._log(`session utxos: ${this._sessionUtxos?.satoshis}-${amountToSendFromStream.toNumber()}`)
+        this._log(`wallet utxos: ${wallet.selectedUtxos?.satoshis}`)
         this._log(error)
         // if there is an error on our wallet making a tx then abort the stream
         this._stream.emit('error')
       }
       try {
         // stop stream if there are no outputs
-        const managerEvent = (buildResult.tx && buildResult.tx!.txOuts.length === 0) 
+        bundle.managerEvent = (bundle.buildResult.tx && bundle.buildResult.tx!.txOuts.length === 0) 
           ? 'stop' : 'progress'
-        const managerResponse = 
-          managerEvent === 'stop' ? 
-            await this.closeTheStream(buildResult.hex)
-            : await this.sendManager(managerEvent, buildResult.hex)
-        this.logManagerResponse(managerResponse)
-        if (managerResponse.status) {
-            if (managerResponse.status === 'Missing Inputs') {
-              throw new Error(`Error from stream manager: ${managerResponse.status}`)
+        bundle.managerResponse = 
+          bundle.managerEvent === 'stop' ? 
+            await this.closeTheStream(bundle.buildResult.hex)
+            : await this.sendManager(bundle.managerEvent, bundle)
+        this.logManagerResponse(bundle.managerResponse)
+        if (bundle.managerResponse.status) {
+            if (bundle.managerResponse.status === 'Missing Inputs') {
+              throw new Error(`Error from stream manager: ${bundle.managerResponse.status}`)
             }
-            if (managerResponse.status === "broadcast skipped, funding change below dust") {
-              throw new Error(`Error from stream manager: ${managerResponse.status}`)
+            if (bundle.managerResponse.status === "broadcast skipped, funding change below dust") {
+              throw new Error(`Error from stream manager: ${bundle.managerResponse.status}`)
             }            
         }
         // triggers onMoney event handler for normal monetizing process
@@ -230,7 +282,76 @@ export class BitcoinConnection extends EventEmitter {
       }
     }
     this.sending = false
-    return buildResult
+    return bundle
+  }
+
+  //TODO: make this full featured text replacement
+  getContent(managerResponse:any, bundle: SendBitcoinBundle) {
+    return TXT_CONTENT.replace('$TXID', managerResponse?.txid)
+  }
+
+  getBaseUrl(site:string) {
+    const path = site.split('/')
+    if (path.length<3) return this.cleanUrl(site)
+    return `${path[0]}//${path[2]}/`
+  }
+
+  getDomain(site:string) {
+    const path = `${site}/`.split('/')
+    if (path.length<3) return this.cleanUrl(site)
+    return `${path[2]}`
+  }
+
+  async getImage(bundle: SendBitcoinBundle):Promise<string|null> {
+    const baseurl = `${this.getDomain(bundle?.meta?.site)}`
+    try {
+      const favurl = await this._favIcon.getFavicon(baseurl)
+      if (favurl.startsWith('http')) return favurl
+      return `${baseurl}${favurl}`
+    }
+    catch {
+      return null
+    }
+  }
+
+  async storeMeta(
+    managerResponse:any, 
+    bundle: SendBitcoinBundle
+  ) {
+    const txid = managerResponse?.txid
+    const hex = managerResponse?.hex
+    // post
+    const txt = {
+      channel: TXT_CHANNEL,
+      set: {
+        [txid]: {
+          tags: TXT_TAGS,
+          meta: { 
+            title: `${bundle.meta.site}`, 
+            description: `${bundle.meta.sessionId}`,
+            content: this.getContent(managerResponse,bundle),
+            image: await this.getImage(bundle)
+          },
+          data: bundle.meta
+        }
+      }
+    }
+    // this._log(txt)
+    try {
+      const response = await portableFetch(metaurl, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(txt)
+      })
+      const storageResponse = await response.json()
+      if (!response.ok) {
+        throw Error(`failed storage POST`)
+      }
+      this._log(storageResponse)
+    }
+    catch (err) {
+      this._log(err)
+    }
   }
 
   logManagerResponse(response: any):any {
@@ -244,15 +365,19 @@ export class BitcoinConnection extends EventEmitter {
   // forward money stream to stream manager
   // configure your stream manager url in meta tag
   // in attribute data-service-provider
-  async sendManager(method:string, tx:string, txjson?:object) {
+  // method parameter overrides whatever is in bundle
+  async sendManager(
+    method:string, 
+    bundle: SendBitcoinBundle
+  ) {
     const manager = `${this._serviceProvider}${method}`
     const response = await portableFetch(manager, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         session: this._requestId,
-        hex: tx,
-        obj: txjson,
+        hex: bundle.buildResult.hex,
+        obj: bundle.buildResult.txjson,
         payTo: this._payto.destinationAccount
       })
     })
@@ -260,6 +385,10 @@ export class BitcoinConnection extends EventEmitter {
     const managerResponse = await response.json()
     if (!response.ok) {
       throw Error(`failed manager POST`)
+    } else {
+      if (doMeta === true && method === 'stop') {
+        this.storeMeta(managerResponse, bundle)
+      }
     }
     return managerResponse
   }

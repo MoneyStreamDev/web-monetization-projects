@@ -135,8 +135,8 @@ export const Unfunded = (props: PopupProps) => {
         <Muted>
           {`Balance ${walletBalance}`}&nbsp;
           <button onClick={walletRefresh}>refresh</button>
-          &nbsp;
-          <button onClick={walletSend}>send</button>
+          {/* &nbsp;
+          <button onClick={walletSend}>send</button> */}
         </Muted>
         <Muted>
           <button onClick={showAddressSummary}>Summary</button>

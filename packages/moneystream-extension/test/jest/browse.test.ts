@@ -12,7 +12,7 @@ describe('browse stream', () => {
         expect(w).toBeInstanceOf(Wallet)
         w.loadWallet(demo_wif)
         await w.loadUnspent()
-        expect(w.balance).toBeGreaterThan(0)
+        expect(w.balance).toBe(0)
         //w.selectExpandableInputs()
     })
     it ('should browse session', async () => {
@@ -20,7 +20,7 @@ describe('browse stream', () => {
         expect(w).toBeInstanceOf(Wallet)
         w.loadWallet(demo_wif)
         await w.loadUnspent()
-        expect(w.balance).toBeGreaterThan(0)
+        expect(w.balance).toBe(0)
         const packetsize = 500
         const iterations = Math.floor(w.balance/packetsize)
         let utxos!: OutputCollection

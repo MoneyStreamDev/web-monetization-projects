@@ -193,7 +193,8 @@ export class Stream extends EventEmitter {
           plugin,
           spspDetails,
           debug: this.container.get(tokens.Logger),
-          wallet: this._wallet
+          wallet: this._wallet,
+          initiatingUrl: this._initiatingUrl
         })
         if (this._active) {
           this._debug(`starting attempt`)
@@ -346,6 +347,7 @@ interface StreamAttemptOptions {
   spspDetails: SPSPResponse
   debug: Logger
   wallet: Wallet
+  initiatingUrl: string
 }
 
 class StreamAttempt {
@@ -363,6 +365,7 @@ class StreamAttempt {
   private _lastDelivered = 0
   private _requestId: string
   private _wallet: Wallet
+  private _initiatingUrl: string
 
   constructor(opts: StreamAttemptOptions) {
     this._onMoney = opts.onMoney
@@ -372,15 +375,20 @@ class StreamAttempt {
     this._spspDetails = opts.spspDetails
     this._debug = opts.debug
     this._wallet = opts.wallet
+    this._initiatingUrl = opts.initiatingUrl
   }
 
   async start(): Promise<void> {
     if (!this._active) return
 
     this._debug('Starting Bitcoin Connection')
-    this._connection = new BitcoinConnection(this._debug, this._serviceProvider, 
-      this._requestId, this._wallet)
+    this._connection = new BitcoinConnection(
+      this._debug, 
+      this._serviceProvider, 
+      this._requestId, 
+      this._wallet)
     this._connection.payTo(this._spspDetails)
+    this._connection.initiatingUrl(this._initiatingUrl)
     // this._connection = await createConnection({
     //   ...this._spspDetails,
     //   plugin,
