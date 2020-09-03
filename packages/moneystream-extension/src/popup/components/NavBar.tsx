@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import IconButton from '@material-ui/core/IconButton'
 import HomeIcon from '@material-ui/icons/AccountBalanceWallet'
 import HistoryIcon from '@material-ui/icons/History'
+import SettingsIcon from '@material-ui/icons/Settings'
 //import SendIcon from '@material-ui/icons/Send'
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney'
 import { SendPage } from './Send'
@@ -31,11 +32,16 @@ const useStyles = makeStyles((theme) => ({
             <HomeIcon />
           </IconButton>
         </Link>
-        <Link to='/history'>
+        <Link to='/settings'>
+          <IconButton aria-label="Settings"  color="primary">
+            <SettingsIcon />
+          </IconButton>
+        </Link>
+        {/* <Link to='/history'>
           <IconButton aria-label="History"  color="primary">
             <HistoryIcon />
           </IconButton>
-        </Link>
+        </Link> */}
 
         <SendPage context={context}></SendPage>
 

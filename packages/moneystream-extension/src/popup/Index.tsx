@@ -10,6 +10,7 @@ import { WebMonetizedBar } from './components/WebMonetizedBar'
 import { Status } from './components/Status'
 import { PayToUrlPage } from './components/PayToUrl'
 import { HistoryPage } from './components/History'
+import { SettingsPage } from './components/Settings'
 import { PopupProps } from './types'
 import { MemoryRouter, Switch, Route } from 'react-router-dom'
 import { NavBar } from './components/NavBar'
@@ -60,6 +61,7 @@ export function Index(props: PopupProps) {
         <MemoryRouter>
           <Switch>
             <Route path='/status' component={() => <Status context={context}/>} />
+            <Route path='/settings' component={() => <SettingsPage context={context}/>} />
             <Route path='/history' component={() => <HistoryPage context={context}/>} />
             <Route path='/paytourl' component={() => <PayToUrlPage context={context}/>} />
             {/* <Route path='/settings' component={Settings} /> */}

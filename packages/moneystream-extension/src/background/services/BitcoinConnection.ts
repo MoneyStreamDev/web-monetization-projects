@@ -8,13 +8,12 @@ import { portableFetch, SPSPResponse } from '@web-monetization/polyfill-utils'
 import { Favicons } from './Favicons'
 
 // set to true to store metadata onchain and locally
-const doMeta = true
+// disable for now
+const doMeta:boolean|null = false
 const metaurl = "http://localhost:3013/api"
 
 const TXT_CHANNEL = "moneystream"
 const TXT_TAGS = ["moneystream"]
-//TODO: could be favicon of web site
-const TXT_IMAGE = "https://moneystreamdev.github.io/moneystream-project/img/logo.png"
 const TXT_CONTENT = "[See onchain](https://whatsonchain.com/tx/$TXID)  \n"
 
 // if you do not specify a data-service-provider
@@ -229,7 +228,7 @@ export class BitcoinConnection extends EventEmitter {
     // wallet could make amount less than requested
     if (amountToSendFromStream.toNumber() > 0) {
       try {
-        bundle.meta = doMeta ? this.getSessionData(
+        bundle.meta = doMeta === true ? this.getSessionData(
           amountToSendFromStream
         ) : null
         this._log(bundle.meta)
