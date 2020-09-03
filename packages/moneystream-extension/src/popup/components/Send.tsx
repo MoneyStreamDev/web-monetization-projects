@@ -42,7 +42,7 @@ export const SendPage = (props: PopupProps) => {
   return (
       <>
         <IconButton 
-            onClick={walletSend}
+            onClick={walletSend} size="small"
             color="primary" aria-label="Send">
             <SendIcon />
         </IconButton>

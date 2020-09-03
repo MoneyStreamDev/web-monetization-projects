@@ -28,12 +28,15 @@ const useStyles = makeStyles((theme) => ({
     return (
       <div className={classes.root}>
         <Link to='/'>
-          <IconButton aria-label="Home">
+          <IconButton aria-label="Home" 
+            color="primary" size="small">
             <HomeIcon />
           </IconButton>
         </Link>
+
         <Link to='/settings'>
-          <IconButton aria-label="Settings"  color="primary">
+          <IconButton aria-label="Settings" 
+          color="primary" size="small">
             <SettingsIcon />
           </IconButton>
         </Link>

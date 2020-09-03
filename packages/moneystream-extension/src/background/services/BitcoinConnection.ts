@@ -228,11 +228,11 @@ export class BitcoinConnection extends EventEmitter {
     // wallet could make amount less than requested
     if (amountToSendFromStream.toNumber() > 0) {
       try {
-        bundle.meta = doMeta === true ? this.getSessionData(
-          amountToSendFromStream
-        ) : null
-        this._log(bundle.meta)
-        bundle.metahash = this._merkle.hash(bundle.meta)
+        if (doMeta === true) {
+          bundle.meta = this.getSessionData(amountToSendFromStream)
+          this._log(bundle.meta)
+          bundle.metahash = this._merkle.hash(bundle.meta)
+        }
         bundle.buildResult = await wallet.makeStreamableCashTx(
           amountToSendFromStream,
           null,true,this._sessionUtxos,

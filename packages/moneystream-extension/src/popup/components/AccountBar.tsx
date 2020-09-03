@@ -84,7 +84,7 @@ export const AccountBar = (props: PopupProps) => {
     runtime: { tabOpener }
   } = context
 
-  const onExploreClick = tabOpener(`https://moneystreamdev.github.io/moneystream-project/`)
+  const onExploreClick = tabOpener(`https://monstr.link`)
   const onAboutClick = tabOpener(`https://moneystreamdev.github.io/moneystream-project/`)
   const onSettingsClick = () => {
     //tabOpener(`${moneystreamDomain}/settings`)
@@ -124,7 +124,7 @@ export const AccountBar = (props: PopupProps) => {
         }}
         getContentAnchorEl={null}
       >
-        <MenuItem
+        {/* <MenuItem
           divider
           dense
           component='a'
@@ -132,7 +132,7 @@ export const AccountBar = (props: PopupProps) => {
           target='_blank'
         >
           <Typography variant='caption'>Wallet</Typography>
-        </MenuItem>
+        </MenuItem> */}
 
         {/* <MenuItem dense component='a' 
           onClick={onExploreClick} target='_blank'>
@@ -149,17 +149,22 @@ export const AccountBar = (props: PopupProps) => {
           <Typography variant='caption'>About</Typography>
         </MenuItem>
 
-        {/* <Link to={'/paytourl'} > */}
-          <MenuItem 
-            // component={Link} to='/paytourl'
+        <MenuItem
+          dense
+          component='a'
+          onClick={onExploreClick}
+          target='_blank'
+        >
+          <Typography variant='caption'>Explore</Typography>
+        </MenuItem>
+
+          {/* <MenuItem 
             dense
             component='a'
-            // onClick={onPayToUrlClick}
             target='_blank'
           >
             <Typography variant='caption'>Pay to URL</Typography>
-          </MenuItem>
-        {/* </Link> */}
+          </MenuItem> */}
 
         {/* <Link to={'/paytourl'}>
             <ListItem button>
