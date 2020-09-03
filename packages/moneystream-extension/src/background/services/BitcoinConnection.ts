@@ -369,27 +369,31 @@ export class BitcoinConnection extends EventEmitter {
     method:string, 
     bundle: SendBitcoinBundle
   ) {
-    const manager = `${this._serviceProvider}${method}`
-    const response = await portableFetch(manager, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        session: this._requestId,
-        hex: bundle.buildResult.hex,
-        obj: bundle.buildResult.txjson,
-        payTo: this._payto.destinationAccount
-      })
-    })
-    //use response.text() for non-json response
-    const managerResponse = await response.json()
-    if (!response.ok) {
-      throw Error(`failed manager POST`)
+    if (!bundle.buildResult.hex) {
+      return null
     } else {
-      if (doMeta === true && method === 'stop') {
-        this.storeMeta(managerResponse, bundle)
+      const manager = `${this._serviceProvider}${method}`
+      const response = await portableFetch(manager, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          session: this._requestId,
+          hex: bundle.buildResult.hex,
+          obj: bundle.buildResult.txjson,
+          payTo: this._payto.destinationAccount
+        })
+      })
+      //use response.text() for non-json response
+      const managerResponse = await response.json()
+      if (!response.ok) {
+        throw Error(`failed manager POST`)
+      } else {
+        if (doMeta === true && method === 'stop') {
+          this.storeMeta(managerResponse, bundle)
+        }
       }
+      return managerResponse
     }
-    return managerResponse
   }
 
   protected safeEmit (event: string, ...args: any[]) {
