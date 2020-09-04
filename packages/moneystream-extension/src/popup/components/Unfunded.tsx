@@ -113,7 +113,8 @@ export const Unfunded = (props: PopupProps) => {
   }
 
   function getCutOff() : boolean|undefined {
-    if (state.checkedCutOff === null) return undefined
+    // interpret initial state as monetization on
+    if (state.checkedCutOff === null) return true
     return state.checkedCutOff.toString() === "true"
   }
 
