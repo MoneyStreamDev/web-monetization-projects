@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Grid, styled } from '@material-ui/core'
+import { Grid, styled, Switch } from '@material-ui/core'
 
 import { Colors } from '../../shared-theme/colors'
 import { PopupProps } from '../types'
@@ -22,8 +22,8 @@ const Muted = styled('p')({
 })
 
 const Button = styled(StatusButton)({
-  paddingLeft: '29px',
-  paddingRight: '29px'
+  paddingLeft: '10px',
+  paddingRight: '10px'
 })
 
 const useStyles = makeStyles((theme) => ({
@@ -47,8 +47,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
+const killKey = 'monetizationKillSwitch'
+
 export const Unfunded = (props: PopupProps) => {
   const [walletBalance, setWalletBalance] = useState(props.context.wallet?.balance)
+  const [state, setState] = React.useState({
+    checkedCutOff: localStorage.getItem(killKey)
+  })
   const {
     context: {
       moneystreamDomain,
@@ -75,9 +80,7 @@ export const Unfunded = (props: PopupProps) => {
     if (address) {
       const buildResult = await wallet?.makeSimpleSpend(Long.fromNumber(sats), wallet?.selectedUtxos, address)
       const api = new IndexingService()
-      //console.log(buildResult)
       const broadcastResult = await api.broadcastRaw(buildResult.hex)
-      //console.log(broadcastResult)
       alert(JSON.stringify(broadcastResult))
       await walletRefresh()
     }
@@ -102,13 +105,31 @@ export const Unfunded = (props: PopupProps) => {
     alert(payDesc)
     walletRefresh()
     //TODO: update background wallet
-    
+  }
+
+  const handleChange = (event:any) => {
+    setState({ ...state, [event.target.name]: event.target.checked })
+    localStorage.setItem(killKey,event.target.checked)
+  }
+
+  function getCutOff() : boolean|undefined {
+    if (state.checkedCutOff === null) return undefined
+    return state.checkedCutOff.toString() === "true"
   }
 
   const classes = useStyles()
   return (
-    <Grid container justify='center' alignItems='center'>
+    <Grid spacing={1} container justify='center' alignItems='center'>
       <div>
+        <StatusTypography variant='subtitle1' align='center'>
+            Monetization Switch
+          <Switch
+          checked={getCutOff()}
+          onChange={handleChange}
+          name="checkedCutOff"
+          inputProps={{ 'aria-label': 'primary checkbox' }}
+          />
+        </StatusTypography>
         <StatusTypography variant='h6' align='center'>
           {titleString}
         </StatusTypography>
@@ -132,25 +153,39 @@ export const Unfunded = (props: PopupProps) => {
             onPayment = {onPayment}
           />
         </div>
-        <Muted>
+        <StatusTypography variant='subtitle1'>
           {`Balance ${walletBalance}`}&nbsp;
-          <button onClick={walletRefresh}>refresh</button>
-          {/* &nbsp;
-          <button onClick={walletSend}>send</button> */}
-        </Muted>
-        <Muted>
-          <button onClick={showAddressSummary}>Summary</button>
-        </Muted>
-        <Muted>
-          <button onClick={showUnspent}>Unspent Outputs</button>
-        </Muted>
-        <Muted>
-          <button onClick={showHistory}>Tx History</button>
-        </Muted>
-        <input id="wif" name="wif" type="hidden" value={`${wallet?.toJSON().wif}`}></input>
-        <Muted>
-          <button onClick={wifToClipboard}>Copy Private Key</button>
-        </Muted>
+          <Button variant="text" onClick={walletRefresh} text="refresh"></Button>
+        </StatusTypography>
+
+        <Grid container spacing={0}>
+        <Grid container item xs={12} spacing={0}>
+          <Grid item xs={6} spacing={0}>
+            <Muted>
+              <Button variant="outlined" onClick={showAddressSummary} text="Summary"></Button>
+            </Muted>
+          </Grid>
+          <Grid item xs={6} spacing={0}>
+            <Muted>
+              <Button variant="outlined" onClick={showUnspent} text="Unspent"></Button>
+            </Muted>
+          </Grid>
+        </Grid>
+        <Grid container item xs={12} spacing={0}>
+          <Grid item xs={6} spacing={0}>
+            <Muted>
+            <Button variant="outlined" onClick={showHistory} text="History"></Button>
+            </Muted>
+          </Grid>
+          <Grid item xs={6} spacing={0}>
+            <input id="wif" name="wif" type="hidden" value={`${wallet?.toJSON().wif}`}></input>
+            <Muted>
+              <Button variant="outlined" onClick={wifToClipboard} text="Copy&nbsp;Key"></Button>
+            </Muted>
+          </Grid>
+        </Grid>
+      </Grid>
+
       </div>
     </Grid>
   )

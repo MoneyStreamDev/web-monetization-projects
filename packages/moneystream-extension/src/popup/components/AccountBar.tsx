@@ -124,20 +124,6 @@ export const AccountBar = (props: PopupProps) => {
         }}
         getContentAnchorEl={null}
       >
-        {/* <MenuItem
-          divider
-          dense
-          component='a'
-          onClick={onWallet}
-          target='_blank'
-        >
-          <Typography variant='caption'>Wallet</Typography>
-        </MenuItem> */}
-
-        {/* <MenuItem dense component='a' 
-          onClick={onExploreClick} target='_blank'>
-          <Typography variant='caption'>Discover</Typography>
-        </MenuItem> */}
 
         <MenuItem
           divider
@@ -158,22 +144,10 @@ export const AccountBar = (props: PopupProps) => {
           <Typography variant='caption'>Explore</Typography>
         </MenuItem>
 
-          {/* <MenuItem 
-            dense
-            component='a'
-            target='_blank'
-          >
-            <Typography variant='caption'>Pay to URL</Typography>
-          </MenuItem> */}
-
-        {/* <Link to={'/paytourl'}>
-            <ListItem button>
-              <ListItemIcon>
-                <SignInIcon />
-              </ListItemIcon>
-              <ListItemText primary={'Pay To Url'} />
-            </ListItem>
-          </Link> */}
+        {/* <MenuItem dense component='a' 
+          onClick={onExploreClick} target='_blank'>
+          <Typography variant='caption'>Discover</Typography>
+        </MenuItem> */}
 
         {/* <MenuItem dense component='a' 
           onClick={onSettingsClick} target='_blank'>

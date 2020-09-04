@@ -5,6 +5,7 @@ import { PopupProps } from '../types'
 
 import Switch from '@material-ui/core/Switch'
 import { StatusTypography } from './util/StatusTypography'
+import EnjoymentMeter from './EnjoymentMeter'
 
 export const SettingsPage = (props: PopupProps) => {
     const [state, setState] = React.useState({
@@ -25,7 +26,7 @@ export const SettingsPage = (props: PopupProps) => {
         <StatusTypography variant='h6' align='center'>
           Settings
         </StatusTypography>
-        <StatusTypography variant='subtitle1' align='center'>
+        {/* <StatusTypography variant='subtitle1' align='center'>
             MoneyStream switch
             <Switch
             checked={state.checkedCutOff}
@@ -33,7 +34,8 @@ export const SettingsPage = (props: PopupProps) => {
             name="checkedCutOff"
             inputProps={{ 'aria-label': 'primary checkbox' }}
             />
-        </StatusTypography>
+        </StatusTypography> */}
+        <EnjoymentMeter/>
       </div>
     </Grid>
   )
