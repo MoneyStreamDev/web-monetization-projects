@@ -149,6 +149,14 @@ export class Stream extends EventEmitter {
 
   async start() {
     if (this._active) return
+    const kill = localStorage.getItem(killKey)
+    if (kill !== null) {
+      if (kill === "false") {
+        this._debug(`MoneyStream is off`)
+        return
+      }
+      else this._debug(kill)
+    }
     this._active = true
 
     // reset this upon every start *before* early exit while _looping
@@ -349,6 +357,8 @@ interface StreamAttemptOptions {
   wallet: Wallet
   initiatingUrl: string
 }
+
+const killKey = 'monetizationKillSwitch'
 
 class StreamAttempt {
   private readonly _onMoney: (event: OnMoneyEvent) => void
