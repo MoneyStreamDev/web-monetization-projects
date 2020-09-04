@@ -1,10 +1,13 @@
 <a name="moneystream-extension@0.1.6"></a>
 
-# [moneystream-extension@0.1.6](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.6...moneystream-extension@0.1.5) (2020-09-01)
+# [moneystream-extension@0.1.6](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.6...moneystream-extension@0.1.5) (2020-09-04)
 
 ### Features
-- Add metadata hash
-- Preliminary support for transaction storage
+- Add metadata hash to transaction
+- Preliminary support for transaction storage (TXT)
+- Updated UI with settings page
+- Ability to turn monetization on or off
+- Bug fixes
 
 <a name="moneystream-extension@0.1.5"></a>
 
