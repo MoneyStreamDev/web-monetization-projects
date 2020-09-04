@@ -109,7 +109,7 @@ export const Unfunded = (props: PopupProps) => {
 
   const handleChange = (event:any) => {
     setState({ ...state, [event.target.name]: event.target.checked })
-    localStorage.setItem(killKey,event.target.checked)
+    localStorage.setItem(killKey, event.target.checked)
   }
 
   function getCutOff() : boolean|undefined {
@@ -122,7 +122,7 @@ export const Unfunded = (props: PopupProps) => {
     <Grid spacing={1} container justify='center' alignItems='center'>
       <div>
         <StatusTypography variant='subtitle1' align='center'>
-            Monetization Switch
+          Monetization {getCutOff() ? "ON":"OFF"}
           <Switch
           checked={getCutOff()}
           onChange={handleChange}
