@@ -8,8 +8,9 @@ import { portableFetch, SPSPResponse } from '@web-monetization/polyfill-utils'
 import { Favicons } from './Favicons'
 
 // set to true to store metadata onchain and locally
-// disable for now
-const doMeta:boolean|null = false
+const historyKey = 'monetizationHistory'
+const historyValue = localStorage.getItem(historyKey)
+const doMeta:boolean = historyValue === null ? false : historyValue === "true"
 const metaurl = "http://localhost:3013/api"
 
 const TXT_CHANNEL = "moneystream"
@@ -252,11 +253,11 @@ export class BitcoinConnection extends EventEmitter {
       }
       try {
         // stop stream if there are no outputs
-        bundle.managerEvent = (bundle.buildResult.tx && bundle.buildResult.tx!.txOuts.length === 0) 
+        bundle.managerEvent = (bundle.buildResult.tx && wallet.countOutputs(bundle.buildResult.tx) === 0) 
           ? 'stop' : 'progress'
         bundle.managerResponse = 
           bundle.managerEvent === 'stop' ? 
-            await this.closeTheStream(bundle.buildResult.hex)
+            await this.closeTheStream(bundle)
             : await this.sendManager(bundle.managerEvent, bundle)
         this.logManagerResponse(bundle.managerResponse)
         if (bundle.managerResponse.status) {
