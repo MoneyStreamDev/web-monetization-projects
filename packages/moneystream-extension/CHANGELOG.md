@@ -1,3 +1,10 @@
+<a name="moneystream-extension@0.1.7"></a>
+
+# [moneystream-extension@0.1.7](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.7...moneystream-extension@0.1.6) (2020-09-04)
+
+### Features
+- Bug fixes
+
 <a name="moneystream-extension@0.1.6"></a>
 
 # [moneystream-extension@0.1.6](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.6...moneystream-extension@0.1.5) (2020-09-04)

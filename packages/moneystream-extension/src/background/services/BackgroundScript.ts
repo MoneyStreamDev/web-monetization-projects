@@ -640,9 +640,17 @@ export class BackgroundScript {
 
     this.tabStates.logLastMonetizationCommand(frame, 'start')
     // This used to be sent from content script as a separate message
-    console.log(request.data)
+    // console.log(request.data)
     this.mayMonetizeSite(sender, request.data.initiatingUrl)
 
+    if (!request?.data?.paymentPointer) {
+      // eslint-disable-next-line no-console
+      console.warn('startWebMonetization cancelled; missing payment pointer')
+      this.sendSetMonetizationStateMessage(frame, 'stopped')
+      // TODO: another way to do this?
+      this.storage.set('error', true)
+      return false
+    }
     // This may throw so do after mayMonetizeSite has had a chance to set
     // the page as being monetized (or attempted to be)
     const spspEndpoint = resolvePaymentEndpoint(request.data.paymentPointer)
