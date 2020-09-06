@@ -19,9 +19,9 @@
   "background": {
     "page": "static/background.html"
   },
-  "web_accessible_resources": [
-    "moneystream.js"
-  ],
+  "externally_connectable": {
+    "matches": ["https://*/*","*://localhost/*"]
+  },
   "content_scripts": [
     {
       "matches": ["https://*/*","http://*/*"],

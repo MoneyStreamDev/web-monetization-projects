@@ -46,8 +46,8 @@ import { Wallet } from 'moneystream-wallet'
 
 @injectable()
 export class BackgroundScript {
-  private _wallet!: Wallet
   constructor(
+    private wallet: Wallet,
     private popup: PopupBrowserAction,
     private favIcons: Favicons,
     private assoc: StreamAssociations,
@@ -146,6 +146,20 @@ export class BackgroundScript {
       // see: https://developer.chrome.com/apps/runtime#event-onMessage
       return true
     })
+
+    // this requires externally_connectable
+    this.api.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
+      const serialized = JSON.stringify(request)
+      this.log('received external. request=', serialized)
+
+      void this.handleMessageExternal(request, sender, sendResponse)
+
+      // important: this tells chrome to expect an async response.
+      // if `true` is not returned here then async messages don't make it back
+      // see: https://developer.chrome.com/apps/runtime#event-onMessage
+      return true
+    })
+
   }
 
   private initializeActiveTab() {
@@ -304,6 +318,33 @@ export class BackgroundScript {
     }
   }
 
+  async handleMessageExternal(
+    request: ToBackgroundMessage,
+    sender: MessageSender,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    sendResponse: (response: any) => any
+  ) {
+    switch (request.command) {
+      case 'info':
+        this.log('info command:', request.data)
+        const man = this.api.runtime.getManifest()
+        sendResponse({
+          name: man.name,
+          version: man.version,
+          address: this.wallet?.keyPair.toAddress().toString()
+        })
+        break
+      case 'log':
+        this.log('log command:', request.data)
+        sendResponse(true)
+        break
+      default:
+        sendResponse(false)
+        break
+    }
+  }
+
+  // messages from content script to background script
   async handleMessage(
     request: ToBackgroundMessage,
     sender: MessageSender,
@@ -311,6 +352,14 @@ export class BackgroundScript {
     sendResponse: (response: any) => any
   ) {
     switch (request.command) {
+      case 'info':
+        const man = this.api.runtime.getManifest()
+        sendResponse({
+          name: man.name,
+          version: man.version,
+          address: this.wallet?.keyPair.toAddress().toString()
+        })
+        break
       case 'log':
         this.log('log command:', request.data)
         sendResponse(true)
@@ -321,8 +370,8 @@ export class BackgroundScript {
       case 'paymentReceived':
           // send just the new utxo in request.data?
           console.log(`PAYMENT RECEIVED`)
-          if (this._wallet) {
-            await this._wallet.loadUnspent()
+          if (this.wallet) {
+            await this.wallet.loadUnspent()
           }
         break
       case 'adaptedSite':
@@ -705,7 +754,7 @@ export class BackgroundScript {
       spspEndpoint,
       ...request.data,
       initiatingUrl: request.data.initiatingUrl
-    }, this._wallet)
+    }, this.wallet)
 
     if (lastCommand === 'pause') {
       // TODO: why do we need the timeout here ?
