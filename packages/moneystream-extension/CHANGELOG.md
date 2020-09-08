@@ -3,7 +3,8 @@
 # [moneystream-extension@0.1.7](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.7...moneystream-extension@0.1.6) (2020-09-04)
 
 ### Features
-- Bug fixes
+- Allow web pages to query extension wallet address
+- Don't try to monetize page if meta tag content is empty
 
 <a name="moneystream-extension@0.1.6"></a>
 
