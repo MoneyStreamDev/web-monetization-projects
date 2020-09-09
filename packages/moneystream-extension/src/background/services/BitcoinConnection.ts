@@ -260,13 +260,16 @@ export class BitcoinConnection extends EventEmitter {
             await this.closeTheStream(bundle)
             : await this.sendManager(bundle.managerEvent, bundle)
         this.logManagerResponse(bundle.managerResponse)
-        if (bundle.managerResponse.status) {
+        if (bundle.managerResponse && bundle.managerResponse.status) {
             if (bundle.managerResponse.status === 'Missing Inputs') {
               throw new Error(`Error from stream manager: ${bundle.managerResponse.status}`)
             }
             if (bundle.managerResponse.status === "broadcast skipped, funding change below dust") {
               throw new Error(`Error from stream manager: ${bundle.managerResponse.status}`)
             }            
+        } else {
+          this._log(`no response?`)
+          this._log(bundle)
         }
         // triggers onMoney event handler for normal monetizing process
         this._stream.emit('outgoing_money')

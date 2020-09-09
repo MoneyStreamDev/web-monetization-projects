@@ -2,10 +2,7 @@ export interface AdaptiveBandwidthTiers {
   getBandwidth(url: string): Promise<number>
 }
 
-// This determines the monetization rate
-// 1 cent per minute ~83 
-// This will be negotiable
-const SATOSHIS_PER_SECOND = 50
+const enjoyKey = 'monetizationEnjoyment'
 
 export class AdaptiveBandwidth {
   // Fields for calculation of outgoing money
@@ -31,6 +28,22 @@ export class AdaptiveBandwidth {
     this._sentAmount += Number(amount) || 0
   }
 
+  getSatoshisPerSecond() : number {
+    // This determines the monetization rate
+    // 1 cent per minute ~83 
+    try {
+      const enjoyValue = localStorage.getItem(enjoyKey)
+      if (enjoyValue === null) return 20
+      const enjoyInt = parseInt(enjoyValue.toString(),10)
+      if (enjoyInt > 67) return 60
+      if (enjoyInt > 34) return 40
+      return 20
+    }
+    catch { 
+      return 20
+    }
+  }
+
   // noinspection DuplicatedCode
   async getStreamSendMax() {
     const time = Date.now()
@@ -38,7 +51,7 @@ export class AdaptiveBandwidth {
     const secondsElapsed = timeElapsed / 1000
     //TODO: reenable adaptive bandwidth
     //const bandwidth = await this._tiers.getBandwidth(this._pageUrl)
-    const bandwidth = SATOSHIS_PER_SECOND
+    const bandwidth = this.getSatoshisPerSecond()
     const sendAmount = Math.floor(secondsElapsed * bandwidth - this._sentAmount)
     this._debug('current send amount is', sendAmount)
     return sendAmount

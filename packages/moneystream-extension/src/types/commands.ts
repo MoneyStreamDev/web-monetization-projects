@@ -125,6 +125,17 @@ export interface FetchYoutubeChannelId extends Command {
  * content -> background
  * browser.runtime.sendMessage
  */
+export interface FetchMetanet extends Command {
+  command: 'fetchMetanet'
+  data: {
+    url: string
+  }
+}
+
+/**
+ * content -> background
+ * browser.runtime.sendMessage
+ */
 export interface FrameStateChange extends Command {
   command: 'frameStateChange'
   data: {
@@ -190,6 +201,7 @@ export type ToBackgroundMessage =
   | IsRateLimited
   | ContentScriptInit
   | FetchYoutubeChannelId
+  | FetchMetanet
   | SendTip
   | FrameStateChange
   | UnloadFrame

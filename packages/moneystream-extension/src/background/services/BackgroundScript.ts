@@ -40,6 +40,7 @@ import { Favicons } from './Favicons'
 import { PopupBrowserAction } from './PopupBrowserAction'
 import { Logger, logger } from './utils'
 import { YoutubeService } from './YoutubeService'
+import { MetanetService } from './MetanetService'
 import { BackgroundFramesService } from './BackgroundFramesService'
 import { StreamAssociations } from './StreamAssociations'
 import { Wallet } from 'moneystream-wallet'
@@ -58,6 +59,7 @@ export class BackgroundScript {
     private store: LocalStorageProxy,
     private auth: AuthService,
     private youtube: YoutubeService,
+    private metanet: MetanetService,
     private framesService: BackgroundFramesService,
 
     @logger('BackgroundScript')
@@ -408,6 +410,9 @@ export class BackgroundScript {
       case 'fetchYoutubeChannelId':
         sendResponse(await this.youtube.fetchChannelId(request.data.youtubeUrl))
         break
+      case 'fetchMetanet':
+          sendResponse(await this.metanet.fetchPaymail(request.data.url))
+          break
       case 'sendTip':
         sendResponse(await this.sendTip())
         break

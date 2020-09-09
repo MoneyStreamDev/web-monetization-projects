@@ -47,13 +47,11 @@ export default function EnjoymentMeter() {
   const classes = useStyles()
 
   const changed = (event:any, newValue:any) => {
-    console.log(newValue)
     setState({ ...state, [event.target.name]: newValue })
     localStorage.setItem(enjoyKey, newValue)
   }
 
   function getEnjoy():number {
-    console.log(state.enjoyValue)
     if (state.enjoyValue === null) return 1
     return parseInt(state.enjoyValue.toString(),10)
   }

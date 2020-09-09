@@ -7,6 +7,7 @@ import { getAdaptedSite } from '../util/getAdaptedSite'
 import { debug } from '../util/logging'
 import { ContentRuntime } from '../types/ContentRunTime'
 import { FetchYoutubeChannelId } from '../../types/commands'
+import { FetchMetanet } from '../../types/commands'
 
 import { Frames } from './Frames'
 
@@ -48,10 +49,33 @@ export class AdaptedContentService {
     })
   }
 
+  async fetchMetanet(url: string) {
+    return new Promise<string | null>(resolve => {
+      const message: FetchMetanet = {
+        command: 'fetchMetanet',
+        data: { url: url }
+      }
+      this.contentRuntime.sendMessage(message, resolve)
+    })
+  }
+
   async adaptedPageDetails(url: string, site: string) {
     debug('fetching payment pointer for this page', url, site)
 
+    let paymailPointer = null
     const variables = { url }
+    if (site === 'powping') {
+      console.log(`POWPING ${url}`)
+      //TODO: fetch page
+      //could get page or could get from metanet
+      const paymail = await this.fetchMetanet(url)
+      debug('paymail', { paymail })
+      if (paymail) {
+        debug('found paymail', paymail, 'for', url)
+        // Object.assign(variables, { channelId })
+        paymailPointer = paymail
+      }
+    }
 
     if (site === 'youtube') {
       const channelId = await this.fetchChannelId(url)
@@ -59,6 +83,12 @@ export class AdaptedContentService {
       if (channelId) {
         debug('found channel id', channelId, 'for', url)
         Object.assign(variables, { channelId })
+      }
+
+      // this hack is a stub. will need to call service
+      // to get the paymail from youtube
+      if (url.startsWith(DUMMY_URL)) {
+        paymailPointer = DUMMY_POINTER
       }
     }
 
@@ -79,8 +109,7 @@ export class AdaptedContentService {
     const paymentPointerQuery = {
       data:{
         adaptedPage: {
-          paymentPointer: url.startsWith(DUMMY_URL) ? 
-            DUMMY_POINTER : null,
+          paymentPointer: paymailPointer,
           channelImage: null
         }
       }

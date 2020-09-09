@@ -1,3 +1,11 @@
+<a name="moneystream-extension@0.1.8"></a>
+
+# [moneystream-extension@0.1.8](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.8...moneystream-extension@0.1.7) (2020-09-04)
+
+### Features
+- Monetize PowPing
+- Adjust monetization rate
+
 <a name="moneystream-extension@0.1.7"></a>
 
 # [moneystream-extension@0.1.7](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.7...moneystream-extension@0.1.6) (2020-09-04)
