@@ -395,6 +395,16 @@ export class BitcoinConnection extends EventEmitter {
         if (doMeta === true && method === 'stop') {
           this.storeMeta(managerResponse, bundle)
         }
+        // update monetization status here
+        if (managerResponse 
+          && managerResponse.returnResult
+          && managerResponse.returnResult === "monetizing"
+        ) {
+          const current = localStorage.getItem('monetized')
+          if (current === null || current !== 'true') {
+            localStorage.setItem('monetized', 'true')
+          }
+        }
       }
       return managerResponse
     }
