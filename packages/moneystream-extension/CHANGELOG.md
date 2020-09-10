@@ -5,6 +5,7 @@
 ### Features
 - Monetize PowPing
 - Adjust monetization rate
+- Show green $ monetized status as soon as monetizing
 
 <a name="moneystream-extension@0.1.7"></a>
 
