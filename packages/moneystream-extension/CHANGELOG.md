@@ -1,3 +1,10 @@
+<a name="moneystream-extension@0.1.9"></a>
+
+# [moneystream-extension@0.1.9](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.9...moneystream-extension@0.1.8) (2020-09-10)
+
+### Features
+- Whitelist BitcoinOfThings for onboarding
+
 <a name="moneystream-extension@0.1.8"></a>
 
 # [moneystream-extension@0.1.8](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.8...moneystream-extension@0.1.7) (2020-09-04)
