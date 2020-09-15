@@ -5,6 +5,7 @@ import { PopupProps } from '../types'
 
 import { StatusTypography } from './util/StatusTypography'
 import EnjoymentMeter from './EnjoymentMeter'
+import MaxSessionFunding from './MaxSessionFunding'
 import { HistoryPage } from './History'
 
 export const SettingsPage = (props: PopupProps) => {
@@ -39,6 +40,9 @@ export const SettingsPage = (props: PopupProps) => {
             />
         </StatusTypography> */}
         <EnjoymentMeter/>
+        <div className="mb-20">
+        <MaxSessionFunding/>
+        </div>
         <HistoryPage context={context}/>
       </div>
     </Grid>

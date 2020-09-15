@@ -1,11 +1,18 @@
 import React from 'react'
 import { PopupProps } from '../types'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, Theme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography';
 import { Link } from '@material-ui/core'
 import Switch from '@material-ui/core/Switch'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
+    root: {
+      width: 200,
+    },
+    margin: {
+      height: theme.spacing(2),
+      padding: '1rem',
+    },
     container: {
       textAlign: 'center'
     },
@@ -51,13 +58,13 @@ export const HistoryPage = (props: PopupProps) => {
     const onHistoryClick = tabOpener(`http://localhost:3013/`)
 
     return (
-    <div>
-      <Typography id="discrete-slider-restrict" gutterBottom>
-        Control your browser history
+    <div className={classes.root}>
+        <div className={classes.margin}/>
+        <Typography id="discrete-slider-restrict" gutterBottom>
+        Control your history
       </Typography>
         <div>
-          <Link
-            onClick={onHistoryClick}
+          <Link onClick={onHistoryClick}
           >View History in TXT</Link>
         </div>
         <div>

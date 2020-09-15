@@ -9,8 +9,8 @@ import { Favicons } from './Favicons'
 
 // set to true to store metadata onchain and locally
 const historyKey = 'monetizationHistory'
-const historyValue = localStorage.getItem(historyKey)
-const doMeta:boolean = historyValue === null ? false : historyValue === "true"
+const maxsessionfundingKey = 'maxsessionfunding'
+const enjoyKey = 'monetizationEnjoyment'
 const metaurl = "http://localhost:3013/api"
 
 const TXT_CHANNEL = "moneystream"
@@ -58,12 +58,17 @@ export class BitcoinConnection extends EventEmitter {
     sourceAssetScale:number = 8
     // requestId is like a sessionId
     private _requestId: string
+    private historyValue: string|null = null
+    private maxsessionfundingValue: string|null = null
+    private enjoyValue: string|null = null
+    private doMeta:boolean = false
+
     constructor (
       log: Logger, 
       serviceProvider: string, 
       requestId:any, 
       wallet: Wallet
-    ) {
+      ) {
       super()
       this._wallet = wallet
       this._closed = false
@@ -106,6 +111,11 @@ export class BitcoinConnection extends EventEmitter {
   async createStream (): Promise<BitcoinStream> {
     const stream = new BitcoinStream({id:999,isServer:false,connectionId:"badconx"}, this._log)
       this._stream = stream
+      this.historyValue = localStorage.getItem(historyKey)
+      this.maxsessionfundingValue = localStorage.getItem(maxsessionfundingKey)
+      this.enjoyValue = localStorage.getItem(enjoyKey)
+      this.doMeta = this.historyValue === null ? false : this.historyValue === "true"
+      
       stream.on('_maybe_start_send_loop', this.startSendLoop.bind(this))
       return stream
   }
@@ -211,6 +221,44 @@ export class BitcoinConnection extends EventEmitter {
     }
   }
 
+  getNextEvent(wallet:Wallet, bundle: SendBitcoinBundle) {
+    // if no outputs then stop
+    if (bundle.buildResult.tx 
+      && wallet.countOutputs(bundle.buildResult.tx) === 0) {
+        return 'stop'
+    }
+    // check user maximum session amount policy
+    if (this.maxsessionfundingValue === null) {
+      // use reasonable defaults
+      if (this.enjoyValue === null) {
+        // no info to work from, make some default
+        if (this._totalDelivered.toNumber() >= 20000) {
+          return 'stop'
+        }
+      } else {
+        const enjoyNumber = Number(this.enjoyValue)
+        if (enjoyNumber < 33) {
+          if (this._totalDelivered.toNumber() >= 20000) {
+            return 'stop'
+          }
+        }
+        if (enjoyNumber < 67) {
+          if (this._totalDelivered.toNumber() >= 40000) {
+            return 'stop'
+          }
+        }
+        if (this._totalDelivered.toNumber() >= 60000) {
+          return 'stop'
+        }
+    }
+    } else {
+      if (this._totalDelivered.toNumber() >= Number(this.maxsessionfundingValue)) {
+        return 'stop'
+      }
+    }
+    return 'progress'
+  }
+
   /**
    * raise event that will send bitcoin
    * TODO: refer to ilp-protocol-stream:Connection
@@ -229,7 +277,7 @@ export class BitcoinConnection extends EventEmitter {
     // wallet could make amount less than requested
     if (amountToSendFromStream.toNumber() > 0) {
       try {
-        if (doMeta === true) {
+        if (this.doMeta === true) {
           bundle.meta = this.getSessionData(amountToSendFromStream)
           this._log(bundle.meta)
           bundle.metahash = this._merkle.hash(bundle.meta)
@@ -253,8 +301,7 @@ export class BitcoinConnection extends EventEmitter {
       }
       try {
         // stop stream if there are no outputs
-        bundle.managerEvent = (bundle.buildResult.tx && wallet.countOutputs(bundle.buildResult.tx) === 0) 
-          ? 'stop' : 'progress'
+        bundle.managerEvent = this.getNextEvent(wallet, bundle)
         bundle.managerResponse = 
           bundle.managerEvent === 'stop' ? 
             await this.closeTheStream(bundle)
@@ -392,7 +439,7 @@ export class BitcoinConnection extends EventEmitter {
       if (!response.ok) {
         throw Error(`failed manager POST`)
       } else {
-        if (doMeta === true && method === 'stop') {
+        if (this.doMeta === true && method === 'stop') {
           this.storeMeta(managerResponse, bundle)
         }
         // update monetization status here

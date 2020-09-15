@@ -9,8 +9,8 @@ const useStyles = makeStyles((theme: Theme) =>
       width: 200,
     },
     margin: {
-      height: theme.spacing(3),
-      padding: '1rem',
+      // height: theme.spacing(2),
+      // padding: '1rem',
     },
   }),
 )
@@ -58,10 +58,6 @@ export default function EnjoymentMeter() {
 
   return (
     <div className={classes.root}>
-      {/* <Typography id="discrete-slider" gutterBottom>
-        Temperature
-      </Typography> */}
-
       <div className={classes.margin} />
       <Typography id="discrete-slider-restrict" gutterBottom>
         Choose your web experience

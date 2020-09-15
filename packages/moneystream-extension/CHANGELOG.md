@@ -1,3 +1,10 @@
+<a name="moneystream-extension@0.1.10"></a>
+
+# [moneystream-extension@0.1.10](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.10...moneystream-extension@0.1.9) (2020-09-10)
+
+### Features
+- Add Max Spend amount per session
+
 <a name="moneystream-extension@0.1.9"></a>
 
 # [moneystream-extension@0.1.9](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.9...moneystream-extension@0.1.8) (2020-09-10)
