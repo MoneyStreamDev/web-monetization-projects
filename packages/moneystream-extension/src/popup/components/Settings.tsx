@@ -7,6 +7,7 @@ import { StatusTypography } from './util/StatusTypography'
 import EnjoymentMeter from './EnjoymentMeter'
 import MaxSessionFunding from './MaxSessionFunding'
 import { HistoryPage } from './History'
+import UnitSelector from './UnitSelector'
 
 export const SettingsPage = (props: PopupProps) => {
   const [state, setState] = React.useState({
@@ -30,20 +31,12 @@ export const SettingsPage = (props: PopupProps) => {
         <StatusTypography variant='h6' align='center'>
           Settings
         </StatusTypography>
-        {/* <StatusTypography variant='subtitle1' align='center'>
-            MoneyStream switch
-            <Switch
-            checked={state.checkedCutOff}
-            onChange={handleChange}
-            name="checkedCutOff"
-            inputProps={{ 'aria-label': 'primary checkbox' }}
-            />
-        </StatusTypography> */}
         <EnjoymentMeter/>
         <div className="mb-20">
         <MaxSessionFunding/>
         </div>
         <HistoryPage context={context}/>
+        <UnitSelector/>
       </div>
     </Grid>
   )

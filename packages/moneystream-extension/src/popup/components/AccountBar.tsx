@@ -86,13 +86,6 @@ export const AccountBar = (props: PopupProps) => {
 
   const onExploreClick = tabOpener(`https://monstr.link`)
   const onAboutClick = tabOpener(`https://moneystreamdev.github.io/moneystream-project/`)
-  const onSettingsClick = () => {
-    //tabOpener(`${moneystreamDomain}/settings`)
-  }
-  const onWallet = () => {
-    //how to navigate to Status to fund?
-    //alert(`go to wallet page`)
-  }
   const onPayToUrlClick = () => {
      //context.router.history.push('/paytourl')
   }

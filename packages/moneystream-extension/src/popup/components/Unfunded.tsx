@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Grid, styled, Switch } from '@material-ui/core'
 
 import { Colors } from '../../shared-theme/colors'
@@ -50,7 +50,8 @@ const useStyles = makeStyles((theme) => ({
 
 export const Unfunded = (props: PopupProps) => {
   const [walletBalance, setWalletBalance] = useState(props.context.wallet?.balance)
-  const [state, setState] = React.useState({
+  const [balanceUnits, setBalanceUnits] = useState('Satoshis')
+  const [state, setState] = useState({
     checkedCutOff: localStorage.getItem(STORAGE_KEY.kill)
   })
   const {
@@ -64,11 +65,43 @@ export const Unfunded = (props: PopupProps) => {
   const showUnspent = tabOpener(`https://api.whatsonchain.com/v1/bsv/main/address/${wallet?.keyPair.toAddress().toString()}/unspent`)
   const showHistory = tabOpener(`https://api.whatsonchain.com/v1/bsv/main/address/${wallet?.keyPair.toAddress().toString()}/history`)
 
+  useEffect(() => {
+    showBalance()
+  })
+
+  async function showBalance() {
+    let balance = wallet?.balance
+    const unitsValue = localStorage.getItem(STORAGE_KEY.unitDisplay)
+    let units = 'Satoshis'
+    if (unitsValue) {
+      const unitsNumber = Number(unitsValue)
+      if (unitsNumber === 50) {
+        //TODO: get exchange
+        const exchangeValue = localStorage.getItem(STORAGE_KEY.exchangeRate) || 5000
+        const exchangeNumber = Number(exchangeValue)
+        balance = (balance || 0) / exchangeNumber / 100
+        units = 'USD'
+      }
+      if (unitsNumber === 100) {
+        const enjoyValue = localStorage.getItem(STORAGE_KEY.enjoy) || 0
+        const enjoyNumber = Number(enjoyValue)
+        let enjoyRate = 20
+        if (enjoyNumber === 50) enjoyRate = 40
+        if (enjoyNumber === 100) enjoyRate = 60
+        balance = Math.floor((balance || 0) / enjoyRate / 60)
+        units = 'Minutes'
+      }
+    }
+    await setWalletBalance(balance)
+    await setBalanceUnits(units)
+    //TODO: update background wallet
+
+  }
+
   // payment was received or sent
   async function walletRefresh() {
     await wallet?.loadUnspent()
-    await setWalletBalance(wallet?.balance)
-    //TODO: update background wallet
+    showBalance()
   }
 
   async function walletSend() {
@@ -154,7 +187,7 @@ export const Unfunded = (props: PopupProps) => {
           />
         </div>
         <StatusTypography variant='subtitle1'>
-          {`Balance ${walletBalance}`}&nbsp;
+          {`${walletBalance} ${balanceUnits}`}&nbsp;
           <Button variant="text" onClick={walletRefresh} text="refresh"></Button>
         </StatusTypography>
 

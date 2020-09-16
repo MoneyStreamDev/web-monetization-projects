@@ -16,8 +16,10 @@ export const STORAGE_KEY = {
   kill: 'monetizationKillSwitch',
   enjoy: 'monetizationEnjoyment',
   history: 'monetizationHistory',
-  maxsessionfunding: 'maxsessionfunding'
-  
+  maxsessionfunding: 'maxsessionfunding',
+  unitDisplay: 'unitDisplay',
+  exchangeRate: 'exchangeRate',
+  exchangeUpdate: 'exchangeUpdate'
 }
 
 /**
