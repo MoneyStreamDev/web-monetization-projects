@@ -7,6 +7,7 @@ import { PopupProps } from '../types'
 import { StatusButton } from './StatusButton'
 import { StatusTypography } from './util/StatusTypography'
 import { makeStyles } from '@material-ui/core/styles'
+import { STORAGE_KEY } from '../../types/storage'
 import MoneyButton from '@moneybutton/react-money-button'
 import Long from 'long'
 import { IndexingService } from 'moneystream-wallet'
@@ -47,12 +48,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const killKey = 'monetizationKillSwitch'
-
 export const Unfunded = (props: PopupProps) => {
   const [walletBalance, setWalletBalance] = useState(props.context.wallet?.balance)
   const [state, setState] = React.useState({
-    checkedCutOff: localStorage.getItem(killKey)
+    checkedCutOff: localStorage.getItem(STORAGE_KEY.kill)
   })
   const {
     context: {
@@ -109,7 +108,7 @@ export const Unfunded = (props: PopupProps) => {
 
   const handleChange = (event:any) => {
     setState({ ...state, [event.target.name]: event.target.checked })
-    localStorage.setItem(killKey, event.target.checked)
+    localStorage.setItem(STORAGE_KEY.kill, event.target.checked)
   }
 
   function getCutOff() : boolean|undefined {

@@ -12,7 +12,12 @@ export const STORAGE_KEY = {
   error: 'error',
   moneystreamSite: 'moneystreamSite',
   monetizedTotal: 'monetizedTotal',
-  monetizedFavicon: 'monetizedFavicon'
+  monetizedFavicon: 'monetizedFavicon',
+  kill: 'monetizationKillSwitch',
+  enjoy: 'monetizationEnjoyment',
+  history: 'monetizationHistory',
+  maxsessionfunding: 'maxsessionfunding'
+  
 }
 
 /**

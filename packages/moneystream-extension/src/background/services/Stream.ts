@@ -4,6 +4,7 @@ import { EventEmitter } from 'events'
 import { BitcoinConnection } from './BitcoinConnection'
 import { BitcoinStream } from './BitcoinStream'
 import { Wallet } from 'moneystream-wallet'
+import { STORAGE_KEY } from '../../types/storage'
 import {
   AdaptiveBandwidth,
   asyncUtils,
@@ -149,7 +150,7 @@ export class Stream extends EventEmitter {
 
   async start() {
     if (this._active) return
-    const kill = localStorage.getItem(killKey)
+    const kill = localStorage.getItem(STORAGE_KEY.kill)
     if (kill !== null) {
       if (kill === "false") {
         this._debug(`MoneyStream is off`)
@@ -357,8 +358,6 @@ interface StreamAttemptOptions {
   wallet: Wallet
   initiatingUrl: string
 }
-
-const killKey = 'monetizationKillSwitch'
 
 class StreamAttempt {
   private readonly _onMoney: (event: OnMoneyEvent) => void

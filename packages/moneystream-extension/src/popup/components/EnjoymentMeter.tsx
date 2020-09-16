@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
+import { STORAGE_KEY } from '../../types/storage'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,17 +39,15 @@ function valueLabelFormat(value: number) {
   return marks.findIndex(mark => mark.value === value) + 1;
 }
 
-const enjoyKey = 'monetizationEnjoyment'
-
 export default function EnjoymentMeter() {
   const [state, setState] = React.useState({
-    enjoyValue: localStorage.getItem(enjoyKey)
+    enjoyValue: localStorage.getItem(STORAGE_KEY.enjoy)
   })
   const classes = useStyles()
 
   const changed = (event:any, newValue:any) => {
     setState({ ...state, [event.target.name]: newValue })
-    localStorage.setItem(enjoyKey, newValue)
+    localStorage.setItem(STORAGE_KEY.enjoy, newValue)
   }
 
   function getEnjoy():number {

@@ -4,6 +4,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography';
 import { Link } from '@material-ui/core'
 import Switch from '@material-ui/core/Switch'
+import { STORAGE_KEY } from '../../types/storage'
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -29,11 +30,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   }))
 
-const historyKey = 'monetizationHistory'
-
 export const HistoryPage = (props: PopupProps) => {
     const [state, setState] = React.useState({
-      checkedHistory: localStorage.getItem(historyKey)
+      checkedHistory: localStorage.getItem(STORAGE_KEY.history)
     })
     const {
       context: {
@@ -47,7 +46,7 @@ export const HistoryPage = (props: PopupProps) => {
 
     const handleChange = (event:any) => {
       setState({ ...state, [event.target.name]: event.target.checked })
-      localStorage.setItem(historyKey, event.target.checked)
+      localStorage.setItem(STORAGE_KEY.history, event.target.checked)
     }
 
     function getSetting() : boolean|undefined {

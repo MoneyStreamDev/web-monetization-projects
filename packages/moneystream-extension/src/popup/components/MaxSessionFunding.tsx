@@ -2,6 +2,7 @@ import React from 'react'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
+import { STORAGE_KEY } from '../../types/storage'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -15,11 +16,9 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-const maxsessionfundingKey = 'maxsessionfunding'
-
 export default function MaxSessionFunding() {
   const [state, setState] = React.useState({
-    maxsessionfundingValue: localStorage.getItem(maxsessionfundingKey)
+    maxsessionfundingValue: localStorage.getItem(STORAGE_KEY.maxsessionfunding)
   })
   const classes = useStyles()
 
@@ -31,7 +30,7 @@ export default function MaxSessionFunding() {
   const handleChange = (event:any) => {
     console.log(event)
     setState({ ...state, [event.target.name]: event.target.value })
-    localStorage.setItem(maxsessionfundingKey, event.target.value)
+    localStorage.setItem(STORAGE_KEY.maxsessionfunding, event.target.value)
   }
 
   return (

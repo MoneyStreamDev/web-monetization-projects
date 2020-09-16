@@ -2,6 +2,7 @@ export interface AdaptiveBandwidthTiers {
   getBandwidth(url: string): Promise<number>
 }
 
+//TODO: reference types or pass in
 const enjoyKey = 'monetizationEnjoyment'
 
 export class AdaptiveBandwidth {

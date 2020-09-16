@@ -3,14 +3,12 @@ import * as Long from 'long'
 import { Logger, logger } from './utils'
 import { BitcoinStream } from './BitcoinStream'
 import { Wallet, OutputCollection, Merkle } from 'moneystream-wallet'
+import { STORAGE_KEY } from '../../types/storage'
 import { Tx } from 'bsv'
 import { portableFetch, SPSPResponse } from '@web-monetization/polyfill-utils'
 import { Favicons } from './Favicons'
 
 // set to true to store metadata onchain and locally
-const historyKey = 'monetizationHistory'
-const maxsessionfundingKey = 'maxsessionfunding'
-const enjoyKey = 'monetizationEnjoyment'
 const metaurl = "http://localhost:3013/api"
 
 const TXT_CHANNEL = "moneystream"
@@ -111,9 +109,9 @@ export class BitcoinConnection extends EventEmitter {
   async createStream (): Promise<BitcoinStream> {
     const stream = new BitcoinStream({id:999,isServer:false,connectionId:"badconx"}, this._log)
       this._stream = stream
-      this.historyValue = localStorage.getItem(historyKey)
-      this.maxsessionfundingValue = localStorage.getItem(maxsessionfundingKey)
-      this.enjoyValue = localStorage.getItem(enjoyKey)
+      this.historyValue = localStorage.getItem(STORAGE_KEY.history)
+      this.maxsessionfundingValue = localStorage.getItem(STORAGE_KEY.maxsessionfunding)
+      this.enjoyValue = localStorage.getItem(STORAGE_KEY.enjoy)
       this.doMeta = this.historyValue === null ? false : this.historyValue === "true"
       
       stream.on('_maybe_start_send_loop', this.startSendLoop.bind(this))
