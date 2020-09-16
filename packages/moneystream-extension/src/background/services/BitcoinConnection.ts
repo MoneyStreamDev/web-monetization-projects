@@ -228,9 +228,12 @@ export class BitcoinConnection extends EventEmitter {
         return 'stop'
     }
     // check user maximum session amount policy
-    if (this.maxsessionfundingValue === null) {
+    if (this.maxsessionfundingValue === null
+      || this.maxsessionfundingValue === ''
+      ) {
       // use reasonable defaults
-      if (this.enjoyValue === null) {
+      if (this.enjoyValue === null
+        || this.enjoyValue === '') {
         // no info to work from, make some default
         if (this._totalDelivered.toNumber() >= 20000) {
           return 'stop'
