@@ -4,6 +4,8 @@
 
 ### Features
 - Add Max Spend amount per session
+- Option for balance display in Satoshis, USD or Minutes
+- Add Exchange rate lookup
 
 <a name="moneystream-extension@0.1.9"></a>
 
