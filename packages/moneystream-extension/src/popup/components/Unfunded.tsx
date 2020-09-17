@@ -48,6 +48,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
+const exchange_url = `https://cash.bitcoinofthings.com/exchange`
+
 export const Unfunded = (props: PopupProps) => {
   const [walletBalance, setWalletBalance] = useState(props.context.wallet?.balance)
   const [balanceUnits, setBalanceUnits] = useState('Satoshis')
@@ -69,6 +71,36 @@ export const Unfunded = (props: PopupProps) => {
     showBalance()
   })
 
+  function elapsed(from: Date) {
+    const time = new Date()
+    const timeElapsed = time.getTime() - from.getTime()
+    const secondsElapsed = timeElapsed / 1000
+    return secondsElapsed
+  }
+
+  async function getExchange() {
+    let exchangeValue = localStorage.getItem(STORAGE_KEY.exchangeRate) || ''
+    let exchangeUpdate = localStorage.getItem(STORAGE_KEY.exchangeUpdate) || ''
+    if (!exchangeValue) {
+        const response = await fetch(exchange_url)
+        const exchange = await response.json()
+        exchangeValue = exchange.data?.rate || ''
+        exchangeUpdate = new Date().toUTCString()
+        localStorage.setItem(STORAGE_KEY.exchangeRate, exchangeValue)
+        localStorage.setItem(STORAGE_KEY.exchangeUpdate, exchangeUpdate)
+    }
+    const elapsedSeconds = elapsed(new Date(exchangeUpdate))
+    if (elapsedSeconds > 60 * 30) {
+      const response = await fetch(exchange_url)
+      const exchange = await response.json()
+      exchangeValue = exchange.data?.rate || ''
+      exchangeUpdate = new Date().toUTCString()
+      localStorage.setItem(STORAGE_KEY.exchangeRate, exchangeValue)
+      localStorage.setItem(STORAGE_KEY.exchangeUpdate, exchangeUpdate)
+    }
+    return Number(exchangeValue)
+  }
+
   async function showBalance() {
     let balance = wallet?.balance
     const unitsValue = localStorage.getItem(STORAGE_KEY.unitDisplay)
@@ -77,9 +109,9 @@ export const Unfunded = (props: PopupProps) => {
       const unitsNumber = Number(unitsValue)
       if (unitsNumber === 50) {
         //TODO: get exchange
-        const exchangeValue = localStorage.getItem(STORAGE_KEY.exchangeRate) || 5000
-        const exchangeNumber = Number(exchangeValue)
-        balance = (balance || 0) / exchangeNumber / 100
+        const exchangeNumber = await getExchange()
+        const SAT_PER_CENT = 1e8/(exchangeNumber*100)
+        balance = (balance || 0) / SAT_PER_CENT / 100
         units = 'USD'
       }
       if (unitsNumber === 100) {
