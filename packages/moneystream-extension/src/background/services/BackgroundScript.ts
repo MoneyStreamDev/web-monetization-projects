@@ -45,6 +45,9 @@ import { BackgroundFramesService } from './BackgroundFramesService'
 import { StreamAssociations } from './StreamAssociations'
 import { Wallet } from 'moneystream-wallet'
 
+// triggers monetized icon, was 1500
+const MONETIZED_TRIGGER = 700
+
 @injectable()
 export class BackgroundScript {
   constructor(
@@ -548,7 +551,7 @@ export class BackgroundScript {
     const newFrameTotal = frameTotal + Number(details?.sentAmount ?? 0)
     //TODO: look at return message from service to set this status
     // console.log(`handle monetized ${newFrameTotal}`)
-    if (newFrameTotal < 1500) {
+    if (newFrameTotal < MONETIZED_TRIGGER) {
       this.setFramePending({ tabId, frameId }, url, newFrameTotal)
     } else {
       this.setFrameMonetized({ tabId, frameId }, url, newFrameTotal)

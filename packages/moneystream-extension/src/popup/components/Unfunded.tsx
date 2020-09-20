@@ -12,7 +12,6 @@ import MoneyButton from '@moneybutton/react-money-button'
 import Long from 'long'
 import { IndexingService } from 'moneystream-wallet'
 
-const titleString = 'MoneyStream is early Alpha!'
 const subheading1 = 'Only fund using a few pennies.'
 const footerString = 'No subscription nor membership required!'
 
@@ -53,6 +52,8 @@ const exchange_url = `https://cash.bitcoinofthings.com/exchange`
 export const Unfunded = (props: PopupProps) => {
   const [walletBalance, setWalletBalance] = useState(props.context.wallet?.balance)
   const [balanceUnits, setBalanceUnits] = useState('Satoshis')
+  const [extensionName, setExtensionName] = useState('MS')
+  const [extensionVersion, setExtensionVersion] = useState('v0.0.0')
   const [state, setState] = useState({
     checkedCutOff: localStorage.getItem(STORAGE_KEY.kill)
   })
@@ -68,8 +69,21 @@ export const Unfunded = (props: PopupProps) => {
   const showHistory = tabOpener(`https://api.whatsonchain.com/v1/bsv/main/address/${wallet?.keyPair.toAddress().toString()}/history`)
 
   useEffect(() => {
+    getInfo()
     showBalance()
   })
+
+  function getInfo() {
+    chrome.runtime.sendMessage(
+      {command: "info"}, 
+      response => {
+        if (!chrome.runtime.lastError) {
+          console.log(response)
+            setExtensionName(response?.name)
+            setExtensionVersion(response?.version)
+        }
+      })
+  }
 
   function elapsed(from: Date) {
     const time = new Date()
@@ -111,7 +125,7 @@ export const Unfunded = (props: PopupProps) => {
         //TODO: get exchange
         const exchangeNumber = await getExchange()
         const SAT_PER_CENT = 1e8/(exchangeNumber*100)
-        balance = (balance || 0) / SAT_PER_CENT / 100
+        balance = Math.floor((balance || 0) / SAT_PER_CENT *100) / 10000
         units = 'USD'
       }
       if (unitsNumber === 100) {
@@ -196,7 +210,7 @@ export const Unfunded = (props: PopupProps) => {
           />
         </StatusTypography>
         <StatusTypography variant='h6' align='center'>
-          {titleString}
+          {`${extensionName} ${extensionVersion} Alpha`}
         </StatusTypography>
         <StatusTypography variant='subtitle1' align='center'>
           {subheading1}

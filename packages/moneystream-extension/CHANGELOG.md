@@ -1,3 +1,11 @@
+<a name="moneystream-extension@0.1.11"></a>
+
+# [moneystream-extension@0.1.11](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.11...moneystream-extension@0.1.10) (2020-09-17)
+
+### Features
+- Add version display
+- Adjust monetized icon
+
 <a name="moneystream-extension@0.1.10"></a>
 
 # [moneystream-extension@0.1.10](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.10...moneystream-extension@0.1.9) (2020-09-10)
