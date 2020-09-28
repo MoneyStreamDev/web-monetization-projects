@@ -1,3 +1,10 @@
+<a name="moneystream-extension@0.1.12"></a>
+
+# [moneystream-extension@0.1.12](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.12...moneystream-extension@0.1.11) (2020-09-19)
+
+### Features
+- stop sending two 'stop' api calls
+
 <a name="moneystream-extension@0.1.11"></a>
 
 # [moneystream-extension@0.1.11](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.11...moneystream-extension@0.1.10) (2020-09-17)

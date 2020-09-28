@@ -371,6 +371,7 @@ class StreamAttempt {
   private _connection!: BitcoinConnection
   private _serviceProvider: string
   private _active = true
+  private _isShuttingDown = false
   private _lastDelivered = 0
   private _requestId: string
   private _wallet: Wallet
@@ -512,7 +513,8 @@ class StreamAttempt {
 
   async stop(): Promise<void> {
     this._active = false
-    if (!this._connection) return
+    if (!this._connection || this._isShuttingDown) return
+    this._isShuttingDown = true
 
     this._debug('initiating stream shutdown')
     if (this._bitcoinStream.isOpen()) {
