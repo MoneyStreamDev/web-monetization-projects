@@ -26,20 +26,23 @@ export class MetanetService {
       const chunk = await resp.text()
 
       this.log('searching page length', chunk.length)
-      //const searcher = /"channelId":"(.*?)"|data-channel-external-id="(.*?)"/g
-      const searcher = /<a class='username' [^>]+>[^(]+ \(([^)]+)\)/i
+      // first search powping
+      let searcher = /<a class='username' [^>]+>[^(]+ \(([^)]+)\)/i
       let searched: RegExpExecArray | null = null
       let found: string | null = null
-      // do {
-        searched = searcher.exec(chunk)
-        if (searched) {
-          this.log(searched)
-          found = searched[1]
-          this.log('found', found)
-         } //else {
-      //     this.log('not found')
-      //   }
-      // } while (searched)
+      searched = searcher.exec(chunk)
+      if (searched) {
+        found = searched[1]
+        this.log('found', found)
+      }
+      if (found) return found ?? null
+      // search for powpress clipboard info
+      searcher = /<p>signed:&nbsp;<a href="[\S]+"\>([\S]+)<\/a>/i
+      searched = searcher.exec(chunk)
+      if (searched) {
+        found = searched[1]
+        this.log('found', found)
+      }
       return found ?? null
     }
   }

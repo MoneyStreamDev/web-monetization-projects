@@ -65,8 +65,16 @@ export class AdaptedContentService {
     let paymailPointer = null
     const variables = { url }
     if (site === 'powping') {
-      console.log(`POWPING ${url}`)
-      //TODO: fetch page
+      //could get page or could get from metanet
+      const paymail = await this.fetchMetanet(url)
+      debug('paymail', { paymail })
+      if (paymail) {
+        debug('found paymail', paymail, 'for', url)
+        // Object.assign(variables, { channelId })
+        paymailPointer = paymail
+      }
+    }
+    if (site === 'medium' || site === 'wordpress') {
       //could get page or could get from metanet
       const paymail = await this.fetchMetanet(url)
       debug('paymail', { paymail })

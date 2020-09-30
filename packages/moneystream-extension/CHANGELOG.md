@@ -1,3 +1,10 @@
+<a name="moneystream-extension@0.1.13"></a>
+
+# [moneystream-extension@0.1.13](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.13...moneystream-extension@0.1.12) (2020-09-29)
+
+### Features
+- Monetize PowPress content on WordPress and Medium
+
 <a name="moneystream-extension@0.1.12"></a>
 
 # [moneystream-extension@0.1.12](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.12...moneystream-extension@0.1.11) (2020-09-19)
