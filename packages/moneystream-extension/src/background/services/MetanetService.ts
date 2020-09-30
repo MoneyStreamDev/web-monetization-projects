@@ -43,6 +43,14 @@ export class MetanetService {
         found = searched[1]
         this.log('found', found)
       }
+      if (found) return found ?? null
+      // on medium
+      searcher = /<strong class="[\S]+ [\S+]+"><em class="[\S]+">([\S]+)<\/em><\/strong>/i
+      searched = searcher.exec(chunk)
+      if (searched) {
+        found = searched[1]
+        this.log('found', found)
+      }
       return found ?? null
     }
   }

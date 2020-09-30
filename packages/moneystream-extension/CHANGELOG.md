@@ -1,3 +1,10 @@
+<a name="moneystream-extension@0.1.14"></a>
+
+# [moneystream-extension@0.1.14](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.14...moneystream-extension@0.1.13) (2020-09-30)
+
+### Features
+- Fix medium monetization
+
 <a name="moneystream-extension@0.1.13"></a>
 
 # [moneystream-extension@0.1.13](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.13...moneystream-extension@0.1.12) (2020-09-29)
