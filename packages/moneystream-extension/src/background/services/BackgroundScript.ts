@@ -46,7 +46,7 @@ import { StreamAssociations } from './StreamAssociations'
 import { Wallet } from 'moneystream-wallet'
 
 // triggers monetized icon, was 1500
-const MONETIZED_TRIGGER = 700
+const MONETIZED_TRIGGER = 650
 
 @injectable()
 export class BackgroundScript {
@@ -339,6 +339,27 @@ export class BackgroundScript {
           address: this.wallet?.keyPair.toAddress().toString()
         })
         break
+      case 'play':
+          this.log('play command:', request.data)
+          // start a stream
+          sendResponse(await this.startWebMonetization(
+            {
+              command: 'startWebMonetization',
+              data:{
+              requestId:'uuid_here',
+              paymentPointer:'bcsott@moneybutton.com',
+              initiatingUrl:'https://moneystreamdev.github.io/moneystream-project/',
+              serviceProviderUrl:''
+              }
+            }, sender))
+          sendResponse({
+            result: `played`
+          })
+          break
+      case 'stop':
+            this.log('stop command:', request.data)
+            sendResponse(this.stopWebMonetization(sender))
+            break
       case 'log':
         this.log('log command:', request.data)
         sendResponse(true)
@@ -389,7 +410,7 @@ export class BackgroundScript {
         )
         break
       case 'startWebMonetization':
-        this.log('got startwebmonetization')
+        console.log(request)
         sendResponse(await this.startWebMonetization(request, sender))
         break
       case 'pauseWebMonetization':

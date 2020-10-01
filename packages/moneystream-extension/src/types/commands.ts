@@ -42,6 +42,20 @@ export interface SetStreamControls extends Command {
 export interface Info extends Command {
   command: 'info'
 }
+/**
+ * content -> background
+ * browser.runtime.sendMessage
+ */
+export interface Play extends Command {
+  command: 'play'
+}
+/**
+ * content -> background
+ * browser.runtime.sendMessage
+ */
+export interface Stop extends Command {
+  command: 'stop'
+}
 
 /**
  * content -> background
@@ -210,6 +224,8 @@ export type ToBackgroundMessage =
   | OnFrameAllowedChanged
   | PaymentReceived
   | Info
+  | Play
+  | Stop
 
 export type IconState =
   | 'streaming-paused'

@@ -3,7 +3,7 @@ import { PopupProps } from '../types'
 
 import { NoWallet } from './NoWallet'
 import { Unfunded } from './Unfunded'
-// import { PaidViews } from './PaidViews'
+import { PaidViews } from './PaidViews'
 import { Wallet } from 'moneystream-wallet'
 
 export interface IUser {
