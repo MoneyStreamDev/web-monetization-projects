@@ -42,6 +42,30 @@ export interface SetStreamControls extends Command {
 export interface Info extends Command {
   command: 'info'
 }
+/**
+ * content -> background
+ * browser.runtime.sendMessage
+ */
+export interface Start extends Command {
+  command: 'start',
+  data: any
+}
+/**
+ * content -> background
+ * browser.runtime.sendMessage
+ */
+export interface Progress extends Command {
+  command: 'progress',
+  data: any
+}
+
+/**
+ * content -> background
+ * browser.runtime.sendMessage
+ */
+export interface Stop extends Command {
+  command: 'stop'
+}
 
 /**
  * content -> background
@@ -210,6 +234,9 @@ export type ToBackgroundMessage =
   | OnFrameAllowedChanged
   | PaymentReceived
   | Info
+  | Start
+  | Stop
+  | Progress
 
 export type IconState =
   | 'streaming-paused'
@@ -281,6 +308,19 @@ export interface MonetizationStart {
   data: {
     requestId: string
     paymentPointer: string
+  }
+}
+
+/**
+ *  background -> content
+ *  browser.tabs.sendMessage
+ */
+export interface MonetizationStop {
+  command: 'monetizationStop'
+  data: {
+    requestId: string,
+    paymentPointer: string
+    finalized: boolean
   }
 }
 
@@ -365,6 +405,7 @@ export type ToContentMessage =
   | CheckAdaptedContent
   | MonetizationProgress
   | MonetizationStart
+  | MonetizationStop
   | SetMonetizationState
   | CheckIFrameIsAllowedFromBackground
   | ReportCorrelationIdToParentContentScript

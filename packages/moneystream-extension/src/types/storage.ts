@@ -19,7 +19,8 @@ export const STORAGE_KEY = {
   maxsessionfunding: 'maxsessionfunding',
   unitDisplay: 'unitDisplay',
   exchangeRate: 'exchangeRate',
-  exchangeUpdate: 'exchangeUpdate'
+  exchangeUpdate: 'exchangeUpdate',
+  exportBalance: 'exportBalance'
 }
 
 /**

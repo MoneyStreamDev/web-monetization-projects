@@ -117,6 +117,7 @@ export class ContentScript {
   setRuntimeMessageListener() {
     this.runtime.onMessage.addListener(
       (request: ToContentMessage, sender, sendResponse) => {
+        console.log(request)
         if (request.command === 'checkAdaptedContent') {
           if (request.data && request.data.from) {
             debug(
@@ -144,6 +145,11 @@ export class ContentScript {
         } else if (request.command === 'monetizationStart') {
           debug('monetizationStart event')
           this.monetization.postMonetizationStartWindowMessageAndSetMonetizationState(
+            request.data
+          )
+        } else if (request.command === 'monetizationStop') {
+          debug('monetizationStop event')
+          this.monetization.postMonetizationStopWindowMessage(
             request.data
           )
         } else if (request.command === 'checkIFrameIsAllowedFromBackground') {

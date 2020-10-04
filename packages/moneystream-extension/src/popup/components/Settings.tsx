@@ -8,6 +8,7 @@ import EnjoymentMeter from './EnjoymentMeter'
 import MaxSessionFunding from './MaxSessionFunding'
 import { HistoryPage } from './History'
 import UnitSelector from './UnitSelector'
+import StorageSwitch from './StorageSwitch'
 
 export const SettingsPage = (props: PopupProps) => {
   const [state, setState] = React.useState({
@@ -28,15 +29,16 @@ export const SettingsPage = (props: PopupProps) => {
   return (
     <Grid container justify='center' alignItems='center'>
       <div>
-        <StatusTypography variant='h6' align='center'>
+        {/* <StatusTypography variant='h6' align='center'>
           Settings
-        </StatusTypography>
+        </StatusTypography> */}
         <EnjoymentMeter/>
         <div className="mb-20">
         <MaxSessionFunding/>
         </div>
         <HistoryPage context={context}/>
         <UnitSelector/>
+        <StorageSwitch/>
       </div>
     </Grid>
   )

@@ -1,3 +1,6 @@
+// Don't like how StreamAttempt deals with Stream
+// need to abort attempt, how to get ref to Stream?
+
 // const makeDebug = require('debug')
 import { EventEmitter } from 'events'
 
@@ -204,7 +207,7 @@ export class Stream extends EventEmitter {
           debug: this.container.get(tokens.Logger),
           wallet: this._wallet,
           initiatingUrl: this._initiatingUrl
-        })
+        }, this)
         if (this._active) {
           this._debug(`starting attempt`)
           await attempt.start()
@@ -367,6 +370,7 @@ class StreamAttempt {
   private readonly _plugin: any //IlpPluginBtp
   private readonly _spspDetails: SPSPResponse
 
+  private _stream: Stream
   private _bitcoinStream!: BitcoinStream
   private _connection!: BitcoinConnection
   private _serviceProvider: string
@@ -377,7 +381,8 @@ class StreamAttempt {
   private _wallet: Wallet
   private _initiatingUrl: string
 
-  constructor(opts: StreamAttemptOptions) {
+  constructor(opts: StreamAttemptOptions, stream: Stream) {
+    this._stream = stream
     this._onMoney = opts.onMoney
     this._requestId = opts.requestId
     this._bandwidth = opts.bandwidth
@@ -425,6 +430,7 @@ class StreamAttempt {
         const receipt = this._bitcoinStream.receipt
           ? this._bitcoinStream.receipt.toString('base64')
           : undefined
+        // console.log(`ONMONEY STREAM ${receipt}`)
         setImmediate(this.onMoney.bind(this), sentAmount, receipt)
       }
 
@@ -462,13 +468,16 @@ class StreamAttempt {
       }
 
       const onConnectionError = (err: Error) => {
-        this._debug('onConnectionError(%s)', err)
+        this._debug(`onConnectionError(${err})`)
         cleanUp()
         reject(err)
       }
 
       const onStreamError = (err: Error) => {
-        this._debug('onStreamError(%s)', err)
+        this._debug(`onStreamError(${err})`)
+        // raise the stopmonetization back to page
+        //this.stop()
+        this._stream.emit('abort', this._requestId)
         cleanUp()
         reject(err)
       }

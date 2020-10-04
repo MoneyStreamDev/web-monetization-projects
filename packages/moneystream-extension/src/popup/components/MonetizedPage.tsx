@@ -22,7 +22,7 @@ const FlexBox = styled('div')(({ theme }) => ({
 export function MonetizedPage(props: PopupProps) {
   const [limitRefreshDate, setLimitRefreshDate] = useState<string | null>(null)
   const [showControls, onClick] = useShowIfClicked({
-    clicksRequired: 9,
+    clicksRequired: 3,
     withinMs: 5000,
     key: 'showStreamingControls'
   })

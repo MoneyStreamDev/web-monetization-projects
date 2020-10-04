@@ -39,6 +39,7 @@ export class Streams extends EventEmitter {
     child.bind(tokens.StreamDetails).toConstantValue({ ...options })
     this._streams[id] = child.get(Stream)
     this._streams[id].on('money', details => {
+      // console.log(`ONMONEY STREAMS ${JSON.stringify(details)}`)
       this.emit('money', { url: options.initiatingUrl, id, ...details })
     })
     this._streams[id].on('abort', requestId => {
