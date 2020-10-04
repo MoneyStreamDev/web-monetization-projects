@@ -26,7 +26,7 @@ import {
   ToBackgroundMessage,
   TipSent
 } from '../../types/commands'
-import { LocalStorageProxy } from '../../types/storage'
+import { LocalStorageProxy, STORAGE_KEY } from '../../types/storage'
 import { TabState } from '../../types/TabState'
 import { getFrameSpec, getTab } from '../../util/tabs'
 import { FrameSpec } from '../../types/FrameSpec'
@@ -239,6 +239,7 @@ export class BackgroundScript {
   private routeStreamsMoneyEventsToContentScript() {
     // pass stream monetization events to the correct tab
     this.streams.on('money', (details: StreamMoneyEvent) => {
+      console.log(`ONMONEY BGS ${JSON.stringify(details)}`)
       const frame = this.assoc.getFrame(details.requestId)
       const { tabId, frameId } = frame
       if (details.packetNumber === 0) {
@@ -267,6 +268,7 @@ export class BackgroundScript {
       }
       this.handleMonetizedSite(frame, details.initiatingUrl, details)
       this.api.tabs.sendMessage(tabId, message, { frameId })
+      console.log(`ONMONEY SENDMESS ${tabId} ${JSON.stringify(message)} ${frameId}`)
       this.savePacketToHistoryDb(details)
     })
   }
@@ -333,33 +335,72 @@ export class BackgroundScript {
       case 'info':
         this.log('info command:', request.data)
         const man = this.api.runtime.getManifest()
+        const showBalanceValue = this.storage.getRaw(STORAGE_KEY.exportBalance)
+        const showBalance = showBalanceValue === null ? false : showBalanceValue === "true"
+        // TODO: await seems to only work inside sendResponse???
+        // const utxos = await this.wallet.loadUnspent()
+        // console.log(utxos)
         sendResponse({
           name: man.name,
           version: man.version,
-          address: this.wallet?.keyPair.toAddress().toString()
+          address: this.wallet?.keyPair.toAddress().toString(),
+          balanceSatoshis: showBalance ? (await this.wallet.loadUnspent()).spendable().satoshis : null,
+          exchangeRate: this.storage.getRaw(STORAGE_KEY.exchangeRate),
+          exchangeUpdate: this.storage.getRaw(STORAGE_KEY.exchangeUpdate)
         })
         break
-      case 'play':
-          this.log('play command:', request.data)
+      case 'start':
+          this.log('start command:', request.data)
+          const kill = this.storage.getRaw(STORAGE_KEY.kill)
+          if (kill !== null) {
+            if (kill === "false") {
+              sendResponse(false)
+            }
+          }
           // start a stream
           sendResponse(await this.startWebMonetization(
             {
               command: 'startWebMonetization',
-              data:{
-              requestId:'uuid_here',
-              paymentPointer:'bcsott@moneybutton.com',
-              initiatingUrl:'https://moneystreamdev.github.io/moneystream-project/',
-              serviceProviderUrl:''
-              }
+              data: request.data
             }, sender))
-          sendResponse({
-            result: `played`
-          })
+          this.sendSetMonetizationStateMessage(getFrameSpec(sender), 'started')
+          this.storage.set('error', false)
+          this.storage.set('monetized', true)
           break
-      case 'stop':
+        case 'progress':
+            // TODO: StreamAttempt should be raising this event instead!
+            const kill_prog = this.storage.getBoolean(STORAGE_KEY.kill)
+            if (!kill_prog) {
+              sendResponse(false)
+            } else {
+              sendResponse(true)
+              // raise monetization progress event to the browser
+              // TODO: get these values from current stream
+              const message: MonetizationProgress = {
+                command: 'monetizationProgress',
+                data: {
+                  paymentPointer: 'test@test.com',
+                  serviceProviderUrl: 'url',
+                  amount: this.storage.getRaw('monetizedTotal') || '',
+                  assetCode: 'BSV',
+                  requestId: request.data.requestId,
+                  assetScale: 8,
+                  sentAmount: this.storage.getRaw('monetizedTotal') || '',
+                  // receipt: details.receipt
+                }
+              }
+              const { tabId, frameId } = getFrameSpec(sender)
+              this.api.tabs.sendMessage(tabId, message, { frameId })
+              this.storage.set('monetized', true)
+            }
+          break
+        case 'stop':
             this.log('stop command:', request.data)
             sendResponse(this.stopWebMonetization(sender))
-            break
+            this.sendSetMonetizationStateMessage(getFrameSpec(sender), 'stopped')
+            this.storage.set('error', false)
+            this.storage.set('monetized', false)
+          break
       case 'log':
         this.log('log command:', request.data)
         sendResponse(true)
@@ -934,6 +975,7 @@ export class BackgroundScript {
         state
       }
     }
+    console.log(message)
     this.api.tabs.sendMessage(tabId, message, { frameId })
   }
 

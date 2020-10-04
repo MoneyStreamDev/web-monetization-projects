@@ -425,6 +425,7 @@ class StreamAttempt {
         const receipt = this._bitcoinStream.receipt
           ? this._bitcoinStream.receipt.toString('base64')
           : undefined
+        console.log(`ONMONEY STREAM ${receipt}`)
         setImmediate(this.onMoney.bind(this), sentAmount, receipt)
       }
 

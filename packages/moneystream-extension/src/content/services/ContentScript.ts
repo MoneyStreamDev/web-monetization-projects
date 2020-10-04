@@ -140,6 +140,7 @@ export class ContentScript {
             paymentPointer: request.data.paymentPointer,
             requestId: request.data.requestId
           }
+          console.log(request)
           this.monetization.postMonetizationProgressWindowMessage(detail)
         } else if (request.command === 'monetizationStart') {
           debug('monetizationStart event')

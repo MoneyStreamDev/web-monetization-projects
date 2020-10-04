@@ -148,6 +148,10 @@ export class DocumentMonetization {
     // stopWebMonetization message handler has had a chance to run.
     if (this.request?.requestId === detail.requestId) {
       this.postMonetizationMessage('monetizationprogress', detail)
+    } else {
+      console.log(`aint got ${this.request?.requestId}. post it anyway, but something went wrong`)
+      console.log(detail)
+      this.postMonetizationMessage('monetizationprogress', detail)
     }
   }
 

@@ -24,6 +24,9 @@
       "https://moneystreamdev.github.io/*",
       "https://bitcoinofthings.com/*",
       "https://upubsub.com/*",
+      "https://www.fullcyclemining.com/*",
+      "https://develop.mymovies.us/*",
+      "https://bcstudios.us/*",
       "https://*/*",
       "*://localhost/*"
     ]

@@ -46,9 +46,19 @@ export interface Info extends Command {
  * content -> background
  * browser.runtime.sendMessage
  */
-export interface Play extends Command {
-  command: 'play'
+export interface Start extends Command {
+  command: 'start',
+  data: any
 }
+/**
+ * content -> background
+ * browser.runtime.sendMessage
+ */
+export interface Progress extends Command {
+  command: 'progress',
+  data: any
+}
+
 /**
  * content -> background
  * browser.runtime.sendMessage
@@ -224,8 +234,9 @@ export type ToBackgroundMessage =
   | OnFrameAllowedChanged
   | PaymentReceived
   | Info
-  | Play
+  | Start
   | Stop
+  | Progress
 
 export type IconState =
   | 'streaming-paused'
