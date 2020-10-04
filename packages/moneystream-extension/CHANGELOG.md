@@ -3,7 +3,9 @@
 # [moneystream-extension@0.1.15](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.15...moneystream-extension@0.1.14) (2020-10-01)
 
 ### Features
-- 
+- Option to export wallet balance
+- Commands for web page to start and stop monetization
+- Emit monetizationstop event to page
 
 <a name="moneystream-extension@0.1.14"></a>
 
