@@ -312,6 +312,19 @@ export interface MonetizationStart {
 }
 
 /**
+ *  background -> content
+ *  browser.tabs.sendMessage
+ */
+export interface MonetizationStop {
+  command: 'monetizationStop'
+  data: {
+    requestId: string,
+    paymentPointer: string
+    finalized: boolean
+  }
+}
+
+/**
  *  background -> popup
  *  browser.tabs.sendMessage
  */
@@ -392,6 +405,7 @@ export type ToContentMessage =
   | CheckAdaptedContent
   | MonetizationProgress
   | MonetizationStart
+  | MonetizationStop
   | SetMonetizationState
   | CheckIFrameIsAllowedFromBackground
   | ReportCorrelationIdToParentContentScript

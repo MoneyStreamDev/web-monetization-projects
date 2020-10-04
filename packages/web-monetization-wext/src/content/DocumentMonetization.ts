@@ -155,6 +155,21 @@ export class DocumentMonetization {
     }
   }
 
+  postMonetizationStopWindowMessage(
+    detail: MonetizationStopEvent['detail']
+  ) {
+    // Protect against extremely unlikely race condition
+    // A progress message coming before a content -> background script
+    // stopWebMonetization message handler has had a chance to run.
+    if (this.request?.requestId === detail.requestId) {
+      this.postMonetizationMessage('monetizationstop', detail)
+    } else {
+      console.log(`aint got ${this.request?.requestId}. post it anyway, but something went wrong`)
+      console.log(detail)
+      this.postMonetizationMessage('monetizationstop', detail)
+    }
+  }
+
   postTipMessage(type: TipEvent['type'], detailSource: TipEvent['detail']) {
     const detail = { ...detailSource }
 

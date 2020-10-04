@@ -15,6 +15,7 @@ import {
   ContentScriptInit,
   MonetizationProgress,
   MonetizationStart,
+  MonetizationStop,
   OnFrameAllowedChanged,
   PauseWebMonetization,
   ReportCorrelationIdFromIFrameContentScript,
@@ -239,7 +240,7 @@ export class BackgroundScript {
   private routeStreamsMoneyEventsToContentScript() {
     // pass stream monetization events to the correct tab
     this.streams.on('money', (details: StreamMoneyEvent) => {
-      console.log(`ONMONEY BGS ${JSON.stringify(details)}`)
+      // console.log(`ONMONEY BGS ${JSON.stringify(details)}`)
       const frame = this.assoc.getFrame(details.requestId)
       const { tabId, frameId } = frame
       if (details.packetNumber === 0) {
@@ -268,7 +269,7 @@ export class BackgroundScript {
       }
       this.handleMonetizedSite(frame, details.initiatingUrl, details)
       this.api.tabs.sendMessage(tabId, message, { frameId })
-      console.log(`ONMONEY SENDMESS ${tabId} ${JSON.stringify(message)} ${frameId}`)
+      //console.log(`ONMONEY SENDMESS ${tabId} ${JSON.stringify(message)} ${frameId}`)
       this.savePacketToHistoryDb(details)
     })
   }
@@ -325,6 +326,7 @@ export class BackgroundScript {
     }
   }
 
+  // messages from web page to content script (chrome)
   async handleMessageExternal(
     request: ToBackgroundMessage,
     sender: MessageSender,
@@ -368,7 +370,7 @@ export class BackgroundScript {
           this.storage.set('monetized', true)
           break
         case 'progress':
-            // TODO: StreamAttempt should be raising this event instead!
+            // StreamAttempt is raising this event. No needs to call it
             const kill_prog = this.storage.getBoolean(STORAGE_KEY.kill)
             if (!kill_prog) {
               sendResponse(false)
@@ -376,6 +378,7 @@ export class BackgroundScript {
               sendResponse(true)
               // raise monetization progress event to the browser
               // TODO: get these values from current stream
+              // This will use monetizedTotal! not the incremental amount
               const message: MonetizationProgress = {
                 command: 'monetizationProgress',
                 data: {
@@ -953,7 +956,15 @@ export class BackgroundScript {
     // May be noop other side if stop monetization was initiated from
     // ContentScript
     this.sendSetMonetizationStateMessage(frame, 'stopped', requestId)
-    if (closed) {
+    const message: MonetizationStop = {
+      command: 'monetizationStop',
+      data: {
+        requestId: requestId || '',
+        paymentPointer: '', finalized:true
+      }
+    }
+    this.api.tabs.sendMessage(frame.tabId, message, { frameId:frame.frameId })
+  if (closed) {
       this.tabStates.clearFrame(frame)
     }
     this.reloadTabState({
