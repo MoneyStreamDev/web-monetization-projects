@@ -11,7 +11,8 @@ const MoneystreamBar = styled('div')({
   justifyContent: 'center',
   borderTop: `0.5px solid ${Colors.Grey89}`,
   backgroundColor: Colors.White,
-  height: '40px',
+  height: '30px',
+  marginTop: '8px',
   textAlign: 'center'
 })
 

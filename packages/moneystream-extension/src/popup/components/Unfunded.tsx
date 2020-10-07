@@ -8,14 +8,14 @@ import { StatusButton } from './StatusButton'
 import { StatusTypography } from './util/StatusTypography'
 import { makeStyles } from '@material-ui/core/styles'
 import { STORAGE_KEY } from '../../types/storage'
-import MoneyButton from '@moneybutton/react-money-button'
 import Long from 'long'
 import { IndexingService } from 'moneystream-wallet'
+import FundingOptions from './FundingOptions'
 
 const subheading1 = 'Only fund using a few pennies.'
 const footerString = 'No subscription nor membership required!'
 
-const Muted = styled('p')({
+const Muted = styled('div')({
   color: Colors.Grey500,
   fontSize: '12px',
   fontWeight: 600
@@ -23,7 +23,9 @@ const Muted = styled('p')({
 
 const Button = styled(StatusButton)({
   paddingLeft: '10px',
-  paddingRight: '10px'
+  paddingRight: '10px',
+  padingTop: '3px',
+  padddingBottom: '3px'
 })
 
 const useStyles = makeStyles((theme) => ({
@@ -41,8 +43,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
   },
-  moneybutton: {
-    width: '115px',
+  funding: {
     marginTop: theme.spacing(1),
   },
 }))
@@ -175,16 +176,6 @@ export const Unfunded = (props: PopupProps) => {
     }
   }
 
-  function onPayment (payment:any) {
-    const payDesc = `Your wallet was funded
-    Amount: ${payment.amount} ${payment.currency}
-    Satoshis: ${payment.satoshis}
-    Status: ${payment.status}`
-    alert(payDesc)
-    walletRefresh()
-    //TODO: update background wallet
-  }
-
   const handleChange = (event:any) => {
     setState({ ...state, [event.target.name]: event.target.checked })
     localStorage.setItem(STORAGE_KEY.kill, event.target.checked)
@@ -218,19 +209,8 @@ export const Unfunded = (props: PopupProps) => {
         <StatusTypography variant='subtitle1' align='center'>
           {`Your Address is ${wallet?.keyPair.toAddress().toString()}`}
         </StatusTypography>
-        {/* <Button
-          text='Fund&nbsp;Your&nbsp;Wallet'
-          variant='contained'
-          onClick={onClick}
-        /> */}
-        <div className={classes.moneybutton}>
-          <MoneyButton
-            editable={true}
-            to={wallet?.keyPair.toAddress().toString()}
-            amount='0.05'
-            currency='USD'
-            onPayment = {onPayment}
-          />
+        <div className={classes.funding}>
+          <FundingOptions wallet={wallet} walletRefresh={walletRefresh}></FundingOptions>
         </div>
         <StatusTypography variant='subtitle1'>
           {`${walletBalance} ${balanceUnits}`}&nbsp;
@@ -239,12 +219,12 @@ export const Unfunded = (props: PopupProps) => {
 
         <Grid container spacing={0}>
         <Grid container item xs={12} spacing={0}>
-          <Grid item xs={6} spacing={0}>
+          <Grid item xs={6} spacing={0} style={{marginBottom:3}}>
             <Muted>
               <Button variant="outlined" onClick={showAddressSummary} text="Summary"></Button>
             </Muted>
           </Grid>
-          <Grid item xs={6} spacing={0}>
+          <Grid item xs={6} spacing={0} style={{marginBottom:3}}>
             <Muted>
               <Button variant="outlined" onClick={showUnspent} text="Unspent"></Button>
             </Muted>

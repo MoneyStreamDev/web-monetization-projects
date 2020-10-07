@@ -1,10 +1,10 @@
 {
   "$schema": "../moneystream-monorepo-upkeep/resources/package-json-schema-nested-overrides.json",
   "$overRideUpKeep": {
-    "version": "0.1.15"
+    "version": "0.1.16"
   },
   "name": "@moneystream/extension",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "private": false,
   "keywords": [
     "bitcoin",
@@ -48,7 +48,7 @@
   "dependencies": {
     "@abraham/reflection": "^0.7.0",
     "@dier-makr/inversify": "^0.0.0",
-    "@material-ui/core": "^4.10.2",
+    "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@moneybutton/react-money-button": "^0.38.4",
     "@moneystream/anonymous-tokens": "^0.0.0",
@@ -64,6 +64,7 @@
     "jsonwebtoken": "^8.5.1",
     "long": "^4.0.0",
     "moneystream-wallet": "https://github.com/moneystreamdev/moneystream-wallet",
+    "qrcode.react": "^1.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
