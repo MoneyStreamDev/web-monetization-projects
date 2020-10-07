@@ -327,6 +327,7 @@ export class BackgroundScript {
   }
 
   // messages from web page to content script (chrome)
+  // deprecated. use postMessage instead
   async handleMessageExternal(
     request: ToBackgroundMessage,
     sender: MessageSender,
@@ -415,20 +416,37 @@ export class BackgroundScript {
   }
 
   // messages from content script to background script
+  // info,start,stop could come from browser
   async handleMessage(
     request: ToBackgroundMessage,
     sender: MessageSender,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     sendResponse: (response: any) => any
   ) {
+    this.log(request)
     switch (request.command) {
       case 'info':
+        this.log('info command:', request.data)
         const man = this.api.runtime.getManifest()
-        sendResponse({
-          name: man.name,
-          version: man.version,
-          address: this.wallet?.keyPair.toAddress().toString()
-        })
+        const showBalanceValue = this.storage.getRaw(STORAGE_KEY.exportBalance)
+        const showBalance = showBalanceValue === null ? false : showBalanceValue === "true"
+        // TODO: await seems to only work inside sendResponse???
+        // const utxos = await this.wallet.loadUnspent()
+        // send data back to browser
+        const message = {
+          command:'info',
+          data:{direction:"extension-to-browser"},
+          message: {
+            name: man.name,
+            version: man.version,
+            address: this.wallet?.keyPair.toAddress().toString(),
+            balanceSatoshis: showBalance ? (await this.wallet.loadUnspent()).spendable().satoshis : null,
+            exchangeRate: this.storage.getRaw(STORAGE_KEY.exchangeRate),
+            exchangeUpdate: this.storage.getRaw(STORAGE_KEY.exchangeUpdate)
+          }
+        }
+        const { tabId, frameId } = getFrameSpec(sender)
+        this.api.tabs.sendMessage(tabId, message, { frameId })
         break
       case 'log':
         this.log('log command:', request.data)

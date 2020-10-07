@@ -303,6 +303,23 @@ export interface MonetizationProgress {
  *  background -> content
  *  browser.tabs.sendMessage
  */
+export interface InfoToBrowser {
+  command: 'info'
+  data: { direction: string },
+    message: {
+    name: string
+    version: string
+    address: string
+    balanceSatoshis: number
+    exchangeRate: string
+    exchangeUpdate: string
+  }
+}
+
+/**
+ *  background -> content
+ *  browser.tabs.sendMessage
+ */
 export interface MonetizationStart {
   command: 'monetizationStart'
   data: {
@@ -411,5 +428,6 @@ export type ToContentMessage =
   | ReportCorrelationIdToParentContentScript
   | OnFrameAllowedChanged
   | TipSent
+  | InfoToBrowser
 
 export type ToPopupMessage = LocalStorageUpdate | ClosePopup

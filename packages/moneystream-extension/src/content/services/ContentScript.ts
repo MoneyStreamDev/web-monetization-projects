@@ -114,10 +114,32 @@ export class ContentScript {
     )
   }
 
+  // messages from web page to content page handled here
+  setPageMessageListener() {
+    window.addEventListener("message",
+      (event) => {
+        if (event.source == window
+          && event.data && event.data.direction == "browser-to-extension") {
+            // forward event to BackgroundScript
+            // info, start, stop
+            console.log(event.data.message)
+            this.runtime.sendMessage(event.data.message)
+          }
+      }
+  )}
+
+
   setRuntimeMessageListener() {
     this.runtime.onMessage.addListener(
       (request: ToContentMessage, sender, sendResponse) => {
         console.log(request)
+        if (request.command === 'info') {
+          if (request.data && request.data.direction == "extension-to-browser") {
+            console.log(request.message)
+            window.postMessage(request,"*")
+          }
+        }
+
         if (request.command === 'checkAdaptedContent') {
           if (request.data && request.data.from) {
             debug(
@@ -226,6 +248,7 @@ export class ContentScript {
         this.watchPageEventsToPauseOrResume()
       })
       this.setRuntimeMessageListener()
+      this.setPageMessageListener()
       this.monetization.injectDocumentMonetization()
       if (this.storage.getItem('WM_DEBUG')) {
         this.eventsLogger.bindLoggersToEvents()
