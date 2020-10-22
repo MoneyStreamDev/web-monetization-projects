@@ -1,3 +1,10 @@
+<a name="moneystream-extension@0.1.17"></a>
+
+# [moneystream-extension@0.1.17](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.17...moneystream-extension@0.1.15) (2020-10-06)
+
+### Features
+- Fund with Handcash QR code
+
 <a name="moneystream-extension@0.1.16"></a>
 
 # [moneystream-extension@0.1.16](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.16...moneystream-extension@0.1.15) (2020-10-06)

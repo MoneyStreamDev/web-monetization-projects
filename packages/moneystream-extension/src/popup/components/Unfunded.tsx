@@ -12,7 +12,6 @@ import Long from 'long'
 import { IndexingService } from 'moneystream-wallet'
 import FundingOptions from './FundingOptions'
 
-const subheading1 = 'Only fund using a few pennies.'
 const footerString = 'No subscription nor membership required!'
 
 const Muted = styled('div')({
@@ -202,9 +201,6 @@ export const Unfunded = (props: PopupProps) => {
         </StatusTypography>
         <StatusTypography variant='h6' align='center'>
           {`${extensionName} ${extensionVersion} Alpha`}
-        </StatusTypography>
-        <StatusTypography variant='subtitle1' align='center'>
-          {subheading1}
         </StatusTypography>
         <StatusTypography variant='subtitle1' align='center'>
           {`Your Address is ${wallet?.keyPair.toAddress().toString()}`}

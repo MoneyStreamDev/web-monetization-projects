@@ -23,11 +23,12 @@ const MoneystreamContainer = styled(Container)(({ theme }) => ({
   backgroundColor: Colors.Grey99
 }))
 
+//this affects the extension size on screen
 const OuterDiv = styled('div')({
   minWidth: '308px',
-  maxWidth: '308px',
+  //  maxWidth: '308px',
   height: 'auto',
-  minHeight: '260px'
+  minHeight: '600px'
 })
 
 export function Index(props: PopupProps) {

@@ -2770,12 +2770,12 @@
     csstype "^2.2.0"
 
 "@types/serve-static@*":
-  version "1.13.5"
-  resolved "https://registry.yarnpkg.com/@types/serve-static/-/serve-static-1.13.5.tgz#3d25d941a18415d3ab092def846e135a08bbcf53"
-  integrity sha512-6M64P58N+OXjU432WoLLBQxbA0LRGBCRm7aAGQJ+SMC1IMl0dgRVi9EFfoDcS2a7Xogygk/eGN94CfwU9UF7UQ==
+  version "1.13.6"
+  resolved "https://registry.yarnpkg.com/@types/serve-static/-/serve-static-1.13.6.tgz#866b1b8dec41c36e28c7be40ac725b88be43c5c1"
+  integrity sha512-nuRJmv7jW7VmCVTn+IgYDkkbbDGyIINOeu/G0d74X3lm6E5KfMeQPJhxIt1ayQeQB3cSxvYs1RA/wipYoFB4EA==
   dependencies:
-    "@types/express-serve-static-core" "*"
     "@types/mime" "*"
+    "@types/node" "*"
 
 "@types/sjcl@^1.0.29":
   version "1.0.29"
@@ -13158,6 +13158,11 @@ react-router@5.2.0:
     react-is "^16.6.0"
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
+
+react-script-hook@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/react-script-hook/-/react-script-hook-1.2.1.tgz#82b5250b7e2f3e8d645eabc9d4f54b7580b3d5c6"
+  integrity sha512-IRqtZcXjFYWf7HnC3zj/n46D3QP5XhrVeGj0t2JbHY2ws73zvs6tOHWVr5l2GShRGqZEBCFlguYfVUU2lI2qzw==
 
 react-transition-group@^4.4.0:
   version "4.4.1"

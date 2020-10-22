@@ -1,14 +1,18 @@
-import * as React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import * as React from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import { StatusTypography } from './util/StatusTypography'
+import Typography from '@material-ui/core/Typography'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import MoneyButton from '@moneybutton/react-money-button'
 import {QRCodeImport} from './QRCode'
+import {RelayXButton} from './RelayXButton'
 
-const useStyles = makeStyles((theme) => ({
+const subheading1 = 'Only fund using a few pennies'
+
+const useStyles = makeStyles((theme:any) => ({
   root: {
     width: '100%',
   },
@@ -51,16 +55,24 @@ export default function FundingOptions(props:any) {
         >
           <Typography className={classes.heading}>Fund from MoneyButton</Typography>
         </AccordionSummary>
-        <AccordionDetails>
-        <MoneyButton
-            editable={true}
-            to={props.wallet?.keyPair.toAddress().toString()}
-            amount='0.05'
-            currency='USD'
-            onPayment = {onPayment}
-          />
+        <AccordionDetails style={{"display":"block"}}>
+          <div>
+            <StatusTypography variant='subtitle1' align='center'>
+              {subheading1}
+            </StatusTypography>
+          </div>
+          <div>
+            <MoneyButton
+                editable={true}
+                to={props.wallet?.keyPair.toAddress().toString()}
+                amount='0.05'
+                currency='USD'
+                onPayment = {onPayment}
+              />
+            </div>
         </AccordionDetails>
       </Accordion>
+
       <Accordion onChange={onChange}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -71,6 +83,30 @@ export default function FundingOptions(props:any) {
         </AccordionSummary>
         <AccordionDetails>
             <QRCodeImport address={formatUrl()}></QRCodeImport>
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion onChange={onChange}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel2a-content"
+          id="panel2a-header"
+        >
+        <Typography className={classes.heading}>Fund from RelayX</Typography>
+        </AccordionSummary>
+        <AccordionDetails style={{"display":"block"}}>
+          <div>
+          <StatusTypography variant='subtitle1' align='center'>
+            {subheading1}
+          </StatusTypography>
+          </div>
+          <div>
+          <RelayXButton 
+            to={props.wallet?.keyPair.toAddress().toString()}
+            onPayment = {onPayment}
+          >
+          </RelayXButton>
+          </div>
         </AccordionDetails>
       </Accordion>
 
