@@ -35,9 +35,13 @@ export default function FundingOptions(props:any) {
     //TODO: update background wallet
   }
 
-  function formatUrl() {
+  function formatUrlHandcash() {
     const qrstring = `bitcoin:${props.wallet?.keyPair.toAddress().toString()}?sv&amount=${30000/1e8}&label=To+your+MoneyStream&avatarUrl=https://moneystreamdev.github.io/moneystream-project/img/logo.png`
-    console.log(qrstring)
+    return qrstring
+  }
+
+  function formatUrlDotWallet() {
+    const qrstring = `${props.wallet?.keyPair.toAddress().toString()}`
     return qrstring
   }
 
@@ -82,7 +86,7 @@ export default function FundingOptions(props:any) {
         <Typography className={classes.heading}>Fund from HandCash</Typography>
         </AccordionSummary>
         <AccordionDetails>
-            <QRCodeImport address={formatUrl()}></QRCodeImport>
+            <QRCodeImport address={formatUrlHandcash()}></QRCodeImport>
         </AccordionDetails>
       </Accordion>
 
@@ -107,6 +111,19 @@ export default function FundingOptions(props:any) {
           >
           </RelayXButton>
           </div>
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion onChange={onChange}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel2a-content"
+          id="panel2a-header"
+        >
+        <Typography className={classes.heading}>Fund from DotWallet</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+            <QRCodeImport address={formatUrlDotWallet()}></QRCodeImport>
         </AccordionDetails>
       </Accordion>
 

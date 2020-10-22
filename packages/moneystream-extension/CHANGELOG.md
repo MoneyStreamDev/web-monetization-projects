@@ -1,9 +1,16 @@
-<a name="moneystream-extension@0.1.17"></a>
+<a name="moneystream-extension@0.1.18"></a>
 
-# [moneystream-extension@0.1.17](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.17...moneystream-extension@0.1.15) (2020-10-06)
+# [moneystream-extension@0.1.18](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.18...moneystream-extension@0.1.17) (2020-10-22)
 
 ### Features
-- Fund with Handcash QR code
+- Fund with DotWallet Wallet
+
+<a name="moneystream-extension@0.1.17"></a>
+
+# [moneystream-extension@0.1.17](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.17...moneystream-extension@0.1.16) (2020-10-06)
+
+### Features
+- Fund with RelayX Wallet
 
 <a name="moneystream-extension@0.1.16"></a>
 
