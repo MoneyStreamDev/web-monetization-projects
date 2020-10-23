@@ -11247,7 +11247,7 @@ moment@^2.10.6:
 
 "moneystream-wallet@https://github.com/moneystreamdev/moneystream-wallet":
   version "0.2.0"
-  resolved "https://github.com/moneystreamdev/moneystream-wallet#389581a9f4b17310b282c2e75f777dd64fe9ccf1"
+  resolved "https://github.com/moneystreamdev/moneystream-wallet#360c90d9448fc533998ea1e93a102865b8fd0946"
   dependencies:
     "@types/crypto-js" "^3.1.47"
     "@types/node-fetch" "^2.5.7"

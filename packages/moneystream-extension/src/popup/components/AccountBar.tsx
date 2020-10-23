@@ -31,13 +31,13 @@ const Muted = styled('p')({
 })
 
 const MoneystreamImg = styled('img')({
-  marginRight: '8px'
+  marginRight: '4px'
 })
 
 const MoneystreamToolbar = styled(Toolbar)({
   backgroundColor: Colors.White,
   borderBottom: `0.5px solid ${Colors.Grey89}`,
-  height: '56px'
+  height: '52px'
 })
 
 const MoneystreamMenu = withStyles({

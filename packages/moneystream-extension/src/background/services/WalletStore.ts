@@ -31,6 +31,16 @@ export default class WalletStore implements IStorage {
     //     return walletContents
     }
 
+    tryget(): string | null {
+        try {
+            return this.get()
+        }
+        catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
     backup(): void {
         throw new Error("Method not implemented.");
     }

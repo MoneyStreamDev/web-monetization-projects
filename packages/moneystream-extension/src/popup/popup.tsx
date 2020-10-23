@@ -23,8 +23,11 @@ export async function run() {
   if (store.moneystreamwallet) {
     wallet = new Wallet()
     const jwallet = store.moneystreamwallet
-    wallet.loadWallet(jwallet.wif)
-    await wallet.loadUnspent()
+    try {
+      wallet.loadWallet(jwallet.wif)
+      await wallet.loadUnspent()
+    }
+    catch (err) {console.log(err)}
   }
 
   const context: Omit<PopupContext, 'runtime'> = {

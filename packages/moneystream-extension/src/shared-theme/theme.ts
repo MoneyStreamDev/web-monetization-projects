@@ -35,15 +35,15 @@ export const theme = createMuiTheme({
   overrides: {
     MuiMenuItem: {
       root: {
-        paddingTop: '8px',
-        paddingBottom: '8px',
+        paddingTop: '2px',
+        paddingBottom: '2px',
         boxSizing: 'content-box',
-        height: '24px'
+        height: '16px'
       }
     },
     MuiTypography: {
       h1: {
-        margin: '32px 16px'
+        margin: '2px 1px'
       },
       h4: {
         display: 'block'

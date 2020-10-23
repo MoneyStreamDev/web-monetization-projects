@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Grid, styled, Switch } from '@material-ui/core'
-
 import { Colors } from '../../shared-theme/colors'
 import { PopupProps } from '../types'
-
 import { StatusButton } from './StatusButton'
 import { StatusTypography } from './util/StatusTypography'
 import { makeStyles } from '@material-ui/core/styles'
 import { STORAGE_KEY } from '../../types/storage'
-import Long from 'long'
-import { IndexingService } from 'moneystream-wallet'
 import FundingOptions from './FundingOptions'
+import {WalletBalance} from './WalletBalance'
 
 const footerString = 'No subscription nor membership required!'
 
@@ -23,8 +20,9 @@ const Muted = styled('div')({
 const Button = styled(StatusButton)({
   paddingLeft: '10px',
   paddingRight: '10px',
-  padingTop: '3px',
-  padddingBottom: '3px'
+  padingTop: '8px',
+  padddingBottom: '8px',
+  width: '130px'
 })
 
 const useStyles = makeStyles((theme) => ({
@@ -37,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
   },
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(4),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -47,11 +45,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const exchange_url = `https://cash.bitcoinofthings.com/exchange`
-
 export const Unfunded = (props: PopupProps) => {
-  const [walletBalance, setWalletBalance] = useState(props.context.wallet?.balance)
-  const [balanceUnits, setBalanceUnits] = useState('Satoshis')
   const [extensionName, setExtensionName] = useState('MS')
   const [extensionVersion, setExtensionVersion] = useState('v0.0.0')
   const [state, setState] = useState({
@@ -70,7 +64,7 @@ export const Unfunded = (props: PopupProps) => {
 
   useEffect(() => {
     getInfo()
-    showBalance()
+    // showBalance()
   })
 
   function getInfo() {
@@ -85,83 +79,9 @@ export const Unfunded = (props: PopupProps) => {
       })
   }
 
-  function elapsed(from: Date) {
-    const time = new Date()
-    const timeElapsed = time.getTime() - from.getTime()
-    const secondsElapsed = timeElapsed / 1000
-    return secondsElapsed
-  }
-
-  async function getExchange() {
-    let exchangeValue = localStorage.getItem(STORAGE_KEY.exchangeRate) || ''
-    let exchangeUpdate = localStorage.getItem(STORAGE_KEY.exchangeUpdate) || ''
-    if (!exchangeValue) {
-        const response = await fetch(exchange_url)
-        const exchange = await response.json()
-        exchangeValue = exchange.data?.rate || ''
-        exchangeUpdate = new Date().toUTCString()
-        localStorage.setItem(STORAGE_KEY.exchangeRate, exchangeValue)
-        localStorage.setItem(STORAGE_KEY.exchangeUpdate, exchangeUpdate)
-    }
-    const elapsedSeconds = elapsed(new Date(exchangeUpdate))
-    if (elapsedSeconds > 60 * 30) {
-      const response = await fetch(exchange_url)
-      const exchange = await response.json()
-      exchangeValue = exchange.data?.rate || ''
-      exchangeUpdate = new Date().toUTCString()
-      localStorage.setItem(STORAGE_KEY.exchangeRate, exchangeValue)
-      localStorage.setItem(STORAGE_KEY.exchangeUpdate, exchangeUpdate)
-    }
-    return Number(exchangeValue)
-  }
-
-  async function showBalance() {
-    let balance = wallet?.balance
-    const unitsValue = localStorage.getItem(STORAGE_KEY.unitDisplay)
-    let units = 'Satoshis'
-    if (unitsValue) {
-      const unitsNumber = Number(unitsValue)
-      if (unitsNumber === 50) {
-        //TODO: get exchange
-        const exchangeNumber = await getExchange()
-        const SAT_PER_CENT = 1e8/(exchangeNumber*100)
-        balance = Math.floor((balance || 0) / SAT_PER_CENT *100) / 10000
-        units = 'USD'
-      }
-      if (unitsNumber === 100) {
-        const enjoyValue = localStorage.getItem(STORAGE_KEY.enjoy) || 0
-        const enjoyNumber = Number(enjoyValue)
-        let enjoyRate = 20
-        if (enjoyNumber === 50) enjoyRate = 40
-        if (enjoyNumber === 100) enjoyRate = 60
-        balance = Math.floor((balance || 0) / enjoyRate / 60)
-        units = 'Minutes'
-      }
-    }
-    await setWalletBalance(balance)
-    await setBalanceUnits(units)
-    //TODO: update background wallet
-
-  }
-
   // payment was received or sent
   async function walletRefresh() {
-    await wallet?.loadUnspent()
-    showBalance()
-  }
-
-  async function walletSend() {
-    await walletRefresh()
-    //prompt for address
-    const sats = (wallet?.balance || 0) - 500
-    var address = prompt(`Send ${sats} to Address`, "")
-    if (address) {
-      const buildResult = await wallet?.makeSimpleSpend(Long.fromNumber(sats), wallet?.selectedUtxos, address)
-      const api = new IndexingService()
-      const broadcastResult = await api.broadcastRaw(buildResult.hex)
-      alert(JSON.stringify(broadcastResult))
-      await walletRefresh()
-    }
+    //TODO: publish wallet refresh event
   }
 
   function wifToClipboard(/*e*/) {
@@ -205,34 +125,32 @@ export const Unfunded = (props: PopupProps) => {
         <StatusTypography variant='subtitle1' align='center'>
           {`Your Address is ${wallet?.keyPair.toAddress().toString()}`}
         </StatusTypography>
+        <div>
+          <WalletBalance context={props.context} />
+        </div>
         <div className={classes.funding}>
           <FundingOptions wallet={wallet} walletRefresh={walletRefresh}></FundingOptions>
         </div>
-        <StatusTypography variant='subtitle1'>
-          {`${walletBalance} ${balanceUnits}`}&nbsp;
-          <Button variant="text" onClick={walletRefresh} text="refresh"></Button>
-        </StatusTypography>
-
         <Grid container spacing={0}>
-        <Grid container item xs={12} spacing={0}>
-          <Grid item xs={6} spacing={0} style={{marginBottom:3}}>
+        <Grid container item xs={12} spacing={0} style={{marginTop:4,marginBottom:4}}>
+          <Grid item xs={6} spacing={0} style={{marginTop:4,marginBottom:4}}>
             <Muted>
               <Button variant="outlined" onClick={showAddressSummary} text="Summary"></Button>
             </Muted>
           </Grid>
-          <Grid item xs={6} spacing={0} style={{marginBottom:3}}>
+          <Grid item xs={6} spacing={0} style={{marginTop:4,marginBottom:4}}>
             <Muted>
               <Button variant="outlined" onClick={showUnspent} text="Unspent"></Button>
             </Muted>
           </Grid>
         </Grid>
-        <Grid container item xs={12} spacing={0}>
-          <Grid item xs={6} spacing={0}>
+        <Grid container item xs={12} spacing={0} style={{marginTop:4,marginBottom:4}}>
+          <Grid item xs={6} spacing={0} style={{marginTop:4,marginBottom:4}}>
             <Muted>
             <Button variant="outlined" onClick={showHistory} text="History"></Button>
             </Muted>
           </Grid>
-          <Grid item xs={6} spacing={0}>
+          <Grid item xs={6} spacing={0} style={{marginTop:4,marginBottom:4}}>
             <input id="wif" name="wif" type="hidden" value={`${wallet?.toJSON().wif}`}></input>
             <Muted>
               <Button variant="outlined" onClick={wifToClipboard} text="Copy&nbsp;Key"></Button>

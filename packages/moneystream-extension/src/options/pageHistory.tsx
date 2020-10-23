@@ -61,7 +61,7 @@ const Favicon = styled('img')({
 })
 
 const Headings = styled('div')({
-  margin: '16px 24px'
+  margin: '8px 16px'
 })
 
 const Row = styled('div')({

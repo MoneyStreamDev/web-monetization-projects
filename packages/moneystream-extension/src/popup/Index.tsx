@@ -11,15 +11,16 @@ import { Status } from './components/Status'
 import { PayToUrlPage } from './components/PayToUrl'
 import { HistoryPage } from './components/History'
 import { SettingsPage } from './components/Settings'
+import { SendWallet } from './components/SendWallet'
 import { PopupProps } from './types'
 import { MemoryRouter, Switch, Route } from 'react-router-dom'
 import { NavBar } from './components/NavBar'
 
 const MoneystreamContainer = styled(Container)(({ theme }) => ({
-  paddingRight: `${theme.spacing(4)}px`,
-  paddingLeft: `${theme.spacing(4)}px`,
-  paddingTop: `${theme.spacing(2)}px`,
-  paddingBottom: `${theme.spacing(2)}px`,
+  paddingRight: `${theme.spacing(2)}px`,
+  paddingLeft: `${theme.spacing(2)}px`,
+  paddingTop: `${theme.spacing(1)}px`,
+  paddingBottom: `${theme.spacing(1)}px`,
   backgroundColor: Colors.Grey99
 }))
 
@@ -65,7 +66,7 @@ export function Index(props: PopupProps) {
             <Route path='/settings' component={() => <SettingsPage context={context}/>} />
             <Route path='/history' component={() => <HistoryPage context={context}/>} />
             <Route path='/paytourl' component={() => <PayToUrlPage context={context}/>} />
-            {/* <Route path='/settings' component={Settings} /> */}
+            <Route path='/sendwallet' component={() => <SendWallet context={context}/>} />
             <Route path='/' component={() => <Status context={context}/>} />
           </Switch>
           <WebMonetizedBar context={context} />

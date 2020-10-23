@@ -1,3 +1,10 @@
+<a name="moneystream-extension@0.1.19"></a>
+
+# [moneystream-extension@0.1.19](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.19...moneystream-extension@0.1.18) (2020-10-23)
+
+### Features
+- Improve wallet send user interface
+
 <a name="moneystream-extension@0.1.18"></a>
 
 # [moneystream-extension@0.1.18](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.18...moneystream-extension@0.1.17) (2020-10-22)
