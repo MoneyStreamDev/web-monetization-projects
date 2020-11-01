@@ -42,6 +42,9 @@ export interface SetStreamControls extends Command {
 export interface Info extends Command {
   command: 'info'
 }
+export interface InfoDirect extends Command {
+  command: 'infodirect'
+}
 /**
  * content -> background
  * browser.runtime.sendMessage
@@ -233,7 +236,7 @@ export type ToBackgroundMessage =
   | ReportCorrelationIdFromIFrameContentScript
   | OnFrameAllowedChanged
   | PaymentReceived
-  | Info
+  | Info | InfoDirect
   | Start
   | Stop
   | Progress
@@ -401,6 +404,22 @@ export interface ReportCorrelationIdToParentContentScript {
   }
 }
 
+/**
+ *  background -> content
+ *  browser.tabs.sendMessage
+ */
+export interface InfoFromBackgroundToBrowser {
+  command: 'info'
+  data: {
+    name: string
+    version: string
+    address: string
+    balanceSatoshis?: number
+    exchangeRate?: number
+    exchangeUpdate?: string
+  }
+}
+
 export type ToContentMessage =
   | CheckAdaptedContent
   | MonetizationProgress
@@ -411,5 +430,6 @@ export type ToContentMessage =
   | ReportCorrelationIdToParentContentScript
   | OnFrameAllowedChanged
   | TipSent
+  | InfoFromBackgroundToBrowser
 
 export type ToPopupMessage = LocalStorageUpdate | ClosePopup

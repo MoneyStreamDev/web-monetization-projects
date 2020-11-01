@@ -1,7 +1,7 @@
 {
   "name": "MoneyStream",
   "description": "Streamable money for the streaming web",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "manifest_version": 2,
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://www.moneybutton.com https://one.relayx.io; object-src 'self'",
   "browser_specific_settings": {

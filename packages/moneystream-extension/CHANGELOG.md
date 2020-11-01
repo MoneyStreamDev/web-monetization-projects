@@ -1,3 +1,10 @@
+<a name="moneystream-extension@0.1.20"></a>
+
+# [moneystream-extension@0.1.20](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.20...moneystream-extension@0.1.19) (2020-10-24)
+
+### Features
+- post browser to extension messages for firefox support
+
 <a name="moneystream-extension@0.1.19"></a>
 
 # [moneystream-extension@0.1.19](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.19...moneystream-extension@0.1.18) (2020-10-23)

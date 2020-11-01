@@ -114,10 +114,26 @@ export class ContentScript {
     )
   }
 
+  // messages from browse web page to content page handled here
+  setPageMessageListener() {
+    window.addEventListener("message",
+      (event) => {
+        console.log(event)
+        if (event.source == window
+          && event.data && event.data.direction == "browser-to-extension") {
+            // forward event to BackgroundScript
+            // info, start, stop
+            console.log(event.data.message)
+            this.runtime.sendMessage(event.data.message)
+          }
+      }
+  )}
+
   setRuntimeMessageListener() {
     this.runtime.onMessage.addListener(
       (request: ToContentMessage, sender, sendResponse) => {
         console.log(request)
+        console.log(sender)
         if (request.command === 'checkAdaptedContent') {
           if (request.data && request.data.from) {
             debug(
@@ -163,6 +179,10 @@ export class ContentScript {
           this.frames.reportCorrelation(request.data)
         } else if (request.command === 'onFrameAllowedChanged') {
           this.onFrameAllowedChanged(request)
+        } else if (request.command === 'info') {
+          console.log(`INFO event ContentScript.ts`)
+          //send info back to browser page
+          this.monetization.postMessage(request)
         } else if (request.command === 'tip') {
           debug('sendTip event')
           const detail: TipEvent['detail'] = {
@@ -226,6 +246,7 @@ export class ContentScript {
         this.watchPageEventsToPauseOrResume()
       })
       this.setRuntimeMessageListener()
+      this.setPageMessageListener()
       this.monetization.injectDocumentMonetization()
       if (this.storage.getItem('WM_DEBUG')) {
         this.eventsLogger.bindLoggersToEvents()

@@ -140,6 +140,14 @@ export class DocumentMonetization {
     )
   }
 
+  // post a generic message to browser
+  postMessage(message:any) {
+    this.window.postMessage(
+      message,
+      this.window.location.origin
+    )
+  }
+
   postMonetizationProgressWindowMessage(
     detail: MonetizationProgressEvent['detail']
   ) {

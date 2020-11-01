@@ -326,6 +326,37 @@ export class BackgroundScript {
     }
   }
 
+  makePayloadEnvelope (command:string, payload:any) {
+      // browser expects message attribute inside data
+      return {
+      command: command,
+      direction: 'extension-to-browser',
+      message: payload
+    }
+  }
+
+  async getInfoResponse() {
+    const man = this.api.runtime.getManifest()
+    const showBalanceValue = this.storage.getRaw(STORAGE_KEY.exportBalance)
+    const showBalance = showBalanceValue === null ? false : showBalanceValue === "true"
+    return {
+      name: man.name,
+      version: man.version,
+      address: this.wallet?.keyPair.toAddress().toString(),
+      balanceSatoshis: showBalance ? (await this.wallet.loadUnspent()).spendable().satoshis : null,
+      exchangeRate: this.storage.getRaw(STORAGE_KEY.exchangeRate),
+      exchangeUpdate: this.storage.getRaw(STORAGE_KEY.exchangeUpdate)
+    }
+  }
+
+  // this makes envelope
+  sendResponseToContentScript(sender:MessageSender, responseData:any) {
+    const { tabId, frameId } = getFrameSpec(sender)
+    const message = this.makePayloadEnvelope('info', responseData)
+    this.api.tabs.sendMessage(tabId, message, { frameId })
+    return true
+  }
+
   // messages from web page to content script (chrome)
   async handleMessageExternal(
     request: ToBackgroundMessage,
@@ -333,23 +364,12 @@ export class BackgroundScript {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     sendResponse: (response: any) => any
   ) {
+    console.log(request)
     switch (request.command) {
       case 'info':
         this.log('info command:', request.data)
-        const man = this.api.runtime.getManifest()
-        const showBalanceValue = this.storage.getRaw(STORAGE_KEY.exportBalance)
-        const showBalance = showBalanceValue === null ? false : showBalanceValue === "true"
-        // TODO: await seems to only work inside sendResponse???
-        // const utxos = await this.wallet.loadUnspent()
-        // console.log(utxos)
-        sendResponse({
-          name: man.name,
-          version: man.version,
-          address: this.wallet?.keyPair.toAddress().toString(),
-          balanceSatoshis: showBalance ? (await this.wallet.loadUnspent()).spendable().satoshis : null,
-          exchangeRate: this.storage.getRaw(STORAGE_KEY.exchangeRate),
-          exchangeUpdate: this.storage.getRaw(STORAGE_KEY.exchangeUpdate)
-        })
+        const response = await this.getInfoResponse()
+        sendResponse(this.sendResponseToContentScript(sender, response))
         break
       case 'start':
           this.log('start command:', request.data)
@@ -415,6 +435,7 @@ export class BackgroundScript {
   }
 
   // messages from content script to background script
+  // content script should be listening for response
   async handleMessage(
     request: ToBackgroundMessage,
     sender: MessageSender,
@@ -423,12 +444,15 @@ export class BackgroundScript {
   ) {
     switch (request.command) {
       case 'info':
-        const man = this.api.runtime.getManifest()
-        sendResponse({
-          name: man.name,
-          version: man.version,
-          address: this.wallet?.keyPair.toAddress().toString()
-        })
+        console.log(`Info BackgroundScript`)
+        // this is required for browser
+        //const envelope = this.makePayloadEnvelope('info', await this.getInfoResponse())
+        sendResponse(this.sendResponseToContentScript(sender, await this.getInfoResponse()))
+        break
+      case 'infodirect':
+        console.log(`InfoDirect BackgroundScript`)
+        //send response directly back to caller. Works from chrome and ff content script
+        sendResponse(await this.getInfoResponse())
         break
       case 'log':
         this.log('log command:', request.data)
@@ -438,11 +462,11 @@ export class BackgroundScript {
         sendResponse(this.logout(sender))
         break
       case 'paymentReceived':
-          // send just the new utxo in request.data?
-          console.log(`PAYMENT RECEIVED`)
-          if (this.wallet) {
-            await this.wallet.loadUnspent()
-          }
+        // send just the new utxo in request.data?
+        console.log(`PAYMENT RECEIVED`)
+        if (this.wallet) {
+          await this.wallet.loadUnspent()
+        }
         break
       case 'adaptedSite':
         this.adaptedSite(request.data, sender)
@@ -454,8 +478,15 @@ export class BackgroundScript {
         )
         break
       case 'startWebMonetization':
-        console.log(request)
         sendResponse(await this.startWebMonetization(request, sender))
+        break
+      case 'start':
+        console.log(`START browser-to-extension`)
+        sendResponse(await this.startWebMonetization(
+          {
+            command: 'startWebMonetization',
+            data: request.data
+          }, sender))
         break
       case 'pauseWebMonetization':
         sendResponse(this.pauseWebMonetization(request, sender))
@@ -464,6 +495,10 @@ export class BackgroundScript {
         sendResponse(this.resumeWebMonetization(request, sender))
         break
       case 'stopWebMonetization':
+        sendResponse(this.stopWebMonetization(sender))
+        break
+      case 'stop':
+        console.log(`STOP browser-to-extension`)
         sendResponse(this.stopWebMonetization(sender))
         break
       case 'isRateLimited':

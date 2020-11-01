@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export const Unfunded = (props: PopupProps) => {
-  const [extensionName, setExtensionName] = useState('MS')
+  const [extensionName, setExtensionName] = useState('MoneyStream')
   const [extensionVersion, setExtensionVersion] = useState('v0.0.0')
   const [state, setState] = useState({
     checkedCutOff: localStorage.getItem(STORAGE_KEY.kill)
@@ -64,15 +64,15 @@ export const Unfunded = (props: PopupProps) => {
 
   useEffect(() => {
     getInfo()
-    // showBalance()
   })
 
   function getInfo() {
+    // TODO: listen for messages instead?
     chrome.runtime.sendMessage(
-      {command: "info"}, 
+      {command: "infodirect"}, 
       response => {
+        console.log(response)
         if (!chrome.runtime.lastError) {
-          console.log(response)
             setExtensionName(response?.name)
             setExtensionVersion(response?.version)
         }
