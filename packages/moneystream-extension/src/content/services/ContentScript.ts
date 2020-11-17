@@ -118,7 +118,7 @@ export class ContentScript {
   setPageMessageListener() {
     window.addEventListener("message",
       (event) => {
-        console.log(event)
+        // console.log(event)
         if (event.source == window
           && event.data && event.data.direction == "browser-to-extension") {
             // forward event to BackgroundScript
