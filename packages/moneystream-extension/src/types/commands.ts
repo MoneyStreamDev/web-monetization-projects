@@ -39,6 +39,14 @@ export interface SetStreamControls extends Command {
  * content -> background
  * browser.runtime.sendMessage
  */
+export interface Offer extends Command {
+  command: 'offer'
+}
+
+/**
+ * content -> background
+ * browser.runtime.sendMessage
+ */
 export interface Info extends Command {
   command: 'info'
 }
@@ -240,6 +248,7 @@ export type ToBackgroundMessage =
   | Start
   | Stop
   | Progress
+  | Offer
 
 export type IconState =
   | 'streaming-paused'
@@ -420,6 +429,18 @@ export interface InfoFromBackgroundToBrowser {
   }
 }
 
+/**
+ *  background -> content
+ *  browser.tabs.sendMessage
+ */
+export interface UpdateFromBackgroundToBrowser {
+  command: 'update'
+  data: {
+    type: string,
+    details: any
+  }
+}
+
 export type ToContentMessage =
   | CheckAdaptedContent
   | MonetizationProgress
@@ -431,5 +452,6 @@ export type ToContentMessage =
   | OnFrameAllowedChanged
   | TipSent
   | InfoFromBackgroundToBrowser
+  | UpdateFromBackgroundToBrowser
 
 export type ToPopupMessage = LocalStorageUpdate | ClosePopup

@@ -350,9 +350,9 @@ export class BackgroundScript {
   }
 
   // this makes envelope
-  sendResponseToContentScript(sender:MessageSender, responseData:any) {
+  sendResponseToContentScript(sender:MessageSender, command:string, responseData:any) {
     const { tabId, frameId } = getFrameSpec(sender)
-    const message = this.makePayloadEnvelope('info', responseData)
+    const message = this.makePayloadEnvelope(command, responseData)
     this.api.tabs.sendMessage(tabId, message, { frameId })
     return true
   }
@@ -446,8 +446,7 @@ export class BackgroundScript {
       case 'info':
         console.log(`Info BackgroundScript`)
         // this is required for browser
-        //const envelope = this.makePayloadEnvelope('info', await this.getInfoResponse())
-        sendResponse(this.sendResponseToContentScript(sender, await this.getInfoResponse()))
+        sendResponse(this.sendResponseToContentScript(sender, 'info', await this.getInfoResponse()))
         break
       case 'infodirect':
         console.log(`InfoDirect BackgroundScript`)
@@ -532,6 +531,9 @@ export class BackgroundScript {
       case 'onFrameAllowedChanged':
         sendResponse(await this.onFrameAllowedChanged(request, sender))
         break
+      case 'offer':
+        sendResponse(this.sendResponseToContentScript(sender, 'offer', "ok"))
+        break;
       default:
         sendResponse(false)
         break
