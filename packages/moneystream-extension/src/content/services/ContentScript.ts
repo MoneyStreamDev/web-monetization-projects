@@ -180,8 +180,8 @@ export class ContentScript {
         } else if (request.command === 'onFrameAllowedChanged') {
           this.onFrameAllowedChanged(request)
         } else if (request.command === 'info') {
-          console.log(`INFO event ContentScript.ts`)
-          //send info back to browser page
+          this.monetization.postMessage(request)
+        } else if (request.command === 'answer') {
           this.monetization.postMessage(request)
         } else if (request.command === 'tip') {
           debug('sendTip event')

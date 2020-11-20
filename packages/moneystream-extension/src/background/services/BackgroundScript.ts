@@ -31,12 +31,14 @@ import { LocalStorageProxy, STORAGE_KEY } from '../../types/storage'
 import { TabState } from '../../types/TabState'
 import { getFrameSpec, getTab } from '../../util/tabs'
 import { FrameSpec } from '../../types/FrameSpec'
-import { timeout } from '../../content/util/timeout'
+//import { timeout } from '../../content/util/timeout'
+import { Container } from 'inversify'
 
 import { StreamMoneyEvent } from './Stream'
 import { AuthService } from './AuthService'
 import { TabStates } from './TabStates'
 import { Streams } from './Streams'
+import { Offers } from './Offers'
 import { Favicons } from './Favicons'
 import { PopupBrowserAction } from './PopupBrowserAction'
 import { Logger, logger } from './utils'
@@ -45,12 +47,14 @@ import { MetanetService } from './MetanetService'
 import { BackgroundFramesService } from './BackgroundFramesService'
 import { StreamAssociations } from './StreamAssociations'
 import { Wallet } from 'moneystream-wallet'
+import { BandwidthTiers } from '@moneystream/polyfill-utils'
 
-// triggers monetized icon, was 1500
-const MONETIZED_TRIGGER = 650
+// triggers monetized icon
+const MONETIZED_TRIGGER = 600
 
 @injectable()
 export class BackgroundScript {
+  // private _tiers: BandwidthTiers
   constructor(
     private wallet: Wallet,
     private popup: PopupBrowserAction,
@@ -73,7 +77,8 @@ export class BackgroundScript {
     @inject(tokens.WextApi)
     private api: typeof window.chrome,
     @inject(tokens.MoneystreamDomain)
-    private moneystreamDomain: string
+    private moneystreamDomain: string,
+    private _offers: Offers
   ) {}
 
   get activeTab() {
@@ -90,7 +95,8 @@ export class BackgroundScript {
     this.tabStates.activeTab = value
   }
 
-  async run() {
+  async run(container: Container) {
+    //this._tiers = container.get(BandwidthTiers)
     this.initializeActiveTab()
     this.setRuntimeMessageListener()
     this.setTabsOnActivatedListener()
@@ -369,7 +375,7 @@ export class BackgroundScript {
       case 'info':
         this.log('info command:', request.data)
         const response = await this.getInfoResponse()
-        sendResponse(this.sendResponseToContentScript(sender, response))
+        sendResponse(this.sendResponseToContentScript(sender, 'info', response))
         break
       case 'start':
           this.log('start command:', request.data)
@@ -532,7 +538,10 @@ export class BackgroundScript {
         sendResponse(await this.onFrameAllowedChanged(request, sender))
         break
       case 'offer':
-        sendResponse(this.sendResponseToContentScript(sender, 'offer', "ok"))
+        this._offers.add(request.data)
+        console.log(this._offers)
+        // TODO: process the offer, for now just respond ok
+        sendResponse(this.sendResponseToContentScript(sender, 'answer', "ok"))
         break;
       default:
         sendResponse(false)
@@ -713,8 +722,8 @@ export class BackgroundScript {
       this.store.playState = state.playState
       this.store.stickyState = state.stickyState
     } else if (state) {
-      delete this.store.playState
-      delete this.store.stickyState
+      this.store.playState = null
+      this.store.stickyState = null
     }
 
     if (state) {

@@ -433,6 +433,17 @@ export interface InfoFromBackgroundToBrowser {
  *  background -> content
  *  browser.tabs.sendMessage
  */
+export interface AnswerFromBackgroundToBrowser {
+  command: 'answer'
+  data: {
+    answer: string
+  }
+}
+
+/**
+ *  background -> content
+ *  browser.tabs.sendMessage
+ */
 export interface UpdateFromBackgroundToBrowser {
   command: 'update'
   data: {
@@ -452,6 +463,7 @@ export type ToContentMessage =
   | OnFrameAllowedChanged
   | TipSent
   | InfoFromBackgroundToBrowser
+  | AnswerFromBackgroundToBrowser
   | UpdateFromBackgroundToBrowser
 
 export type ToPopupMessage = LocalStorageUpdate | ClosePopup
