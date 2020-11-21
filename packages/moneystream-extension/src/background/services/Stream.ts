@@ -26,6 +26,7 @@ import { BTP_ENDPOINT } from '../../webpackDefines'
 
 import { AnonymousTokens } from './AnonymousTokens'
 import { Logger, logger } from './utils'
+import { Offers } from './Offers'
 
 const { timeout } = asyncUtils
 
@@ -100,6 +101,7 @@ export class Stream extends EventEmitter {
   private _assetScale: number
   private _exchangeRate: number
   private _wallet!: Wallet
+  private _offers!: Offers
 
   constructor(
     @logger('Stream')
@@ -123,6 +125,7 @@ export class Stream extends EventEmitter {
   ) {
     super()
     this._wallet = wallet
+    this._offers = container.get(Offers)
     this._paymentPointer = paymentPointer
     this._requestId = requestId
     this._spspUrl = spspEndpoint
@@ -156,7 +159,7 @@ export class Stream extends EventEmitter {
     const kill = localStorage.getItem(STORAGE_KEY.kill)
     if (kill !== null) {
       if (kill === "false") {
-        this._debug(`MoneyStream is off`)
+        this._debug(`MoneyStream is turned off in configuration`)
         return
       }
       else this._debug(kill)
@@ -180,10 +183,12 @@ export class Stream extends EventEmitter {
     await timeout(1)
     if (!this._active) return
 
+    const _offer = this._offers.findUrl(this._initiatingUrl)
     // reset our timer when we start streaming.
     const bandwidth = new AdaptiveBandwidth(
       this._initiatingUrl,
       this._tiers,
+      _offer,
       this._debug
     )
 

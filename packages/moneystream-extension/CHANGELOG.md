@@ -1,3 +1,10 @@
+<a name="moneystream-extension@0.1.21"></a>
+
+# [moneystream-extension@0.1.21](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.21...moneystream-extension@0.1.20) (2020-11-12)
+
+### Features
+- add Offer and Answer to allow custom stream pricing. Web page content provider can set the price of the streaming media content
+
 <a name="moneystream-extension@0.1.20"></a>
 
 # [moneystream-extension@0.1.20](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.20...moneystream-extension@0.1.19) (2020-10-24)

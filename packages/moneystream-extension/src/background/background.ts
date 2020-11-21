@@ -14,6 +14,7 @@ import { BackgroundScript } from './services/BackgroundScript'
 import { BackgroundStorageService } from './services/BackgroundStorageService'
 import { Stream } from './services/Stream'
 import { Wallet } from 'moneystream-wallet'
+import { Offers } from './services/Offers'
 import { createLogger } from './services/utils'
 import WalletStore from './services/WalletStore'
 
@@ -45,6 +46,7 @@ async function configureContainer(container: Container) {
 
   container.bind(Stream).toSelf().inTransientScope()
   container.bind(Wallet).toConstantValue(wallet)
+  container.bind(Offers).toConstantValue(new Offers())
 
   container
     .bind(tokens.NoContextLoggerName)
@@ -66,7 +68,7 @@ async function main() {
   })
 
   await configureContainer(container)
-  void container.get(BackgroundScript).run()
+  void container.get(BackgroundScript).run(container)
 }
 
 main().catch(console.error)

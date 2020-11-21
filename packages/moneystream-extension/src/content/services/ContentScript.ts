@@ -118,7 +118,7 @@ export class ContentScript {
   setPageMessageListener() {
     window.addEventListener("message",
       (event) => {
-        console.log(event)
+        // console.log(event)
         if (event.source == window
           && event.data && event.data.direction == "browser-to-extension") {
             // forward event to BackgroundScript
@@ -180,8 +180,8 @@ export class ContentScript {
         } else if (request.command === 'onFrameAllowedChanged') {
           this.onFrameAllowedChanged(request)
         } else if (request.command === 'info') {
-          console.log(`INFO event ContentScript.ts`)
-          //send info back to browser page
+          this.monetization.postMessage(request)
+        } else if (request.command === 'answer') {
           this.monetization.postMessage(request)
         } else if (request.command === 'tip') {
           debug('sendTip event')
