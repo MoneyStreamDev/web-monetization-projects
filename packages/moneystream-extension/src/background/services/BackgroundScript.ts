@@ -246,7 +246,6 @@ export class BackgroundScript {
   private routeStreamsMoneyEventsToContentScript() {
     // pass stream monetization events to the correct tab
     this.streams.on('money', (details: StreamMoneyEvent) => {
-      // console.log(`ONMONEY BGS ${JSON.stringify(details)}`)
       const frame = this.assoc.getFrame(details.requestId)
       const { tabId, frameId } = frame
       if (details.packetNumber === 0) {
@@ -337,6 +336,7 @@ export class BackgroundScript {
       return {
       command: command,
       direction: 'extension-to-browser',
+      from: null,
       message: payload
     }
   }
@@ -440,6 +440,23 @@ export class BackgroundScript {
     }
   }
 
+  //use this if getting
+  // 'Expecting not null for sender.tab'
+  // this will send message to any active browser tabs
+  sendResponseToActiveTabs(request: ToBackgroundMessage) {
+    const message = this.makePayloadEnvelope(request.command, request.data)
+    if ((request as any).from) {
+      message.from = (request as any).from
+    }
+    this.api.tabs.query({ active: true, currentWindow: true }, tabs => {
+      if (tabs.length === 0 || tabs[0].id == null) return
+      const tabURL = tabs[0].url
+      const tabId = tabs[0].id
+      // frameid???
+      this.api.tabs.sendMessage(tabId, message)
+    })
+  }
+
   // messages from content script to background script
   // content script should be listening for response
   async handleMessage(
@@ -507,13 +524,23 @@ export class BackgroundScript {
         sendResponse(this.stopWebMonetization(sender))
         break
       case 'isRateLimited':
-        sendResponse(await this.isRateLimited())
+        try {
+          sendResponse(await this.isRateLimited())
+        }
+        catch (err) {
+          console.error(`ERROR ${request.command}`, err)
+        }
         break
       case 'setStreamControls':
         sendResponse(this.setStreamControls(request, sender))
         break
       case 'contentScriptInit':
-        sendResponse(this.contentScriptInit(request, sender))
+        try {
+          sendResponse(await this.contentScriptInit(request, sender))
+        }
+        catch (err) {
+          console.error(`ERROR ${request.command}`, err.message)
+        }
         break
       case 'fetchYoutubeChannelId':
         sendResponse(await this.youtube.fetchChannelId(request.data.youtubeUrl))
@@ -539,10 +566,13 @@ export class BackgroundScript {
         break
       case 'offer':
         this._offers.add(request.data)
-        console.log(this._offers)
         // TODO: process the offer, for now just respond ok
         sendResponse(this.sendResponseToContentScript(sender, 'answer', "ok"))
         break;
+      case 'update':
+          this.sendResponseToActiveTabs(request)
+          sendResponse(true)
+          break;
       default:
         sendResponse(false)
         break

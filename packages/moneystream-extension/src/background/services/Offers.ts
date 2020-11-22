@@ -4,7 +4,13 @@ export class Offers {
     private _offers: any[] = []
 
     add (offer: any) {
-        this._offers.push(offer)
+        const found = this.findIndex(offer.session)
+        if (found < 0 ) this._offers.push(offer)
+        else this._offers[found] = offer
+    }
+
+    findIndex (url:string) {
+        return this._offers.findIndex( o => o.session === url )
     }
 
     findUrl (url:string) {

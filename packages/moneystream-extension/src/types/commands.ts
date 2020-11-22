@@ -140,6 +140,15 @@ export interface StopWebMonetization extends Command {
  * content -> background
  * browser.runtime.sendMessage
  */
+export interface Update extends Command {
+  command: 'update'
+  data: any
+}
+
+/**
+ * content -> background
+ * browser.runtime.sendMessage
+ */
 export interface LogCommand extends Command {
   command: 'log'
   data: string
@@ -249,6 +258,7 @@ export type ToBackgroundMessage =
   | Stop
   | Progress
   | Offer
+  | Update
 
 export type IconState =
   | 'streaming-paused'
@@ -365,7 +375,8 @@ export interface SetMonetizationState {
  * browser.runtime.sendMessage
  */
 export interface SendTip {
-  command: 'sendTip'
+  command: 'sendTip',
+  data?: any
 }
 
 /**

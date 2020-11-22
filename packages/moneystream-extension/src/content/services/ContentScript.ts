@@ -183,6 +183,8 @@ export class ContentScript {
           this.monetization.postMessage(request)
         } else if (request.command === 'answer') {
           this.monetization.postMessage(request)
+        } else if (request.command === 'update') {
+          this.monetization.postMessage(request)
         } else if (request.command === 'tip') {
           debug('sendTip event')
           const detail: TipEvent['detail'] = {

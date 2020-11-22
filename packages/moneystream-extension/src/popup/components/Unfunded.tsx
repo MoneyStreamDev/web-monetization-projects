@@ -51,6 +51,7 @@ export const Unfunded = (props: PopupProps) => {
   const [state, setState] = useState({
     checkedCutOff: localStorage.getItem(STORAGE_KEY.kill)
   })
+  const [triggerUpdate, setTriggerUpdate] = useState(Number(0))
   const {
     context: {
       moneystreamDomain,
@@ -79,9 +80,21 @@ export const Unfunded = (props: PopupProps) => {
       })
   }
 
+  function raiseUpdateEvent(payment: any) {
+      props.context.runtime.sendMessage(
+        {command: 'update', 
+        from:`Unfunded`,
+        data:payment}
+      )
+  }
+
   // payment was received or sent
-  async function walletRefresh() {
-    //TODO: publish wallet refresh event
+  async function walletRefresh(payment: any) {
+    // WOC may not have payment yet!
+    // await wallet?.loadUnspent()
+    // payment.balance = wallet?.balance
+    raiseUpdateEvent(payment)
+    setTriggerUpdate(triggerUpdate + 1)
   }
 
   function wifToClipboard(/*e*/) {
@@ -126,7 +139,7 @@ export const Unfunded = (props: PopupProps) => {
           {`Your Address is ${wallet?.keyPair.toAddress().toString()}`}
         </StatusTypography>
         <div>
-          <WalletBalance context={props.context} />
+          <WalletBalance triggered={triggerUpdate} context={props.context} />
         </div>
         <div className={classes.funding}>
           <FundingOptions wallet={wallet} walletRefresh={walletRefresh}></FundingOptions>

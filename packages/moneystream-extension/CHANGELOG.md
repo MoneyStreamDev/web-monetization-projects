@@ -1,3 +1,12 @@
+<a name="moneystream-extension@0.1.22"></a>
+
+# [moneystream-extension@0.1.22](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.22...moneystream-extension@0.1.21) (2020-11-21)
+
+### Features
+- update offer if url is the same. fixes a bug if there are multiple streaming medias on one page
+- notify web page, using 'update' message, when wallet is funded
+- automatically refresh balance when wallet is funded
+
 <a name="moneystream-extension@0.1.21"></a>
 
 # [moneystream-extension@0.1.21](https://github.com/moneystreamdev/web-monetization-projects/compare/moneystream-extension@0.1.21...moneystream-extension@0.1.20) (2020-11-12)

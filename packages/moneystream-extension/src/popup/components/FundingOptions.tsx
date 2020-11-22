@@ -7,8 +7,9 @@ import { StatusTypography } from './util/StatusTypography'
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import MoneyButton from '@moneybutton/react-money-button'
-import {QRCodeImport} from './QRCode'
-import {RelayXButton} from './RelayXButton'
+import { QRCodeImport } from './QRCode'
+import { RelayXButton } from './RelayXButton'
+import { UnspentOutput } from 'moneystream-wallet'
 
 const subheading1 = 'Only fund using a few pennies'
 
@@ -25,14 +26,35 @@ const useStyles = makeStyles((theme:any) => ({
 export default function FundingOptions(props:any) {
   const classes = useStyles()
 
+  // TODO: attempt add payment to wallet because WOC does not have it yet
+  function addPaymentToWallet(payment: any) {
+    try {
+      if (payment && props.wallet) {
+        // TODO: makes assumptions, buggy
+        // could get this info from rawhex?
+        const unspent = new UnspentOutput(
+          payment.satoshis,
+          props.wallet.keyPair.toOutputScript(),
+          // Buffer.from(utxo0.tx_hash,'hex').reverse().toString('hex')
+          payment.txid, 
+          0 // assumption
+        )
+        props.wallet.selectedUtxos.add(unspent)
+      }
+    } catch (err) {
+      console.error(`FundingOptions`, err)
+    }
+  }
+
   function onPayment (payment:any) {
+    addPaymentToWallet(payment)
+    props.walletRefresh({action:'funding', details:payment})
     const payDesc = `Your wallet was funded
     Amount: ${payment.amount} ${payment.currency}
     Satoshis: ${payment.satoshis}
     Status: ${payment.status}`
+    //TODO: make a nice ui modal
     alert(payDesc)
-    props.walletRefresh()
-    //TODO: update background wallet
   }
 
   function formatUrlHandcash() {
@@ -45,8 +67,8 @@ export default function FundingOptions(props:any) {
     return qrstring
   }
 
-  function onChange() {
-    props.walletRefresh()
+  function onChange() { 
+    /* how to update balance when hc and dotwallet funded? */ 
   }
 
   return (
@@ -55,7 +77,6 @@ export default function FundingOptions(props:any) {
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
-          id="panel1a-header"
         >
           <Typography className={classes.heading}>Fund from MoneyButton</Typography>
         </AccordionSummary>
@@ -81,7 +102,6 @@ export default function FundingOptions(props:any) {
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel2a-content"
-          id="panel2a-header"
         >
         <Typography className={classes.heading}>Fund from HandCash</Typography>
         </AccordionSummary>
@@ -94,7 +114,6 @@ export default function FundingOptions(props:any) {
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel2a-content"
-          id="panel2a-header"
         >
         <Typography className={classes.heading}>Fund from RelayX</Typography>
         </AccordionSummary>
@@ -118,7 +137,6 @@ export default function FundingOptions(props:any) {
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel2a-content"
-          id="panel2a-header"
         >
         <Typography className={classes.heading}>Fund from DotWallet</Typography>
         </AccordionSummary>
