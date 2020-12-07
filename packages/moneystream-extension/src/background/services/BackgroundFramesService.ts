@@ -194,9 +194,7 @@ export class BackgroundFramesService extends EventEmitter {
         this.emit(changedEvent.type, changedEvent)
       } else {
         this.log(
-          'ERROR in frameAdded from=%s update=%s',
-          from,
-          JSON.stringify(update)
+          `ERROR in frameAdded from=${from} update=${JSON.stringify(update)}`,
         )
       }
     } else if (frame) {
@@ -299,7 +297,7 @@ export class BackgroundFramesService extends EventEmitter {
         const frame = this.getFrame(frameSpec)
         this.log('webNavigation.' + event)
         if (this.traceLogging) {
-          this.log('webNavigation.%s details:%o frame=%o', event, details, {
+          this.log(`webNavigation.${event} details:%o frame=%o`, details, {
             frame
           })
         }
@@ -333,7 +331,7 @@ export class BackgroundFramesService extends EventEmitter {
     )
 
     this.api.tabs.onRemoved.addListener(tabId => {
-      this.log('tabs.onTabRemoved %s', tabId)
+      this.log(`tabs.onTabRemoved ${tabId}`)
       delete this.tabs[tabId]
     })
 
@@ -374,7 +372,7 @@ export class BackgroundFramesService extends EventEmitter {
     const { tabId, frameId, spec: frameSpec } = getFrameSpec(sender)
 
     if (message.command === 'unloadFrame') {
-      this.log('unloadFrame %s', frameId, message.data)
+      this.log(`unloadFrame ${frameId}`, message.data)
       const frames = (this.tabs[tabId] = this.tabs[tabId] ?? [])
       const ix = frames.findIndex(f => f.frameId === frameId)
       if (ix !== -1) {
@@ -394,10 +392,7 @@ export class BackgroundFramesService extends EventEmitter {
     } else if (message.command === 'frameStateChange') {
       if (this.traceLogging) {
         this.log(
-          'frameStateChange, frameId=%s, tabId=%s, message=%s',
-          sender.frameId,
-          tabId,
-          JSON.stringify(message, null, 2)
+          `frameStateChange, frameId=${sender.frameId}, tabId=${tabId}, message=${JSON.stringify(message, null, 2)}`,
         )
       }
 

@@ -464,7 +464,7 @@ export class BitcoinConnection extends EventEmitter {
       //args.unshift(event)
       this.emit.apply(this, emitArgs)
     } catch (err) {
-      this._log('error in %s handler: %s', event, err)
+      this._log(`error in ${event} handler:`, err)
     }
   }
 }

@@ -54,7 +54,7 @@ export const MoneystreamLogoImg = () => {
   const logo = isXMAS
     ? '/res/MoneystreamLogoXMAS.svg'
     : '/res/MoneystreamLogo.svg'
-  const logoWidth = isXMAS ? 28 : 32
+  const logoWidth = isXMAS ? 96 : 32
   const style = isXMAS ? { marginTop: '-3px' } : {}
   return (
     <MoneystreamImg

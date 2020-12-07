@@ -181,7 +181,7 @@ export class AnonymousTokens {
 
   private _removeSignedToken(anonUserId: string): Promise<void> {
     this.storedTokenCount--
-    this.debug('removing token anonUserId=%s', anonUserId)
+    this.debug(`removing token anonUserId=${anonUserId}`)
     return this.store.removeItem(TOKEN_PREFIX + anonUserId)
   }
 

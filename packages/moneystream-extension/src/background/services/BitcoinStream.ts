@@ -267,7 +267,7 @@ export class BitcoinStream extends Duplex {
       this.log('cannot set receiveMax to %s because the current limit is: %s', receiveMax, this._receiveMax)
       throw new Error('Cannot decrease the receiveMax')
     }
-    this.log('setting receiveMax to %s', receiveMax)
+    this.log(`setting receiveMax to ${receiveMax}`)
     this._receiveMax = receiveMax
     this.emit('_maybe_start_send_loop')
   }
@@ -282,7 +282,7 @@ export class BitcoinStream extends Duplex {
     const limit = longFromValue(_limit, true)
     const timeout = (opts && opts.timeout) || DEFAULT_TIMEOUT
     if (this._totalSent.greaterThanOrEqual(limit)) {
-      this.log('already sent %s, not sending any more', this._totalSent)
+      this.log(`already sent ${this._totalSent}, not sending any more`)
       return Promise.resolve()
     }
 
@@ -342,7 +342,7 @@ export class BitcoinStream extends Duplex {
     const limit = longFromValue(_limit, true)
     const timeout = (opts && opts.timeout) || DEFAULT_TIMEOUT
     if (this._totalReceived.greaterThanOrEqual(limit)) {
-      this.log('already received %s, not waiting for more', this._totalReceived)
+      this.log(`already received ${this._totalReceived}, not waiting for more`)
       return Promise.resolve()
     }
 
@@ -361,7 +361,7 @@ export class BitcoinStream extends Duplex {
         if (self._totalReceived.greaterThanOrEqual(limit)) {
           resolve()
         } else {
-          self.log('Stream was closed before the desired amount was received (target: %s, totalReceived: %s)', limit, self._totalReceived)
+          self.log(`Stream was closed before the desired amount was received (target: ${limit}, totalReceived: ${self._totalReceived})`)
           reject(new Error(`Stream was closed before the desired amount was received (target: ${limit}, totalReceived: ${self._totalReceived})`))
         }
       }
@@ -456,7 +456,7 @@ export class BitcoinStream extends Duplex {
     this._outgoingHeldAmount = this._outgoingHeldAmount.subtract(amount)
     this._totalSent = this._totalSent.add(amount)
     delete this.holds[holdId]
-    this.log('executed holdId: %s for: %s', holdId, amount)
+    this.log(`executed holdId: ${holdId} for: ${amount}`)
     this.emit('outgoing_money', amount.toString())
 
     if (this._totalSent.greaterThanOrEqual(this._sendMax)) {
@@ -475,7 +475,7 @@ export class BitcoinStream extends Duplex {
       return
     }
     const amount = this.holds[holdId]
-    this.log('cancelled holdId: %s for: %s', holdId, amount)
+    this.log(`cancelled holdId: ${holdId} for: ${amount}`)
     this._outgoingHeldAmount = this._outgoingHeldAmount.subtract(amount)
     delete this.holds[holdId]
   }
@@ -717,7 +717,7 @@ export class BitcoinStream extends Duplex {
       //args.unshift(event)
       this.emit.apply(this, emitArgs)
     } catch (err) {
-      this.log('error in %s handler: %s', event, err)
+      this.log(`error in ${event} handler: ${err}`)
     }
   }
 }

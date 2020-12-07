@@ -45,7 +45,7 @@ export class AuthService extends EventEmitter {
     } else {
       // Routinely do a whoami query to check for subscription status
       // Query could fail if token is invalid
-      this.log('before updateWhoAmI token=%s user=%s', token, this.store.user)
+      this.log(`before updateWhoAmI token=${token} user=${this.store.user}`)
       const stored = token
       const endDate =
         this.store.user?.subscription?.endDate ||
@@ -53,7 +53,7 @@ export class AuthService extends EventEmitter {
       if (!endDate || new Date(endDate) < new Date()) {
         token = await this.updateWhoAmi(stored)
       }
-      this.log('after updateWhoAmI token=%s user=%s', token, this.store.user)
+      this.log(`after updateWhoAmI token=${token} user=${this.store.user}`)
     }
 
     if (token) {

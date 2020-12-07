@@ -68,7 +68,10 @@ export class AdaptiveBandwidth {
   }
 
   getSatoshisPerSecond() : number {
-    if (this._offer) return this.getSatoshisPerSecondFromOffer()
+    if (this._offer 
+      && this._offer.duration
+      && this._offer.amount
+    ) return this.getSatoshisPerSecondFromOffer()
     // This determines the monetization rate
     // 1 cent per minute ~83 
     try {

@@ -231,7 +231,7 @@ export class Stream extends EventEmitter {
             ilpReject.message === 'exhausted capacity.' //&&
             //ilpReject.data.equals(await sha256(Buffer.from(btpToken)))
           ) {
-            this._debug('anonymous token exhausted; retrying, err=%s', e.message)
+            this._debug(`anonymous token exhausted; retrying, err=${e.message}`)
             //this._anonTokens.removeToken(btpToken)
             continue
           }
